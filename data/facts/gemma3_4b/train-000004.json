@@ -1,0 +1,316 @@
+{
+  "doc_id": "train-000004",
+  "annotator": "gemma3:4b",
+  "guideline_version": "v1",
+  "fact_count": 14,
+  "facts": [
+    {
+      "fact_id": "fc67bfb587c59e9b",
+      "doc_id": "train-000004",
+      "annotator": "gemma3:4b",
+      "guideline_version": "v1",
+      "subject": "difference between quotations or prices on the world market for the products listed in Article 1(1)(a) of Regulation (EC) No 2038/1999",
+      "predicate": "may be covered by",
+      "object": "an export refund",
+      "natural_language": "The difference between world market quotations and Community prices may be covered by an export refund.",
+      "source_locator": {
+        "source_type": "prose",
+        "section_path": "preamble.recitals[0]",
+        "char_start": 545,
+        "char_end": 814,
+        "quote": "Article 18 of Regulation (EC) No 2038/1999 provides that the difference between quotations or prices on the world market for the products listed in Article 1(1)(a) of that Regulation and prices for those products within the Community may be covered by an export refund."
+      },
+      "conflict_label": "unlabeled",
+      "extra": {
+        "anchor_score": 100.0,
+        "model_quote": "Article 18 of Regulation (EC) No 2038/1999 provides that the difference between quotations or prices on the world market for the products listed in Article 1(1)(a) of that Regulation and prices for those products within the Community may be covered by an export refund."
+      }
+    },
+    {
+      "fact_id": "4de4edfa048c77c9",
+      "doc_id": "train-000004",
+      "annotator": "gemma3:4b",
+      "guideline_version": "v1",
+      "subject": "situation on the Community and world markets in sugar",
+      "predicate": "are being taken into account",
+      "object": "refunds on white and raw sugar, undenatured and exported in its unaltered state",
+      "natural_language": "The situation on the Community and world markets in sugar is taken into account when fixing refunds on white and raw sugar, undenatured and exported in its unaltered state.",
+      "source_locator": {
+        "source_type": "prose",
+        "section_path": "preamble.recitals[1]",
+        "char_start": 815,
+        "char_end": 1136,
+        "quote": "(2) Regulation (EC) No 2038/1999 provides that when refunds on white and raw sugar, undenatured and exported in its unaltered state, are being fixed account must be taken of the situation on the Community and world markets in sugar and in particular of the price and cost factors set out in Article 19 of that Regulation;"
+      },
+      "conflict_label": "unlabeled",
+      "extra": {
+        "anchor_score": 100.0,
+        "model_quote": "(2) Regulation (EC) No 2038/1999 provides that when refunds on white and raw sugar, undenatured and exported in its unaltered state, are being fixed account must be taken of the situation on the Community and world markets in sugar and in particular of the price and cost factors set out in Article 19 of that Regulation;"
+      }
+    },
+    {
+      "fact_id": "4c26fe472cbb1341",
+      "doc_id": "train-000004",
+      "annotator": "gemma3:4b",
+      "guideline_version": "v1",
+      "subject": "refund on raw sugar",
+      "predicate": "must be fixed",
+      "object": "in respect of the standard quality",
+      "natural_language": "The refund on raw sugar must be fixed in respect of the standard quality.",
+      "source_locator": {
+        "source_type": "prose",
+        "section_path": "preamble.recitals[2]",
+        "char_start": 1255,
+        "char_end": 1332,
+        "quote": "(3) The refund on raw sugar must be fixed in respect of the standard quality;"
+      },
+      "conflict_label": "unlabeled",
+      "extra": {
+        "anchor_score": 100.0,
+        "model_quote": "(3) The refund on raw sugar must be fixed in respect of the standard quality;"
+      }
+    },
+    {
+      "fact_id": "f298e9c4cc8d55f3",
+      "doc_id": "train-000004",
+      "annotator": "gemma3:4b",
+      "guideline_version": "v1",
+      "subject": "standard quality",
+      "predicate": "defined in",
+      "object": "Article 1 of Council Regulation (EC) No 431/68 of 9 April 1968 determining the standard quality for raw sugar and fixing the Community frontier crossing point for calculating cif prices for sugar",
+      "natural_language": "The standard quality is defined in Article 1 of Council Regulation (EC) No 431/68 of 9 April 1968 determining the standard quality for raw sugar and fixing the Community frontier crossing point for calculating cif prices for sugar.",
+      "source_locator": {
+        "source_type": "prose",
+        "section_path": "preamble.recitals[2]",
+        "char_start": 1358,
+        "char_end": 1553,
+        "quote": "Article 1 of Council Regulation (EC) No 431/68 of 9 April 1968 determining the standard quality for raw sugar and fixing the Community frontier crossing point for calculating cif prices for sugar"
+      },
+      "conflict_label": "unlabeled",
+      "extra": {
+        "anchor_score": 100.0,
+        "model_quote": "Article 1 of Council Regulation (EC) No 431/68 of 9 April 1968 determining the standard quality for raw sugar and fixing the Community frontier crossing point for calculating cif prices for sugar"
+      }
+    },
+    {
+      "fact_id": "bbf4f8134de32d30",
+      "doc_id": "train-000004",
+      "annotator": "gemma3:4b",
+      "guideline_version": "v1",
+      "subject": "refund",
+      "predicate": "should be fixed",
+      "object": "in accordance with Article 19(4) of Regulation (EC) No 2038/1999",
+      "natural_language": "The refund should be fixed in accordance with Article 19(4) of Regulation (EC) No 2038/1999.",
+      "source_locator": {
+        "source_type": "prose",
+        "section_path": "preamble.recitals[2]",
+        "char_start": 1603,
+        "char_end": 1708,
+        "quote": "furthermore, this refund should be fixed in accordance with Article 19(4) of Regulation (EC) No 2038/1999"
+      },
+      "conflict_label": "unlabeled",
+      "extra": {
+        "anchor_score": 100.0,
+        "model_quote": "furthermore, this refund should be fixed in accordance with Article 19(4) of Regulation (EC) No 2038/1999"
+      }
+    },
+    {
+      "fact_id": "fbfa83022fa6ad4e",
+      "doc_id": "train-000004",
+      "annotator": "gemma3:4b",
+      "guideline_version": "v1",
+      "subject": "candy sugar",
+      "predicate": "is defined in",
+      "object": "Commission Regulation (EC) No 2135/95 of 7 September 1995 laying down detailed rules of application for the grant of export refunds in the sugar sector",
+      "natural_language": "Candy sugar is defined in Commission Regulation (EC) No 2135/95 of 7 September 1995 laying down detailed rules of application for the grant of export refunds in the sugar sector.",
+      "source_locator": {
+        "source_type": "prose",
+        "section_path": "preamble.recitals[2]",
+        "char_start": 1736,
+        "char_end": 1887,
+        "quote": "Commission Regulation (EC) No 2135/95 of 7 September 1995 laying down detailed rules of application for the grant of export refunds in the sugar sector"
+      },
+      "conflict_label": "unlabeled",
+      "extra": {
+        "anchor_score": 100.0,
+        "model_quote": "Commission Regulation (EC) No 2135/95 of 7 September 1995 laying down detailed rules of application for the grant of export refunds in the sugar sector"
+      }
+    },
+    {
+      "fact_id": "81049318ef6e2410",
+      "doc_id": "train-000004",
+      "annotator": "gemma3:4b",
+      "guideline_version": "v1",
+      "subject": "refund calculated for sugar containing added flavouring or colouring matter",
+      "predicate": "must apply to their sucrose content",
+      "object": "and, accordingly, be fixed per 1 % of the said content",
+      "natural_language": "The refund calculated for sugar containing added flavouring or colouring matter must apply to their sucrose content and, accordingly, be fixed per 1 % of the said content.",
+      "source_locator": {
+        "source_type": "prose",
+        "section_path": "preamble.recitals[2]",
+        "char_start": 1892,
+        "char_end": 2068,
+        "quote": "the refund thus calculated for sugar containing added flavouring or colouring matter must apply to their sucrose content and, accordingly, be fixed per 1 % of the said content."
+      },
+      "conflict_label": "unlabeled",
+      "extra": {
+        "anchor_score": 100.0,
+        "model_quote": "the refund thus calculated for sugar containing added flavouring or colouring matter must apply to their sucrose content and, accordingly, be fixed per 1 % of the said content."
+      }
+    },
+    {
+      "fact_id": "fd54c8663d673b62",
+      "doc_id": "train-000004",
+      "annotator": "gemma3:4b",
+      "guideline_version": "v1",
+      "subject": "refund for sugar",
+      "predicate": "may make it necessary to vary",
+      "object": "according to destination",
+      "natural_language": "The refund for sugar may need to be adjusted based on the destination market.",
+      "source_locator": {
+        "source_type": "prose",
+        "section_path": "preamble.recitals[3]",
+        "char_start": 2069,
+        "char_end": 2224,
+        "quote": "(4) The world market situation or the specific requirements of certain markets may make it necessary to vary the refund for sugar according to destination."
+      },
+      "conflict_label": "unlabeled",
+      "extra": {
+        "anchor_score": 100.0,
+        "model_quote": "(4) The world market situation or the specific requirements of certain markets may make it necessary to vary the refund for sugar according to destination."
+      }
+    },
+    {
+      "fact_id": "ed88bbb6b4720827",
+      "doc_id": "train-000004",
+      "annotator": "gemma3:4b",
+      "guideline_version": "v1",
+      "subject": "amount of the refund",
+      "predicate": "may be fixed",
+      "object": "by other legal instruments",
+      "natural_language": "The amount of the refund may be fixed by other legal instruments.",
+      "source_locator": {
+        "source_type": "prose",
+        "section_path": "preamble.recitals[4]",
+        "char_start": 2225,
+        "char_end": 2312,
+        "quote": "(5) In special cases, the amount of the refund may be fixed by other legal instruments."
+      },
+      "conflict_label": "unlabeled",
+      "extra": {
+        "anchor_score": 100.0,
+        "model_quote": "(5) In special cases, the amount of the refund may be fixed by other legal instruments."
+      }
+    },
+    {
+      "fact_id": "985316baf1cc2e6b",
+      "doc_id": "train-000004",
+      "annotator": "gemma3:4b",
+      "guideline_version": "v1",
+      "subject": "refund",
+      "predicate": "fixed",
+      "object": "every two weeks",
+      "natural_language": "The refund is fixed every two weeks.",
+      "source_locator": {
+        "source_type": "prose",
+        "section_path": "preamble.recitals[5]",
+        "char_start": 2313,
+        "char_end": 2411,
+        "quote": "(6) The refund must be fixed every two weeks; whereas it may be altered in the intervening period."
+      },
+      "conflict_label": "unlabeled",
+      "extra": {
+        "anchor_score": 100.0,
+        "model_quote": "(6) The refund must be fixed every two weeks; whereas it may be altered in the intervening period."
+      }
+    },
+    {
+      "fact_id": "5a7dc8da414424bc",
+      "doc_id": "train-000004",
+      "annotator": "gemma3:4b",
+      "guideline_version": "v1",
+      "subject": "refund",
+      "predicate": "should be",
+      "object": "as set out in the Annex hereto",
+      "natural_language": "The refund amount should be as specified in the Annex.",
+      "source_locator": {
+        "source_type": "prose",
+        "section_path": "preamble.recitals[6]",
+        "char_start": 2412,
+        "char_end": 2667,
+        "quote": "(7) It follows from applying the rules set out above to the present situation on the market in sugar and in particular to quotations or prices for sugar within the Community and on the world market that the refund should be as set out in the Annex hereto."
+      },
+      "conflict_label": "unlabeled",
+      "extra": {
+        "anchor_score": 100.0,
+        "model_quote": "(7) It follows from applying the rules set out above to the present situation on the market in sugar and in particular to quotations or prices for sugar within the Community and on the world market that the refund should be as set out in the Annex hereto."
+      }
+    },
+    {
+      "fact_id": "b29ac8f8277390ca",
+      "doc_id": "train-000004",
+      "annotator": "gemma3:4b",
+      "guideline_version": "v1",
+      "subject": "measures provided for in this Regulation",
+      "predicate": "are in accordance with",
+      "object": "the opinion of the Management Committee for Sugar",
+      "natural_language": "The measures provided for in this Regulation are in accordance with the opinion of the Management Committee for Sugar.",
+      "source_locator": {
+        "source_type": "prose",
+        "section_path": "preamble.recitals[7]",
+        "char_start": 2668,
+        "char_end": 2790,
+        "quote": "(8) The measures provided for in this Regulation are in accordance with the opinion of the Management Committee for Sugar,"
+      },
+      "conflict_label": "unlabeled",
+      "extra": {
+        "anchor_score": 100.0,
+        "model_quote": "(8) The measures provided for in this Regulation are in accordance with the opinion of the Management Committee for Sugar,"
+      }
+    },
+    {
+      "fact_id": "e91d01bcec4c38de",
+      "doc_id": "train-000004",
+      "annotator": "gemma3:4b",
+      "guideline_version": "v1",
+      "subject": "export refunds",
+      "predicate": "are hereby fixed",
+      "object": "to the amounts shown in the Annex hereto",
+      "natural_language": "The export refunds are fixed to the amounts specified in the Annex.",
+      "source_locator": {
+        "source_type": "prose",
+        "section_path": "enacting.article_1",
+        "char_start": 10,
+        "char_end": 209,
+        "quote": "The export refunds on the products listed in Article 1(1)(a) of Regulation (EC) No 2038/1999, undenatured and exported in the natural state, are hereby fixed to the amounts shown in the Annex hereto."
+      },
+      "conflict_label": "unlabeled",
+      "extra": {
+        "anchor_score": 100.0,
+        "model_quote": "The export refunds on the products listed in Article 1(1)(a) of Regulation (EC) No 2038/1999, undenatured and exported in the natural state, are hereby fixed to the amounts shown in the Annex hereto."
+      }
+    },
+    {
+      "fact_id": "bfda5f5814ce087b",
+      "doc_id": "train-000004",
+      "annotator": "gemma3:4b",
+      "guideline_version": "v1",
+      "subject": "This Regulation",
+      "predicate": "shall enter into force on",
+      "object": "14 June 2001",
+      "natural_language": "This Regulation came into force on June 14, 2001.",
+      "source_locator": {
+        "source_type": "prose",
+        "section_path": "enacting.article_2",
+        "char_start": 220,
+        "char_end": 275,
+        "quote": "This Regulation shall enter into force on 14 June 2001."
+      },
+      "conflict_label": "unlabeled",
+      "extra": {
+        "anchor_score": 100.0,
+        "model_quote": "This Regulation shall enter into force on 14 June 2001."
+      }
+    }
+  ]
+}

@@ -29,7 +29,7 @@ const state = {
   conflict: "",
   search: "",
   merge: 0.78,
-  layout: "cose",
+  layout: "concentric",
   selectedFactId: null,
   cy: null,
   textCache: { preamble: "", enacting: "" },
@@ -328,40 +328,88 @@ async function cycleVerify(btn) {
 
 function renderGraph(graph) {
   if (state.cy) state.cy.destroy();
+
+  // Tune layout knobs by graph size — small toy graphs render much better
+  // under concentric than cose. Default to concentric for ≤30 nodes.
+  const nodeCount = graph.nodes.length;
+  const layoutName = state.layout === "cose" && nodeCount <= 30 ? "concentric" : state.layout;
+  const layoutOpts = {
+    name: layoutName,
+    animate: false,
+    padding: 40,
+    nodeDimensionsIncludeLabels: true,
+    avoidOverlap: true,
+  };
+  if (layoutName === "cose") {
+    layoutOpts.idealEdgeLength = 180;
+    layoutOpts.nodeOverlap = 30;
+    layoutOpts.nodeRepulsion = 8000;
+  } else if (layoutName === "concentric") {
+    layoutOpts.minNodeSpacing = 50;
+    layoutOpts.concentric = (n) => n.data("n_annotators") || 1;
+    layoutOpts.levelWidth = () => 1;
+  } else if (layoutName === "breadthfirst") {
+    layoutOpts.spacingFactor = 1.4;
+  }
+
   state.cy = cytoscape({
     container: document.getElementById("cy"),
     elements: [...graph.nodes, ...graph.edges],
-    layout: { name: state.layout, animate: false, padding: 18, idealEdgeLength: 110, nodeOverlap: 16 },
+    layout: layoutOpts,
+    minZoom: 0.2,
+    maxZoom: 2.5,
+    wheelSensitivity: 0.3,
     style: [
       { selector: "node", style: {
-          "background-color": "#cfd6e2", "label": "data(label)",
-          "font-size": 10, "text-wrap": "wrap", "text-max-width": 90,
-          "color": "#222", "text-valign": "center", "text-halign": "center",
-          "width": "mapData(n_annotators, 1, 3, 18, 34)",
-          "height": "mapData(n_annotators, 1, 3, 18, 34)",
-          "border-width": 1, "border-color": "#94a0b6" }},
-      { selector: "node[conflict_label = 'contradiction']", style: { "border-color": "#d32f2f", "border-width": 3 }},
-      { selector: "node[conflict_label = 'granularity']",   style: { "border-color": "#f57c00", "border-width": 3 }},
-      { selector: "node[conflict_label = 'redundancy']",    style: { "border-color": "#1976d2", "border-width": 2 }},
-      { selector: "node.selected", style: { "background-color": "#fff3a0", "border-color": "#f5a623", "border-width": 4 }},
+          "background-color": "#e2e8f0",
+          "label": "data(label)",
+          "font-size": 13,
+          "font-weight": 500,
+          "text-wrap": "wrap",
+          "text-max-width": 140,
+          "color": "#1f2937",
+          "text-valign": "center",
+          "text-halign": "center",
+          "text-outline-color": "#fff",
+          "text-outline-width": 2,
+          "width":  "mapData(n_annotators, 1, 3, 44, 78)",
+          "height": "mapData(n_annotators, 1, 3, 44, 78)",
+          "border-width": 2,
+          "border-color": "#94a3b8" }},
+      { selector: "node[conflict_label = 'contradiction']", style: { "border-color": "#d32f2f", "border-width": 4 }},
+      { selector: "node[conflict_label = 'granularity']",   style: { "border-color": "#f57c00", "border-width": 4 }},
+      { selector: "node[conflict_label = 'redundancy']",    style: { "border-color": "#1976d2", "border-width": 3 }},
+      { selector: "node.selected", style: { "background-color": "#fef08a", "border-color": "#eab308", "border-width": 5 }},
       { selector: "node.dimmed", style: { "opacity": 0.25 }},
       { selector: "edge", style: {
-          "width": "mapData(n_annotators, 1, 3, 1.2, 3.2)",
-          "line-color": "#9e9e9e", "target-arrow-color": "#9e9e9e",
-          "target-arrow-shape": "triangle", "curve-style": "bezier",
-          "label": "data(label)", "font-size": 8, "color": "#555",
-          "text-rotation": "autorotate", "text-background-color": "#fff",
-          "text-background-opacity": 0.7, "text-background-padding": 1 }},
-      { selector: "edge[conflict_label = 'contradiction']", style: { "line-color": "#d32f2f", "target-arrow-color": "#d32f2f", "width": 3 }},
-      { selector: "edge[conflict_label = 'granularity']",   style: { "line-color": "#f57c00", "target-arrow-color": "#f57c00", "width": 2.6 }},
-      { selector: "edge[conflict_label = 'redundancy']",    style: { "line-color": "#1976d2", "target-arrow-color": "#1976d2", "width": 2.2 }},
-      { selector: "edge.selected", style: { "line-color": "#f5a623", "target-arrow-color": "#f5a623", "width": 4 }},
+          "width": "mapData(n_annotators, 1, 3, 2, 5)",
+          "line-color": "#94a3b8",
+          "target-arrow-color": "#94a3b8",
+          "target-arrow-shape": "triangle",
+          "arrow-scale": 1.4,
+          "curve-style": "bezier",
+          "label": "data(label)",
+          "font-size": 11,
+          "color": "#475569",
+          "text-rotation": "autorotate",
+          "text-background-color": "#fff",
+          "text-background-opacity": 0.9,
+          "text-background-padding": 3,
+          "text-background-shape": "roundrectangle" }},
+      { selector: "edge[conflict_label = 'contradiction']", style: { "line-color": "#d32f2f", "target-arrow-color": "#d32f2f", "width": 4 }},
+      { selector: "edge[conflict_label = 'granularity']",   style: { "line-color": "#f57c00", "target-arrow-color": "#f57c00", "width": 3.5 }},
+      { selector: "edge[conflict_label = 'redundancy']",    style: { "line-color": "#1976d2", "target-arrow-color": "#1976d2", "width": 3 }},
+      { selector: "edge.selected", style: { "line-color": "#eab308", "target-arrow-color": "#eab308", "width": 5 }},
       { selector: "edge.dimmed", style: { "opacity": 0.2 }},
     ],
   });
 
   state.cy.on("tap", "edge", (evt) => openPairModal(evt.target));
   state.cy.on("tap", "node", (evt) => filterByEntity(evt.target.id()));
+  // Expose for the splitter resize observer (Phase-5c).
+  window.__cyInstance = state.cy;
+  // Fit the graph nicely into the viewport on first render.
+  setTimeout(() => state.cy && state.cy.fit(undefined, 50), 50);
   refreshGraphHighlights();
 }
 
@@ -1090,6 +1138,7 @@ const escapeHtml = (s) => String(s ?? "")
 let _pollTimer = null;
 let _panelOpen = false;
 let _knownJobs = new Set();   // track new jobs so we auto-open the panel
+let _seenFailed = new Set();  // jobs we've already auto-popped the panel for on failure
 
 document.addEventListener("DOMContentLoaded", initLiveJobs);
 if (document.readyState !== "loading") initLiveJobs();
@@ -1157,17 +1206,22 @@ async function refreshJobsOnce() {
     jobs = (await fetch("/api/jobs").then(r => r.json())).jobs || [];
   } catch { return false; }
 
-  // Auto-open panel if a new job appeared
+  // Auto-open the panel when a new job appears or any job has just failed.
   let haveLive = false;
   let newSeen = false;
+  let newFailure = false;
   const ids = new Set();
   for (const j of jobs) {
     ids.add(j.job_id);
     if (j.status === "queued" || j.status === "running") haveLive = true;
     if (!_knownJobs.has(j.job_id)) newSeen = true;
+    if (j.status === "failed" && !_seenFailed.has(j.job_id)) {
+      newFailure = true;
+      _seenFailed.add(j.job_id);
+    }
   }
   _knownJobs = ids;
-  if (newSeen && !_panelOpen) {
+  if ((newSeen || newFailure) && !_panelOpen) {
     _panelOpen = true;
     $("#live-jobs")?.classList.remove("hidden");
     if ($("#jobs-toggle")) $("#jobs-toggle").textContent = "Jobs ▴";
@@ -1181,6 +1235,9 @@ async function refreshJobsOnce() {
     const row = document.createElement("div");
     row.className = "job-row";
     row.dataset.jobId = j.job_id;
+    const errInline = j.status === "failed" && j.error
+      ? `<div class="job-error" style="grid-column: 2 / -1; color: #ffb4b4; font-size: 11px; margin-top: 2px;">⚠ ${escapeHtml(j.error)}</div>`
+      : "";
     row.innerHTML = `
       <span class="kind ${j.kind}">${j.kind}</span>
       <span class="lbl" title="${escapeHtml(j.label || j.job_id)}">${escapeHtml(j.label || j.job_id)}</span>
@@ -1188,10 +1245,11 @@ async function refreshJobsOnce() {
         <div class="bar" style="width:${pct}%"></div>
         <span class="label">${j.progress.done}/${j.progress.total} (${pct}%)</span>
       </div>
-      <div style="display:flex;gap:4px;justify-content:flex-end;">
+      <div style="display:flex;gap:4px;justify-content:flex-end;align-items:center;">
         <span class="status ${j.status}" title="${escapeHtml(j.error || '')}">${j.status}</span>
         ${j.status === "queued" ? `<button class="cancel-btn" data-job="${j.job_id}">×</button>` : ""}
-      </div>`;
+      </div>
+      ${errInline}`;
     panel.appendChild(row);
   }
   for (const b of panel.querySelectorAll(".cancel-btn")) {
@@ -1211,6 +1269,22 @@ async function cancelJob(jobId) {
 // ------------------------------------------------------------
 // Phase-1 / Phase-2 batch buttons
 // ------------------------------------------------------------
+function _openJobsPanel() {
+  const panel = $("#live-jobs");
+  if (!panel) return;
+  panel.classList.remove("hidden");
+  _panelOpen = true;
+  if ($("#jobs-toggle")) $("#jobs-toggle").textContent = "Jobs ▴";
+  panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+function _setInlineStatus(selector, text, cls) {
+  const el = $(selector);
+  if (!el) return;
+  el.textContent = text;
+  el.className = cls || "";
+}
+
 async function runPhase1() {
   const models = ($("#p1-models").value || "").split(",").map(s => s.trim()).filter(Boolean);
   const guideline_version = $("#p1-guideline").value || "v1";
@@ -1218,16 +1292,23 @@ async function runPhase1() {
   const body = { models, guideline_version };
   if (subset.length) body.doc_ids = subset;
 
-  const expectedDocs = subset.length || 50;  // best-effort estimate for the confirm
+  if (!models.length) {
+    _setInlineStatus("#p1-status", "enter at least one model", "err");
+    return;
+  }
+
+  const expectedDocs = subset.length || 50;
   const ok = confirm(
-    `Phase-1 batch:\n` +
-    `  models: ${models.join(", ")}\n` +
-    `  guideline: ${guideline_version}\n` +
-    `  ~${models.length} × ${expectedDocs} = ${models.length * expectedDocs} cells\n\n` +
-    `On 6 GB GPU each cell is ~3-5 minutes — full matrix can take many hours.\n` +
-    `Proceed?`
+    "Phase-1 batch:\n" +
+    "  models:    " + models.join(", ") + "\n" +
+    "  guideline: " + guideline_version + "\n" +
+    "  approx " + models.length + " x " + expectedDocs + " = " + (models.length * expectedDocs) + " cells\n\n" +
+    "Needs Ollama running with the models pulled. On 6 GB GPU each cell is ~3-5 min.\n\n" +
+    "Proceed?"
   );
   if (!ok) return;
+
+  _setInlineStatus("#p1-status", "enqueueing…", "");
   try {
     const r = await fetch("/api/run_phase1", {
       method: "POST", headers: {"Content-Type":"application/json"},
@@ -1235,13 +1316,18 @@ async function runPhase1() {
     });
     if (!r.ok) {
       const t = await r.text();
-      alert(`failed: ${r.status} ${t.slice(0,160)}`);
+      _setInlineStatus("#p1-status", "failed: " + r.status + " " + t.slice(0,140), "err");
       return;
     }
     const job = await r.json();
-    alert(`Enqueued: job ${job.job_id} (${job.progress.total} cells). Monitor in the Live jobs panel.`);
+    _setInlineStatus("#p1-status",
+      "enqueued · " + job.job_id + " (" + job.progress.total + " cells) — watch the Live jobs panel",
+      "ok");
+    _openJobsPanel();
     refreshJobsOnce();
-  } catch (e) { alert(`request failed: ${e.message}`); }
+  } catch (e) {
+    _setInlineStatus("#p1-status", "request failed: " + e.message, "err");
+  }
 }
 
 async function runPhase2() {
@@ -1249,9 +1335,15 @@ async function runPhase2() {
   const layer2_model = $("#p2-layer2-model").value || "qwen3.5:4b";
   const align_threshold = parseFloat($("#p2-align-threshold").value) || 0.78;
   const body = { skip_layer2, layer2_model, align_threshold };
-  const ok = confirm(`Phase-2 batch:\n  skip_layer2: ${skip_layer2}\n` +
-                     `  layer2_model: ${layer2_model}\n  align_threshold: ${align_threshold}\n\nProceed?`);
+  const ok = confirm("Phase-2 batch:\n" +
+                     "  skip_layer2:     " + skip_layer2 + "\n" +
+                     "  layer2_model:    " + layer2_model + "\n" +
+                     "  align_threshold: " + align_threshold + "\n\n" +
+                     (skip_layer2 ? "Uses the deterministic stub — no LLM needed.\n\n" : "") +
+                     "Proceed?");
   if (!ok) return;
+
+  _setInlineStatus("#p2-status", "enqueueing…", "");
   try {
     const r = await fetch("/api/run_phase2", {
       method: "POST", headers: {"Content-Type":"application/json"},
@@ -1259,12 +1351,370 @@ async function runPhase2() {
     });
     if (!r.ok) {
       const t = await r.text();
-      alert(`failed: ${r.status} ${t.slice(0,160)}`);
+      _setInlineStatus("#p2-status", "failed: " + r.status + " " + t.slice(0,140), "err");
       return;
     }
     const job = await r.json();
-    alert(`Enqueued: job ${job.job_id} (${job.progress.total} docs).`);
+    _setInlineStatus("#p2-status",
+      "enqueued · " + job.job_id + " (" + job.progress.total + " docs) — watch the Live jobs panel",
+      "ok");
+    _openJobsPanel();
     refreshJobsOnce();
-  } catch (e) { alert(`request failed: ${e.message}`); }
+  } catch (e) {
+    _setInlineStatus("#p2-status", "request failed: " + e.message, "err");
+  }
 }
+})();
+
+/* ============================================================
+ * Phase-5c additions: resizable three-pane splitters.
+ * Mounts drag handlers on every .splitter element. Each splitter sits
+ * between two .pane siblings and adjusts their flex-basis on drag.
+ * ============================================================ */
+(() => {
+  const init = () => {
+    const splitters = document.querySelectorAll(".splitter");
+    if (!splitters.length) return;
+
+    splitters.forEach((sp) => sp.addEventListener("mousedown", startDrag));
+
+    // When the graph pane changes size, tell Cytoscape to re-measure its
+    // canvas and re-fit the graph into the new viewport.
+    const cyEl = document.getElementById("cy");
+    if (cyEl && window.ResizeObserver) {
+      let fitTimer = null;
+      const ro = new ResizeObserver(() => {
+        const cy = window.__cyInstance;
+        if (!cy) return;
+        cy.resize();
+        clearTimeout(fitTimer);
+        fitTimer = setTimeout(() => cy && cy.fit(undefined, 50), 120);
+      });
+      ro.observe(cyEl);
+    }
+  };
+
+  function startDrag(e) {
+    e.preventDefault();
+    const splitter = e.currentTarget;
+    const prev = splitter.previousElementSibling;
+    const next = splitter.nextElementSibling;
+    if (!prev || !next) return;
+
+    const startX = e.clientX;
+    const startPrevW = prev.getBoundingClientRect().width;
+    const startNextW = next.getBoundingClientRect().width;
+    const MIN = 160; // matches .pane { min-width }
+
+    splitter.classList.add("dragging");
+    document.body.classList.add("col-resizing");
+
+    const onMove = (ev) => {
+      let dx = ev.clientX - startX;
+      // Clamp so neither pane goes below MIN.
+      if (startPrevW + dx < MIN) dx = MIN - startPrevW;
+      if (startNextW - dx < MIN) dx = startNextW - MIN;
+      const newPrev = startPrevW + dx;
+      const newNext = startNextW - dx;
+      prev.style.flex = `0 0 ${newPrev}px`;
+      next.style.flex = `0 0 ${newNext}px`;
+    };
+    const onUp = () => {
+      splitter.classList.remove("dragging");
+      document.body.classList.remove("col-resizing");
+      document.removeEventListener("mousemove", onMove);
+      document.removeEventListener("mouseup", onUp);
+    };
+    document.addEventListener("mousemove", onMove);
+    document.addEventListener("mouseup", onUp);
+  }
+
+  if (document.readyState !== "loading") init();
+  else document.addEventListener("DOMContentLoaded", init);
+})();
+
+/* ============================================================
+ * Phase-5d additions:
+ *   - Delete-doc button
+ *   - Text font-size controls
+ *   - KG settings popover (node/label sizes, edge labels)
+ *   - Horizontal splitter (drawer height)
+ *   - Live facts refresh while a reextract job is in-flight on current doc
+ * ============================================================ */
+(() => {
+  const $ = (s) => document.querySelector(s);
+
+  const STYLE = {
+    nodeSize: 60, labelSize: 13, edgeLabelSize: 11, edgeWidth: 3,
+    showEdgeLabels: true, showNodeLabels: true,
+  };
+
+  function applyCyStyle() {
+    const cy = window.__cyInstance;
+    if (!cy) return;
+    cy.style()
+      .selector("node").style({
+        "width": STYLE.nodeSize,
+        "height": STYLE.nodeSize,
+        "font-size": STYLE.labelSize,
+        "label": STYLE.showNodeLabels ? "data(label)" : "",
+      })
+      .selector("edge").style({
+        "width": STYLE.edgeWidth,
+        "font-size": STYLE.edgeLabelSize,
+        "label": STYLE.showEdgeLabels ? "data(label)" : "",
+      })
+      .update();
+  }
+
+  function initFontControls() {
+    const body = document.body;
+    const setFs = (px) => {
+      px = Math.max(10, Math.min(28, px));
+      document.documentElement.style.setProperty("--doc-font-size", px + "px");
+      body.dataset.docFontPx = String(px);
+    };
+    setFs(14);
+    $("#text-font-inc")?.addEventListener("click", () =>
+      setFs(parseInt(body.dataset.docFontPx || "14", 10) + 1));
+    $("#text-font-dec")?.addEventListener("click", () =>
+      setFs(parseInt(body.dataset.docFontPx || "14", 10) - 1));
+  }
+
+  function initCySettings() {
+    const panel = $("#graph-settings");
+    const toggleBtn = $("#cy-settings-btn");
+    const fitBtn = $("#cy-fit-btn");
+    const resetBtn = $("#cy-settings-reset");
+
+    toggleBtn?.addEventListener("click", () => {
+      panel?.classList.toggle("hidden");
+    });
+    document.addEventListener("click", (e) => {
+      if (!panel || panel.classList.contains("hidden")) return;
+      if (panel.contains(e.target) || toggleBtn?.contains(e.target)) return;
+      panel.classList.add("hidden");
+    });
+
+    fitBtn?.addEventListener("click", () => {
+      const cy = window.__cyInstance;
+      if (cy) cy.fit(undefined, 40);
+    });
+
+    const wireSlider = (id, key, valId) => {
+      const el = $("#" + id), v = $("#" + valId);
+      if (!el) return;
+      el.addEventListener("input", () => {
+        STYLE[key] = parseFloat(el.value);
+        if (v) v.textContent = el.value;
+        applyCyStyle();
+      });
+    };
+    wireSlider("cy-node-size", "nodeSize", "cy-node-size-v");
+    wireSlider("cy-label-size", "labelSize", "cy-label-size-v");
+    wireSlider("cy-edge-label-size", "edgeLabelSize", "cy-edge-label-size-v");
+    wireSlider("cy-edge-width", "edgeWidth", "cy-edge-width-v");
+
+    $("#cy-show-edge-labels")?.addEventListener("change", (e) => {
+      STYLE.showEdgeLabels = e.target.checked; applyCyStyle();
+    });
+    $("#cy-show-node-labels")?.addEventListener("change", (e) => {
+      STYLE.showNodeLabels = e.target.checked; applyCyStyle();
+    });
+
+    resetBtn?.addEventListener("click", () => {
+      Object.assign(STYLE, {
+        nodeSize: 60, labelSize: 13, edgeLabelSize: 11, edgeWidth: 3,
+        showEdgeLabels: true, showNodeLabels: true,
+      });
+      $("#cy-node-size").value = 60;       $("#cy-node-size-v").textContent = "60";
+      $("#cy-label-size").value = 13;      $("#cy-label-size-v").textContent = "13";
+      $("#cy-edge-label-size").value = 11; $("#cy-edge-label-size-v").textContent = "11";
+      $("#cy-edge-width").value = 3;       $("#cy-edge-width-v").textContent = "3";
+      $("#cy-show-edge-labels").checked = true;
+      $("#cy-show-node-labels").checked = true;
+      applyCyStyle();
+    });
+
+    // Re-apply on every fresh cytoscape render
+    const reapply = () => setTimeout(applyCyStyle, 80);
+    const obs = new MutationObserver(reapply);
+    const cyEl = document.getElementById("cy");
+    if (cyEl) obs.observe(cyEl, { childList: true, subtree: false });
+  }
+
+  function initDeleteDoc() {
+    const btn = $("#delete-doc-btn");
+    if (!btn) return;
+    btn.addEventListener("click", async () => {
+      const sel = $("#doc-select");
+      const docId = sel?.value;
+      if (!docId) { alert("No doc selected."); return; }
+      const ok = confirm(
+        "Permanently DELETE all artefacts for doc: " + docId + "?\n\n" +
+        "This removes:\n" +
+        "  data/parsed/" + docId + ".json\n" +
+        "  data/facts/*/" + docId + ".json (all annotators)\n" +
+        "  data/conflicts/" + docId + "*.json\n" +
+        "  data/graphs/" + docId + ".json\n" +
+        "  data/verifications/" + docId + ".json\n\n" +
+        "Cannot be undone."
+      );
+      if (!ok) return;
+      try {
+        const r = await fetch("/api/doc/" + encodeURIComponent(docId), { method: "DELETE" });
+        if (!r.ok) {
+          let msg = "HTTP " + r.status;
+          try { const j = await r.json(); msg = j.message || msg; } catch {}
+          alert("Delete failed: " + msg);
+          return;
+        }
+        const data = await r.json();
+        // Refresh the doc list and switch to the first remaining doc
+        const docs = (await fetch("/api/docs").then(r => r.json())).docs;
+        sel.innerHTML = "";
+        for (const d of docs) {
+          const opt = document.createElement("option");
+          opt.value = d.doc_id;
+          opt.textContent = (d.is_user_doc ? "📝 " : "") + d.doc_id + " — " +
+                            (d.title || "").slice(0, 70);
+          sel.appendChild(opt);
+        }
+        if (docs.length) {
+          sel.value = docs[0].doc_id;
+          sel.dispatchEvent(new Event("change"));
+        } else {
+          document.querySelector("#doc-title").textContent = "(no docs left — upload one or run scripts/run_dry_run)";
+          document.querySelector("#doc-body").textContent = "";
+        }
+        // brief toast via the live-jobs status area isn't appropriate; just alert
+        console.info("deleted", data.n_removed, "files for", docId);
+      } catch (e) {
+        alert("Delete request failed: " + e.message);
+      }
+    });
+  }
+
+  // Horizontal splitter: drag to resize bottombar height
+  function initHSplitter() {
+    const split = document.querySelector(".hsplitter");
+    const bar = document.getElementById("bottombar");
+    if (!split || !bar) return;
+    split.addEventListener("mousedown", (e) => {
+      e.preventDefault();
+      const startY = e.clientY;
+      const startH = bar.getBoundingClientRect().height;
+      split.classList.add("dragging");
+      document.body.classList.add("row-resizing");
+      const onMove = (ev) => {
+        const dy = ev.clientY - startY;
+        // drag UP = bigger bottombar
+        let newH = startH - dy;
+        const winH = window.innerHeight;
+        newH = Math.max(60, Math.min(winH - 220, newH));
+        bar.style.height = newH + "px";
+        // tell cytoscape its container changed
+        const cy = window.__cyInstance;
+        if (cy) cy.resize();
+      };
+      const onUp = () => {
+        split.classList.remove("dragging");
+        document.body.classList.remove("row-resizing");
+        document.removeEventListener("mousemove", onMove);
+        document.removeEventListener("mouseup", onUp);
+        const cy = window.__cyInstance;
+        if (cy) cy.fit(undefined, 40);
+      };
+      document.addEventListener("mousemove", onMove);
+      document.addEventListener("mouseup", onUp);
+    });
+  }
+
+  // Live refresh: while any reextract job for the current doc is in flight,
+  // poll /api/facts and re-render the table so the user sees new facts appear.
+  function initLiveFactsRefresh() {
+    const docSelect = $("#doc-select");
+    let timer = null;
+
+    async function tick() {
+      try {
+        const jobs = (await fetch("/api/jobs").then(r => r.json())).jobs || [];
+        const docId = docSelect?.value;
+        if (!docId) return;
+        const docKey = docId + ".json";
+        const relevant = jobs.find(j =>
+          (j.status === "running" || j.status === "queued") &&
+          j.kind === "reextract" &&
+          (j.label || "").includes(docId) ||
+          // also match jobs with doc_paths containing the doc id (server-side
+          // label-only check is too brittle):
+          ((j.label || "").includes(docKey)));
+        if (!relevant) return;
+        // Re-fetch facts + graph
+        const facts = await fetch("/api/facts/" + encodeURIComponent(docId)).then(r => r.json());
+        // Push the new facts back into the page's #facts-table.
+        // We can't reach the IIFE's `state`, so we dispatch a custom event that
+        // anyone wanting to know about it can listen for.
+        document.dispatchEvent(new CustomEvent("facts-changed", { detail: { docId, facts: facts.facts || [] } }));
+        // Also flash the table to show it updated.
+        const tbl = document.getElementById("facts-table");
+        if (tbl && facts.facts) {
+          tbl.classList.remove("live-updated");
+          // force reflow
+          void tbl.offsetWidth;
+          tbl.classList.add("live-updated");
+          // Update the visible facts count immediately
+          const cnt = document.getElementById("facts-count");
+          if (cnt) cnt.textContent = facts.count + " facts (live)";
+        }
+      } catch {}
+    }
+
+    const start = () => {
+      if (timer) return;
+      timer = setInterval(tick, 3000);
+    };
+    start();
+
+    // Also when user switches doc, fire a refresh immediately
+    docSelect?.addEventListener("change", () => setTimeout(tick, 500));
+  }
+
+  // Hook into the facts-changed event from inside the original IIFE: we need
+  // to actually trigger a re-fetch of the doc to update the in-memory state.
+  // Since the bootstrap IIFE doesn't expose state, the simplest is to
+  // re-trigger the doc-select 'change' event when a reextract job finishes.
+  function initJobCompletionReload() {
+    let lastJobIds = new Set();
+    let lastStatuses = new Map();
+    setInterval(async () => {
+      try {
+        const jobs = (await fetch("/api/jobs").then(r => r.json())).jobs || [];
+        const docSelect = $("#doc-select");
+        const curDoc = docSelect?.value;
+        for (const j of jobs) {
+          const prev = lastStatuses.get(j.job_id);
+          // When a reextract job for current doc transitions to done, reload
+          if (prev && prev !== j.status && j.status === "done" && j.kind === "reextract") {
+            if (curDoc && (j.label || "").includes(curDoc)) {
+              docSelect.dispatchEvent(new Event("change"));
+            }
+          }
+          lastStatuses.set(j.job_id, j.status);
+        }
+      } catch {}
+    }, 3500);
+  }
+
+  function init() {
+    initFontControls();
+    initCySettings();
+    initDeleteDoc();
+    initHSplitter();
+    initLiveFactsRefresh();
+    initJobCompletionReload();
+  }
+
+  if (document.readyState !== "loading") init();
+  else document.addEventListener("DOMContentLoaded", init);
 })();

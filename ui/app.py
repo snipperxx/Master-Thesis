@@ -54,6 +54,26 @@ app = Flask(__name__,
             static_folder=str(REPO_ROOT / "ui" / "static"))
 
 
+@app.errorhandler(Exception)
+def _json_errors_for_api(exc):
+    """Return JSON (not Flask's HTML page) for any /api/* path failure.
+
+    Prevents the front-end's `response.json()` from blowing up with
+    'Unexpected token <' when the backend hits an abort() or unhandled
+    exception. Non-/api paths fall back to Flask's default handler.
+    """
+    from werkzeug.exceptions import HTTPException
+    if not request.path.startswith("/api/"):
+        # Let Flask render its normal HTML error page for non-API routes.
+        raise exc
+    if isinstance(exc, HTTPException):
+        return jsonify({"error": exc.name, "status": exc.code,
+                        "message": exc.description or str(exc)}), exc.code
+    log.exception("Unhandled /api exception on %s", request.path)
+    return jsonify({"error": type(exc).__name__, "status": 500,
+                    "message": str(exc)}), 500
+
+
 def _load_json(path: Path) -> Any:
     return json.loads(path.read_text(encoding="utf-8"))
 
@@ -103,9 +123,38 @@ def api_docs():
     return jsonify({"docs": out})
 
 
-@app.route("/api/doc/<doc_id>")
+@app.route("/api/doc/<doc_id>", methods=["GET", "DELETE"])
 def api_doc(doc_id: str):
     path = PARSED / f"{doc_id}.json"
+    if request.method == "DELETE":
+        # Remove every per-doc artefact across all data subdirs.
+        removed: list[str] = []
+        # parsed
+        if path.exists():
+            path.unlink(); removed.append(str(path.relative_to(REPO_ROOT)))
+        # facts (one file per annotator)
+        if FACTS.exists():
+            for sub in FACTS.iterdir():
+                if not sub.is_dir():
+                    continue
+                fp = sub / f"{doc_id}.json"
+                if fp.exists():
+                    fp.unlink(); removed.append(str(fp.relative_to(REPO_ROOT)))
+        # conflicts (main + __v2_* variants)
+        if CONFLICTS.exists():
+            for fp in [CONFLICTS / f"{doc_id}.json", *CONFLICTS.glob(f"{doc_id}__*.json")]:
+                if fp.exists():
+                    fp.unlink(); removed.append(str(fp.relative_to(REPO_ROOT)))
+        # graphs + verifications
+        for root in (GRAPHS, VERIFICATIONS):
+            fp = root / f"{doc_id}.json"
+            if fp.exists():
+                fp.unlink(); removed.append(str(fp.relative_to(REPO_ROOT)))
+        if not removed:
+            abort(404, f"doc {doc_id!r} has no files on disk")
+        return jsonify({"ok": True, "doc_id": doc_id,
+                        "removed": removed, "n_removed": len(removed)})
+    # GET
     if not path.exists():
         abort(404, f"parsed doc {doc_id!r} not found")
     parsed = _load_json(path)["document"]
@@ -251,24 +300,34 @@ def api_distribution_shift(doc_id: str):
     v2_label = request.args.get("v2")
     def _path(version: str) -> Path:
         return CONFLICTS / (f"{doc_id}.json" if version == "v1" else f"{doc_id}__{version}.json")
+    def _empty(note: str) -> dict:
+        return {"v1_label": v1_label, "v2_label": v2_label,
+                "note": note,
+                "labels": [], "v1": [], "v2": [], "delta": [], "delta_pct": [],
+                "totals": {"v1": 0, "v2": 0, "delta": 0, "delta_pct": None},
+                "layer1_rate": {"v1": {}, "v2": {}}}
     p1 = _path(v1_label)
     if not p1.exists():
-        abort(404, f"conflicts for {v1_label} not found")
+        return jsonify(_empty(
+            f"No Phase-2 output for '{v1_label}' on this doc yet — "
+            f"run Phase-2 first (Background runs tab)."))
     if v2_label is None:
         cands = sorted(CONFLICTS.glob(f"{doc_id}__v2_*.json"))
         if not cands:
-            return jsonify({"v1_label": v1_label, "v2_label": None,
-                            "note": "No v2 conflicts file found yet — run a re-extract job first.",
-                            "labels": [], "v1": [], "v2": [], "delta": [], "delta_pct": [],
-                            "totals": {"v1": 0, "v2": 0, "delta": 0, "delta_pct": None},
-                            "layer1_rate": {"v1": {}, "v2": {}}})
+            return jsonify(_empty(
+                "No v2 conflicts file found yet — "
+                "save a new guideline version then re-run Phase-1 + Phase-2."))
         p2 = cands[-1]
         v2_label = p2.stem.split("__", 1)[1]
     else:
         p2 = _path(v2_label)
         if not p2.exists():
-            abort(404, f"conflicts for {v2_label} not found")
-    return jsonify(compare_conflict_files(p1, p2, v1_label=v1_label, v2_label=v2_label))
+            return jsonify(_empty(f"conflicts for '{v2_label}' not found on disk"))
+    try:
+        return jsonify(compare_conflict_files(p1, p2, v1_label=v1_label, v2_label=v2_label))
+    except Exception as exc:
+        log.exception("distribution_shift failed for %s", doc_id)
+        return jsonify(_empty(f"comparison failed: {type(exc).__name__}: {exc}"))
 
 
 # ===================== uploads & guidelines ============================
@@ -290,7 +349,7 @@ def api_upload_text():
     response: dict = {"ok": True, "doc_id": doc_id,
                       "title": parsed["document"]["title"],
                       "n_sections": len(parsed["document"]["recitals"]),
-                      "parsed_path": str(out.relative_to(REPO_ROOT))}
+                      "parsed_path": str(out)}
 
     if payload.get("extract"):
         from src import reextract_worker as rw
@@ -450,7 +509,7 @@ def api_guideline_save_and_enqueue():
     models = payload.get("models") or ["qwen3.5:4b"]
     doc_paths = payload.get("doc_paths")
     if not doc_paths:
-        doc_paths = [str(p.relative_to(REPO_ROOT)) for p in sorted(PARSED.glob("*.json"))]
+        doc_paths = [str(p) for p in sorted(PARSED.glob("*.json"))]
     from src import reextract_worker as rw
     job = rw.enqueue(guideline_text, models=models, doc_paths=doc_paths,
                      label=f"new-guideline re-extract ({len(models)}m × {len(doc_paths)}d)")
@@ -465,10 +524,10 @@ def api_run_phase1():
     guideline_version = payload.get("guideline_version", "v1")
     doc_ids = payload.get("doc_ids")
     if doc_ids:
-        doc_paths = [str((PARSED / f"{d}.json").relative_to(REPO_ROOT))
+        doc_paths = [str(PARSED / f"{d}.json")
                      for d in doc_ids if (PARSED / f"{d}.json").exists()]
     else:
-        doc_paths = [str(p.relative_to(REPO_ROOT)) for p in sorted(PARSED.glob("*.json"))]
+        doc_paths = [str(p) for p in sorted(PARSED.glob("*.json"))]
     if not doc_paths:
         abort(400, "no parsed docs available")
     from src import reextract_worker as rw
@@ -527,7 +586,7 @@ def api_run_matrix():
             out.append({"cell": cell, "error": f"guideline {version} not found"}); continue
         try:
             job = rw.enqueue_reextract_with_version(
-                version, models=[model], doc_paths=[str(ppath.relative_to(REPO_ROOT))],
+                version, models=[model], doc_paths=[str(ppath)],
                 label=f"matrix cell ({model} × {doc_id} × {version})")
             out.append({"cell": cell, "job_id": job.job_id})
         except Exception as exc:

@@ -14,6 +14,7 @@
       <label>Doc
         <select id="doc-select"></select>
         <button id="upload-btn" title="Upload arbitrary text">+ Text</button>
+        <button id="delete-doc-btn" title="Delete this doc and every per-doc artifact" class="danger">Delete</button>
       </label>
       <label>Annotators <span id="annotator-chips"></span></label>
       <label>Conflict
@@ -31,8 +32,8 @@
       </label>
       <label>Layout
         <select id="layout-select">
+          <option value="concentric" selected>concentric</option>
           <option value="cose">cose</option>
-          <option value="concentric">concentric</option>
           <option value="breadthfirst">breadthfirst</option>
           <option value="grid">grid</option>
         </select>
@@ -48,8 +49,14 @@
 
   <main id="layout">
 
-    <section id="pane-text" class="pane">
-      <h2>Document text <span class="hint">(select text to re-extract just that span)</span></h2>
+    <section id="pane-text" class="pane" data-pane-key="text">
+      <h2>
+        Document text <span class="hint">(select text to re-extract a span)</span>
+        <span class="pane-tools">
+          <button class="tool-btn" id="text-font-dec" title="Decrease font size">A−</button>
+          <button class="tool-btn" id="text-font-inc" title="Increase font size">A+</button>
+        </span>
+      </h2>
       <div id="doc-title"></div>
       <div id="doc-body"></div>
       <!-- Floating "re-extract this span" menu, shown on text selection -->
@@ -65,8 +72,30 @@
       </div>
     </section>
 
-    <section id="pane-graph" class="pane">
-      <h2>Knowledge graph</h2>
+    <div class="splitter" data-splitter="0" title="Drag to resize"></div>
+
+    <section id="pane-graph" class="pane" data-pane-key="graph">
+      <h2>
+        Knowledge graph
+        <span class="pane-tools">
+          <button class="tool-btn" id="cy-rebuild-btn" title="Rebuild the KG for this doc (Phase-2)">Build KG</button>
+          <button class="tool-btn" id="cy-fit-btn" title="Fit graph to view">Fit</button>
+          <button class="tool-btn" id="cy-settings-btn" title="Adjust node / label size">⚙ Settings</button>
+        </span>
+      </h2>
+      <div id="graph-settings" class="hidden">
+        <label>Node size <input type="range" id="cy-node-size" min="20" max="120" step="2" value="60">
+          <span id="cy-node-size-v">60</span></label>
+        <label>Label size <input type="range" id="cy-label-size" min="8" max="22" step="1" value="13">
+          <span id="cy-label-size-v">13</span></label>
+        <label>Edge label size <input type="range" id="cy-edge-label-size" min="6" max="18" step="1" value="11">
+          <span id="cy-edge-label-size-v">11</span></label>
+        <label>Edge width <input type="range" id="cy-edge-width" min="1" max="8" step="0.5" value="3">
+          <span id="cy-edge-width-v">3</span></label>
+        <label><input type="checkbox" id="cy-show-edge-labels" checked> Show edge labels</label>
+        <label><input type="checkbox" id="cy-show-node-labels" checked> Show node labels</label>
+        <button id="cy-settings-reset" class="tool-btn">Reset</button>
+      </div>
       <div id="cy"></div>
       <div id="cy-legend">
         <span class="dot redundancy"></span> redundancy
@@ -77,14 +106,33 @@
       </div>
     </section>
 
-    <section id="pane-facts" class="pane">
-      <h2>Atomic facts</h2>
+    <div class="splitter" data-splitter="1" title="Drag to resize"></div>
+
+    <section id="pane-facts" class="pane" data-pane-key="facts">
+      <h2>
+        Atomic facts
+        <span class="pane-tools">
+          <label class="sort-label">Sort
+            <select id="facts-sort">
+              <option value="default">default</option>
+              <option value="alignment">by alignment cluster</option>
+              <option value="model">by model</option>
+              <option value="section">by section</option>
+            </select>
+          </label>
+          <button class="tool-btn" id="facts-extract-btn" title="Run Phase-1 extraction for this doc">Extract here</button>
+        </span>
+      </h2>
       <div id="facts-controls">
         <span id="facts-count"></span>
         <div>
           <button id="export-json" title="JSON">JSON</button>
           <button id="export-csv" title="CSV">CSV</button>
         </div>
+      </div>
+      <div id="facts-empty-cta" class="hidden">
+        <strong>No facts on disk for this doc.</strong>
+        <p class="hint">Click <b>Extract here</b> above to run Phase-1 (needs Ollama). The table will fill live as facts get extracted.</p>
       </div>
       <div id="facts-table-wrap">
         <table id="facts-table">
@@ -97,6 +145,9 @@
       </div>
     </section>
   </main>
+
+  <!-- Horizontal splitter between main pane and bottom drawer -->
+  <div class="hsplitter" data-hsplitter="0" title="Drag to resize drawer height"></div>
 
   <!-- Pair-detail modal -->
   <div id="modal-overlay" class="hidden">
@@ -160,22 +211,32 @@
     </nav>
 
     <div class="tab-pane active" data-tab="background-runs">
-      <p class="hint">Kick off long-running Phase-1 (LLM extraction) or Phase-2 (alignment + conflict detection) over all docs.
-        Progress appears in the Live jobs panel at the top right.</p>
+      <p class="hint">Kick off Phase-1 (LLM extraction, requires Ollama running locally) or
+        Phase-2 (alignment + conflict detection — works without Ollama if "skip Layer-2" is on).
+        Progress shows in the Live jobs panel right under the top bar.</p>
       <div class="bg-runs">
         <fieldset>
-          <legend>Phase-1: extract facts</legend>
-          <label>Models <input type="text" id="p1-models" value="qwen3.5:4b,gemma3:4b,phi4-mini" size="36"></label>
+          <legend>Phase-1 — extract facts</legend>
+          <label>Models <input type="text" id="p1-models" value="qwen3.5:4b" size="36"></label>
           <label>Guideline <select id="p1-guideline"></select></label>
-          <label>Doc subset <input type="text" id="p1-doc-subset" placeholder="leave blank for all parsed docs" size="40"></label>
-          <button id="run-phase1-btn">Run Phase-1 (all docs × all models)</button>
+          <label>Doc subset <input type="text" id="p1-doc-subset" placeholder="leave blank = all parsed docs" size="40"></label>
+          <div class="row">
+            <button id="run-phase1-btn">Run Phase-1</button>
+            <span id="p1-status"></span>
+          </div>
+          <p class="ollama-hint">Needs Ollama running at <code>localhost:11434</code> with the model pulled
+            (<code>ollama pull qwen3.5:4b</code>).</p>
         </fieldset>
         <fieldset>
-          <legend>Phase-2: align + detect conflicts</legend>
-          <label><input type="checkbox" id="p2-skip-layer2" checked> Skip Layer-2 (deterministic stub; uncheck to use real Qwen3.5 arbitrator)</label>
+          <legend>Phase-2 — align + detect conflicts</legend>
+          <label><input type="checkbox" id="p2-skip-layer2" checked> Skip Layer-2 (use deterministic stub; uncheck for real Qwen arbitration)</label>
           <label>Layer-2 model <input type="text" id="p2-layer2-model" value="qwen3.5:4b" size="18"></label>
           <label>Align threshold <input type="number" id="p2-align-threshold" value="0.78" step="0.01" min="0" max="1" style="width:60px"></label>
-          <button id="run-phase2-btn">Run Phase-2 (all docs with ≥2 annotators)</button>
+          <div class="row">
+            <button id="run-phase2-btn">Run Phase-2</button>
+            <span id="p2-status"></span>
+          </div>
+          <p class="ollama-hint">Runs over every doc with &ge; 2 annotators on disk.</p>
         </fieldset>
       </div>
     </div>
@@ -205,7 +266,7 @@
     </div>
 
     <div class="tab-pane" data-tab="run-matrix">
-      <p class="hint">Pick (doc × model × guideline) cells. Submit enqueues one job per cell.
+      <p class="hint">Pick (doc &times; model &times; guideline) cells. Submit enqueues one job per cell.
         Cell tooltips show last run's fact_count.</p>
       <div class="row">
         <label>Models <input type="text" id="rm-models" value="qwen3.5:4b,gemma3:4b,phi4-mini" size="34"></label>
