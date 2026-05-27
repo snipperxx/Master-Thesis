@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Atomic Fact VA Prototype</title>
+  <script src="https://unpkg.com/cytoscape@3.30.2/dist/cytoscape.min.js"></script>
+  <link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+
+  <header id="topbar">
+    <h1>Atomic Fact VA</h1>
+    <div class="controls">
+      <label>Doc
+        <select id="doc-select"></select>
+        <button id="upload-btn" title="Upload arbitrary text">+ Text</button>
+      </label>
+      <label>Annotators <span id="annotator-chips"></span></label>
+      <label>Conflict
+        <select id="conflict-filter">
+          <option value="">all</option>
+          <option value="contradiction">contradiction</option>
+          <option value="granularity">granularity</option>
+          <option value="redundancy">redundancy</option>
+          <option value="unlabeled">unlabeled</option>
+        </select>
+      </label>
+      <label class="slider">Entity merge
+        <input type="range" id="merge-threshold" min="0.50" max="0.99" step="0.01" value="0.78">
+        <span id="merge-threshold-value">0.78</span>
+      </label>
+      <label>Layout
+        <select id="layout-select">
+          <option value="cose">cose</option>
+          <option value="concentric">concentric</option>
+          <option value="breadthfirst">breadthfirst</option>
+          <option value="grid">grid</option>
+        </select>
+      </label>
+      <label>Search <input type="text" id="search-box" placeholder="subject/object…" size="14"></label>
+      <span id="label-counts"></span>
+      <button id="compare-btn" title="v1 vs v2 distribution shift">Compare v1↔v2</button>
+      <button id="jobs-toggle" title="Show / hide live jobs panel">Jobs ▾</button>
+    </div>
+    <div id="coverage-row"></div>
+    <div id="live-jobs" class="hidden"></div>
+  </header>
+
+  <main id="layout">
+
+    <section id="pane-text" class="pane">
+      <h2>Document text <span class="hint">(select text to re-extract just that span)</span></h2>
+      <div id="doc-title"></div>
+      <div id="doc-body"></div>
+      <!-- Floating "re-extract this span" menu, shown on text selection -->
+      <div id="span-menu" class="hidden">
+        <label>model
+          <select id="span-model"></select>
+        </label>
+        <label>guideline
+          <select id="span-guideline"></select>
+        </label>
+        <button id="span-reextract">Re-extract span</button>
+        <button id="span-cancel" class="ghost">×</button>
+      </div>
+    </section>
+
+    <section id="pane-graph" class="pane">
+      <h2>Knowledge graph</h2>
+      <div id="cy"></div>
+      <div id="cy-legend">
+        <span class="dot redundancy"></span> redundancy
+        <span class="dot granularity"></span> granularity
+        <span class="dot contradiction"></span> contradiction
+        <span class="dot unlabeled"></span> unlabeled
+        <span class="hint">↑↓ navigate · J/K cycle facts · Esc close modal</span>
+      </div>
+    </section>
+
+    <section id="pane-facts" class="pane">
+      <h2>Atomic facts</h2>
+      <div id="facts-controls">
+        <span id="facts-count"></span>
+        <div>
+          <button id="export-json" title="JSON">JSON</button>
+          <button id="export-csv" title="CSV">CSV</button>
+        </div>
+      </div>
+      <div id="facts-table-wrap">
+        <table id="facts-table">
+          <thead><tr>
+            <th>Annotator</th><th>Subject</th><th>Predicate</th>
+            <th>Object</th><th>Section</th><th>Conflict</th><th>Verify</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <!-- Pair-detail modal -->
+  <div id="modal-overlay" class="hidden">
+    <div id="modal">
+      <header>
+        <span id="modal-title">Pair details</span>
+        <button id="modal-close">×</button>
+      </header>
+      <div id="modal-body"></div>
+    </div>
+  </div>
+
+  <!-- Compare v1↔v2 modal -->
+  <div id="compare-overlay" class="hidden">
+    <div id="compare-modal">
+      <header>
+        <span>Distribution shift: v1 vs v2</span>
+        <button id="compare-close">×</button>
+      </header>
+      <div id="compare-body"></div>
+    </div>
+  </div>
+
+  <!-- Upload text modal -->
+  <div id="upload-overlay" class="hidden">
+    <div id="upload-modal">
+      <header>
+        <span>Upload text</span>
+        <button id="upload-close">×</button>
+      </header>
+      <div class="modal-body">
+        <label>Title <input type="text" id="upload-title" size="50" placeholder="Optional title"></label>
+        <label>Text
+          <textarea id="upload-textarea" rows="14" placeholder="Paste plain text. Empty lines split paragraphs."></textarea>
+        </label>
+        <div class="row">
+          <label>Split mode
+            <select id="upload-split">
+              <option value="paragraph" selected>paragraph (blank line)</option>
+              <option value="sentence">sentence</option>
+            </select>
+          </label>
+          <label><input type="checkbox" id="upload-extract" checked> Also extract facts after upload</label>
+          <label>Model <select id="upload-model"></select></label>
+          <label>Guideline <select id="upload-guideline"></select></label>
+        </div>
+        <div class="row">
+          <button id="upload-submit">Upload</button>
+          <span id="upload-status"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer id="bottombar">
+    <nav id="drawer-tabs">
+      <button class="tab active" data-tab="background-runs">Background runs</button>
+      <button class="tab" data-tab="guideline-edit">Guideline editor</button>
+      <button class="tab" data-tab="guideline-manager">Guidelines</button>
+      <button class="tab" data-tab="run-matrix">Run matrix</button>
+    </nav>
+
+    <div class="tab-pane active" data-tab="background-runs">
+      <p class="hint">Kick off long-running Phase-1 (LLM extraction) or Phase-2 (alignment + conflict detection) over all docs.
+        Progress appears in the Live jobs panel at the top right.</p>
+      <div class="bg-runs">
+        <fieldset>
+          <legend>Phase-1: extract facts</legend>
+          <label>Models <input type="text" id="p1-models" value="qwen3.5:4b,gemma3:4b,phi4-mini" size="36"></label>
+          <label>Guideline <select id="p1-guideline"></select></label>
+          <label>Doc subset <input type="text" id="p1-doc-subset" placeholder="leave blank for all parsed docs" size="40"></label>
+          <button id="run-phase1-btn">Run Phase-1 (all docs × all models)</button>
+        </fieldset>
+        <fieldset>
+          <legend>Phase-2: align + detect conflicts</legend>
+          <label><input type="checkbox" id="p2-skip-layer2" checked> Skip Layer-2 (deterministic stub; uncheck to use real Qwen3.5 arbitrator)</label>
+          <label>Layer-2 model <input type="text" id="p2-layer2-model" value="qwen3.5:4b" size="18"></label>
+          <label>Align threshold <input type="number" id="p2-align-threshold" value="0.78" step="0.01" min="0" max="1" style="width:60px"></label>
+          <button id="run-phase2-btn">Run Phase-2 (all docs with ≥2 annotators)</button>
+        </fieldset>
+      </div>
+    </div>
+
+    <div class="tab-pane" data-tab="guideline-edit">
+      <p class="hint">Edit a guideline body and enqueue a Phase-1 re-extraction job for the full doc set.</p>
+      <textarea id="guideline-text" rows="9" placeholder="Paste a v2 guideline here."></textarea>
+      <div class="row">
+        <button id="guideline-save">Save &amp; enqueue re-extract</button>
+        <label>Models <input type="text" id="guideline-models" value="qwen3.5:4b" size="22"></label>
+        <span id="guideline-status"></span>
+      </div>
+      <div id="job-status"></div>
+    </div>
+
+    <div class="tab-pane" data-tab="guideline-manager">
+      <p class="hint">Load existing prompts/extract_*.md, edit, save as a new version (must contain
+        &lt;&lt;DOC_TITLE&gt;&gt; &lt;&lt;SECTION_PATH&gt;&gt; &lt;&lt;SECTION_TEXT&gt;&gt; sentinels).</p>
+      <div class="row">
+        <label>Version <select id="gm-select"></select></label>
+        <label>Save as <input type="text" id="gm-new-version" placeholder="v3" size="10"></label>
+        <button id="gm-load">Load</button>
+        <button id="gm-save">Save</button>
+        <span id="gm-status"></span>
+      </div>
+      <textarea id="gm-text" rows="14" placeholder="Pick a version and click Load."></textarea>
+    </div>
+
+    <div class="tab-pane" data-tab="run-matrix">
+      <p class="hint">Pick (doc × model × guideline) cells. Submit enqueues one job per cell.
+        Cell tooltips show last run's fact_count.</p>
+      <div class="row">
+        <label>Models <input type="text" id="rm-models" value="qwen3.5:4b,gemma3:4b,phi4-mini" size="34"></label>
+        <button id="rm-add-combo">Add model/guideline columns</button>
+        <button id="rm-submit">Submit selected cells</button>
+        <span id="rm-status"></span>
+      </div>
+      <div id="rm-matrix-wrap"></div>
+    </div>
+  </footer>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

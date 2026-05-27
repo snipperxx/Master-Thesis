@@ -1,0 +1,260 @@
+\documentclass[11pt]{article}
+
+\usepackage[a4paper, margin=1in]{geometry}
+\usepackage{times}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{parskip}
+\usepackage{titlesec}
+\usepackage{amsmath}
+
+\hypersetup{colorlinks=true, linkcolor=blue, urlcolor=blue, citecolor=blue}
+
+\titleformat{\section}{\normalfont\large\bfseries}{\thesection}{0.6em}{}
+\titlespacing*{\section}{0pt}{12pt}{6pt}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{4pt}
+
+\title{\textbf{Master's Thesis Proposal}\\[0.3em]
+Visual Analytics for Atomic Fact Annotation:\\
+Guideline Refinement through a Conflict-Aware Knowledge Graph}
+\author{Zilong Yan \\[0.2em]
+\quad First Reviewer: Prof.\ Daniel A.\ Keim}
+\date{3 May 2026}
+
+\begin{document}
+\maketitle
+
+\section{Motivation}
+
+Factuality evaluation of Large Language Models (LLMs) increasingly relies on
+decomposing generated text into discrete \textit{atomic facts}: minimal,
+self-contained units of meaning against which model outputs can be verified.
+Pipelines such as FActScore \cite{min2023factscore} and FEVER
+\cite{thorne2018fever} treat these atomic facts as the granule of evaluation.
+However, no agreed definition of atomicity exists, and recent empirical work
+shows substantial inter-annotator disagreement (IAA) among both human experts
+and instruction-tuned LLMs \cite{schmidt2025dissecting,wanner2024closer},
+driven by ambiguity in coreference resolution, conditional decomposition,
+and granularity trade-offs.
+Schmidt et al.\ \cite{schmidt2025dissecting}
+argue that low IAA is a signal of underspecified annotation guidelines and
+propose a Visual Analytics (VA) workflow to surface disagreement and drive
+iterative guideline refinement.
+
+A practical obstacle to this refinement loop is that presenting disagreements as a flat list (e.g., a spreadsheet) is not actionable.
+Without visual structure, an analyst cannot easily answer concrete questions needed to fix guidelines: Are models consistently disagreeing about dates?
+Is confusion centered around specific organizations? Or does a particular legal clause always trigger conflicts?
+Furthermore, surfacing genuine disagreement at scale requires comparing facts extracted by multiple annotators.
+Using pairwise LLM-based comparison for this arbitration requires $O(n^2)$ LLM calls, scaling quadratically and becoming prohibitively expensive.
+
+This thesis proposes a Visual Analytics prototype centred on a
+\textit{conflict-aware knowledge graph} (KG): an analyst-facing structure in
+which inter-model disagreements become visually discoverable, drawing
+attention precisely to regions where the annotation guideline is
+underspecified (e.g., entity boundary ambiguity or conditional clause trigger conflicts).
+A two-layer conflict detection mechanism---combining a fast 
+rule-based text filter with a deeper LLM arbitrator---serves the KG by
+filtering redundant fact pairs locally and reserving LLM arbitration for
+genuinely ambiguous cases, keeping the system responsive for
+interactive experimentation.
+Inside the tool, an interactive 
+guideline editor closes the refinement loop: analysts revise extraction rules directly within the interface and immediately observe 
+the resulting shift in the KG.
+The principal evaluation is a closed-loop 
+self-experiment that measures whether one round of KG-driven revision 
+(\texttt{v1} $\to$ \texttt{v2}) shifts the conflict-type distribution 
+toward inter-model convergence.
+Minor adjustments to the corpus or model set may be made in consultation with the supervisor, while the overall experimental framework remains fixed.
+
+\section{Goals and Methodology}
+
+The project is organized into four distinct phases.
+
+\subsection*{Phase 1: Data Pipeline \& Decontextualized Fact Extraction}
+
+We adopt EUR-Lex English-language EU regulatory documents as the primary
+corpus, selected for structured legal prose, public availability, and
+linguistic compatibility with mid-sized open-weight models.
+The experimental set is sized at 50--80 documents so that several thousand 
+aligned pairs are available for distribution-level comparisons in Phase 4.
+
+Three 4B-class local models are deployed via Ollama:
+\begin{itemize}[leftmargin=1.5em, itemsep=2pt]
+    \item \textbf{Qwen3.5-4B} \cite{qwen2026}: strong multilingual reasoning baseline.
+    \item \textbf{Gemma3-4B} \cite{gemma2026}: stable English instruction-following.
+    \item \textbf{Phi4-mini (3.8B)} \cite{phi2026}: optimized for structured output.
+\end{itemize}
+
+These recent small models were selected because technical reports 
+demonstrate their strong performance in structured JSON generation and single-hop reasoning, 
+achieving competitive results in constrained extraction settings \cite{qwen2026, phi2026}.
+The extraction prompt enforces decontextualization following Molecular Facts \cite{gunjal2024molecular}: each fact must be free of unresolved pronouns and carry a \textit{minimal but sufficient} set of disambiguating modifiers --- role, date, location --- such that it remains uniquely identifiable without source context.
+The \textit{minimum-constraint} formulation is adopted directly from \cite{gunjal2024molecular},
+which also motivates treating the level of constraint as a
+\textit{guideline-controlled parameter}: different guideline rules induce different
+effective decontextualization regimes, and Phase 4 measures the consequences.
+Each fact carries a \texttt{source\_quote} field enabling character-level offset recovery via RapidFuzz, so that every triple in the KG can be traced
+back to a specific span in the source document.
+Output is constrained by a \textbf{source-agnostic} JSON Schema. It mitigates formatting failures and serves as a universal interface to seamlessly ingest externally provided \textit{human-annotated} facts without requiring a custom UI.
+
+\subsection*{Phase 2: Semantic Alignment \& Two-Layer Conflict Detection}
+
+\textbf{Architectural Justification.} The decision to adopt a ``decouple and align'' 
+pipeline is strictly guided by empirical findings from our preceding benchmarking project \cite{yan2026benchmarking}.
+Extensive evaluations revealed that local 4B to 7B-class models exhibit severe 
+degradation in effective context windows---showing significant performance drops 
+when processing beyond 5,000 tokens---and systematically struggle with multi-hop 
+reasoning tasks across aggregated documents \cite{yan2026benchmarking}.
+This phenomenon aligns with broader literature documenting the long-context limitations 
+of small transformers \cite{kuratov2024babilong, wang2025longcontext}.
+By reducing the task to local extraction followed by pairwise atomic comparison, we constrain 
+the LLM input to 1K--2K tokens per task, successfully bypassing these bottlenecks.
+
+Facts from different models are aligned using Sentence-BERT \cite{reimers2019sbert}
+combined with the Hungarian algorithm for optimal one-to-one assignment \cite{schmidt2025dissecting}.
+A default similarity threshold of 0.78 is adopted initially; this will be dynamically adjusted based on downstream performance.
+The unit of analysis is the \textit{aligned pair} (two extracted facts mapping to the same underlying semantic claim). This avoids the ambiguity inherent in strict entity-level KG comparison, where surface-form variations and differing graph topologies create false structural mismatches.
+
+Aligned pairs are routed through a two-layer detection mechanism:
+\begin{itemize}[leftmargin=1.5em, itemsep=2pt]
+    \item \textbf{Layer 1 (rule-based filter)}: Pairs with cosine
+        similarity $> 0.95$ and high object-field character
+        overlap are labelled \textsc{Redundancy} and bypass LLM arbitration.
+        Pairs with high sentence-level similarity but
+        divergent object values (the \textit{antonym trap},
+        e.g., ``rate is 15\%'' vs.\ ``rate is 20\%'') escalate to Layer 2.
+    \item \textbf{Layer 2 (LLM arbitration)}: Remaining pairs are sent
+        to Qwen3.5-4B with a few-shot prompt
+        returning \textsc{Contradiction}, \textsc{Granularity},
+        \textsc{Redundancy}, or \textsc{No\_Conflict}.
+\end{itemize}
+
+\textbf{1-Hop Limitation.} It must be explicitly noted that this mechanism is constrained to \textbf{1-hop semantic resolution}. It evaluates direct contradictions between individual aligned pairs, but cannot autonomously detect multi-hop structural conflicts spanning multiple nodes in the wider knowledge graph.
+
+This mechanism is positioned as infrastructure to keep per-document processing fast enough for interactive guideline revision.
+
+\subsection*{Phase 3: Conflict-Aware Knowledge Graph \& VA Interface}
+
+This phase delivers the central contribution: a \textit{conflict-aware knowledge graph} that groups facts around shared entities and exposes inter-model disagreement as visual structure --- the form in which guideline-relevant patterns become discoverable.
+
+\textbf{Triple Extraction, Provenance, and Graph Storage.} Each atomic fact is converted
+into an (S,~P,~O) triple augmented with provenance metadata (source model, document ID, offsets, conflict label).
+To enable efficient structural queries and overcome the 1-hop limitation, these triples are persisted into a \textbf{graph database (e.g., Neo4j)}.
+This storage backend provides the infrastructure to quickly identify topological inconsistencies and execute complex pattern-matching algorithms.
+
+\textbf{Entity resolution.} Surface-form variants
+are unified via SBERT embedding clustering over the global subject-object pool, with
+an editable merge threshold.
+Without this step, the KG fragments and disagreement signals are lost.
+
+\textbf{Three-level node colouring and edge typing.} Nodes inherit the
+strongest conflict label across incident triples:
+\textit{green} (all agree),
+\textit{yellow} (\textsc{Granularity}/\textsc{Redundancy}),
+\textit{red} (\textsc{Contradiction}).
+Edges are typed by predicate and styled by conflict status.
+
+\textbf{Visual analytics interactions.} The front-end is built with Cytoscape.js over a Python (Flask) back-end. Core interactions:
+\begin{itemize}[leftmargin=1.5em, itemsep=2pt]
+    \item \textit{Click-to-highlight}: Clicking a node surfaces supporting text spans.
+    \item \textit{Conflict-cluster filtering}: Filter the KG to show specific disagreement patterns.
+    \item \textit{In-tool fact verification}: Clicking a red node opens a pre-populated search URL.
+    \item \textit{Interactive Graph Constraints ("Patching"):} To compensate for the LLM's multi-hop reasoning limitations, analysts can inject domain-specific structural rules directly via the UI (e.g., setting a cardinality constraint such as ``a specific legal sub-clause can belong to at most one parent clause''). The Neo4j backend queries the KG against these constraints. Topological violations are surfaced as \textsc{Contradiction}, allowing human analysts to effectively "patch" the system's reasoning capabilities.
+    \item \textit{Interactive guideline live-edit panel}: Revise rules and re-run extraction locally.
+\end{itemize}
+
+The KG is the analytical surface through which guideline diagnosis happens.
+A key limitation is the ``hen and egg'' problem of using LLMs to evaluate LLM outputs: absolute factual guarantees are impossible.
+Thus, Phase 4 measures the effect of using this surface to drive refinement, not the KG itself.
+
+\subsection*{Phase 4: Iterative Guideline Refinement Experiment}
+
+The principal evaluation is a closed-loop self-experiment of
+\textit{iterative guideline refinement}.
+Additional quantitative analyses
+will be conducted as concrete questions emerge from Phases 1--3.
+
+\textbf{Iterative Guideline Refinement (closed-loop).} A baseline guideline (\texttt{v1}) processes the entire EUR-Lex corpus.
+KG diagnostics will be analyzed to identify high-frequency disagreement patterns.
+A targeted revision (\texttt{v2}) is then authored to address these patterns, and the pipeline is re-run.
+
+\textbf{Scope of Evaluation:} The primary quantitative evaluation remains strictly \textbf{inter-model}.
+However, to demonstrate applicability to broader inter-annotator workflows, we will ingest a small set of pre-annotated human facts via the standard JSON interface.
+This serves strictly as a qualitative validation to prove the tool can surface discrepancies between human ground-truth and model extractions.
+
+Comparison is performed at the \textit{distribution level}. Reported metrics:
+\textit{Conflict Type Distribution Shift},
+\textit{Total Conflict Count Reduction}, and
+\textit{Layer~1 Filter Rate Change}.
+Tool effectiveness is demonstrated by directional improvements toward
+convergence and a quantifiable reduction in contested facts a hypothetical analyst would need to review.
+
+\begin{thebibliography}{12}
+
+\bibitem{min2023factscore}
+S.~Min, K.~Krishna, X.~Lyu, M.~Lewis, W.~Yih, P.~W.~Koh, M.~Iyyer,
+L.~Zettlemoyer, and H.~Hajishirzi.
+\textit{FActScore: Fine-grained Atomic Evaluation of Factual Precision in
+Long Form Text Generation.} EMNLP 2023, pp.\ 12076--12100.
+
+\bibitem{thorne2018fever}
+J.~Thorne, A.~Vlachos, C.~Christodoulopoulos, and A.~Mittal.
+\textit{FEVER: a Large-scale Dataset for Fact Extraction and VERification.}
+NAACL 2018, pp.\ 809--819.
+
+\bibitem{schmidt2025dissecting}
+M.~Schmidt, D.~A.~Keim, and F.~L.~Dennig.
+\textit{Dissecting Atomic Facts: Visual Analytics for Improving Fact
+Annotations in Language Model Evaluation.} arXiv:2509.01460, 2025.
+
+\bibitem{wanner2024closer}
+M.~Wanner, S.~Ebner, Z.~Jiang, M.~Dredze, and B.~Van Durme.
+\textit{A Closer Look at Claim Decomposition.}
+*SEM 2024, pp.\ 153--175.
+
+\bibitem{gunjal2024molecular}
+A.~Gunjal and G.~Durrett.
+\textit{Molecular Facts: Desiderata for Decontextualization in LLM Fact
+Verification.} EMNLP Findings 2024, pp.\ 3751--3768.
+
+\bibitem{reimers2019sbert}
+N.~Reimers and I.~Gurevych.
+\textit{Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks.}
+EMNLP 2019, pp.\ 3982--3992.
+
+\bibitem{qwen2026}
+Qwen Team.
+\textit{Qwen3.5 Technical Report.}
+arXiv preprint, 2026.
+
+\bibitem{gemma2026}
+Google DeepMind.
+\textit{Gemma 3: Open Models Based on Gemini Research and Technology.}
+arXiv preprint, 2026.
+
+\bibitem{phi2026}
+Microsoft Research.
+\textit{Phi-4: Small Language Models for Complex Structured Output.}
+arXiv preprint, 2026.
+
+\bibitem{yan2026benchmarking}
+Z.~Yan.
+\textit{Benchmarking Knowledge Graph Serializations for LLM Structure-Aware Reasoning 
+and the Shift Towards Text-Level Atomic Fact Resolution.}
+Master's Project Report, University of Konstanz, 2026.
+
+\bibitem{kuratov2024babilong}
+Y.~Kuratov, A.~Bulatov, P.~Anokhin, I.~Rodkin, D.~Sorokin, A.~Sorokin, and M.~Burtsev.
+\textit{BABILong: Testing the Limits of LLMs with Long Context Reasoning-in-a-Haystack.}
+arXiv preprint arXiv:2406.10149, 2024.
+
+\bibitem{wang2025longcontext}
+L.~Wang et al.
+\textit{How Well Do LLMs Handle Long Context? A Systematic Benchmark.}
+arXiv preprint arXiv:2501.14427, 2025.
+
+\end{thebibliography}
+
+\end{document}

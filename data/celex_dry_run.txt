@@ -1,0 +1,19 @@
+# Dry-run candidates for Phase 1 — pick short EUR-Lex acts that exercise
+# different document patterns (tariff classification / feed additive /
+# equivalence decision / council decision). These are starting points;
+# replace any that turn out to be too long or unsuitable.
+#
+# Format: one CELEX number per line. # lines are ignored.
+
+# Tariff classification regulations — short, dense, factual
+32019R0410
+32021R1156
+
+# Feed additive / plant protection authorization — entity-boundary stress
+32018R1568
+
+# Implementing decision (equivalence / recognition) — conditional clauses
+32019D0419
+
+# Council decision — short political/administrative act
+32021D0689

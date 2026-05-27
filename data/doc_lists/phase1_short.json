@@ -1,0 +1,512 @@
+{
+  "schema_version": 1,
+  "docs": [
+    {
+      "doc_id": "train-000000",
+      "title": "COUNCIL DECISION — of 7 June 2005 — abrogating Decision 2005/136/EC on the existence of an excessive deficit in the Netherlands — (2005/729/EC)",
+      "n_words": 759,
+      "char_length": 4608,
+      "recital_count": 6,
+      "article_count": 3,
+      "citation_count": 2,
+      "parsed_path": "data/parsed/train-000000.json"
+    },
+    {
+      "doc_id": "train-000004",
+      "title": "Commission Regulation (EC) No 1156/2001 — of 13 June 2001 — fixing the export refunds on white sugar and raw sugar exported in its unaltered state — THE COMMISSION OF THE EUROPEAN COMMUNITIES,",
+      "n_words": 537,
+      "char_length": 3160,
+      "recital_count": 8,
+      "article_count": 2,
+      "citation_count": 2,
+      "parsed_path": "data/parsed/train-000004.json"
+    },
+    {
+      "doc_id": "train-000005",
+      "title": "Commission Regulation (EC) No 1999/2003 — of 13 November 2003 — fixing certain indicative quantities and individual ceilings for the issuing of licences for importing bananas into the Community under the tariff quotas for the first quarter of 2004 — THE COMMISSION OF THE EUROPEAN COMMUNITIES,",
+      "n_words": 540,
+      "char_length": 3236,
+      "recital_count": 5,
+      "article_count": 3,
+      "citation_count": 2,
+      "parsed_path": "data/parsed/train-000005.json"
+    },
+    {
+      "doc_id": "train-000006",
+      "title": "Commission Regulation (EC) No 1440/2002 — of 7 August 2002 — revising the maximum amount for the B production levy and amending the minimum price for B beet in the sugar sector for the 2002/03 marketing year — THE COMMISSION OF THE EUROPEAN COMMUNITIES,",
+      "n_words": 535,
+      "char_length": 3100,
+      "recital_count": 5,
+      "article_count": 3,
+      "citation_count": 2,
+      "parsed_path": "data/parsed/train-000006.json"
+    },
+    {
+      "doc_id": "train-000007",
+      "title": "COUNCIL REGULATION (EEC) No 1721/91 of 13 June 1991 fixing the production target price, the production aid and the intervention price for olive oil for the 1991/92 marketing year as well as the maximum guaranteed quantity",
+      "n_words": 1054,
+      "char_length": 6196,
+      "recital_count": 0,
+      "article_count": 6,
+      "citation_count": 6,
+      "parsed_path": "data/parsed/train-000007.json"
+    },
+    {
+      "doc_id": "train-000013",
+      "title": "Commission Decision — of 15 February 2001 — approving the single programming document for Community structural assistance under Objective 2 in the Balearic Islands — (notified under document number C(2001) 229) — (Only the Spanish text is authentic) — (2002/426/EC) — THE COMMISSION OF THE EUROPEAN COMMUNITIES,",
+      "n_words": 1562,
+      "char_length": 9990,
+      "recital_count": 11,
+      "article_count": 6,
+      "citation_count": 2,
+      "parsed_path": "data/parsed/train-000013.json"
+    },
+    {
+      "doc_id": "train-000014",
+      "title": "COMMISSION REGULATION (EC) No 1629/96 of 13 August 1996 on an invitation to tender for the refund on export of wholly milled round grain rice to certain third countries — THE COMMISSION OF THE EUROPEAN COMMUNITIES,",
+      "n_words": 808,
+      "char_length": 4674,
+      "recital_count": 0,
+      "article_count": 9,
+      "citation_count": 2,
+      "parsed_path": "data/parsed/train-000014.json"
+    },
+    {
+      "doc_id": "train-000016",
+      "title": "COMMISSION REGULATION (EC) No 99/94 of 19 January 1994 ending the charges against the tariff ceilings opened for 1993 in the framework of generalized tariff preferences, by Council Regulation (EEC) No 3832/90 in respect of certain textile products originating in Sri Lanka, Brazil, Iran, India and Philippines — THE COMMISSION OF THE EUROPEAN COMMUNITIES,",
+      "n_words": 533,
+      "char_length": 3701,
+      "recital_count": 0,
+      "article_count": 2,
+      "citation_count": 2,
+      "parsed_path": "data/parsed/train-000016.json"
+    },
+    {
+      "doc_id": "train-000019",
+      "title": "***** — COUNCIL DECISION — of 29 May 1989 — amending the Seventh Decision, 85/355/EEC, on the equivalence of field inspections carried out in third countries on seed-producing crops and the Seventh Decision, 85/356/EEC, on the equivalence of seed produced in third countries — (89/368/EEC)",
+      "n_words": 733,
+      "char_length": 4324,
+      "recital_count": 0,
+      "article_count": 3,
+      "citation_count": 5,
+      "parsed_path": "data/parsed/train-000019.json"
+    },
+    {
+      "doc_id": "train-000027",
+      "title": "COMMISSION DECISION — of 27 March 2006 — amending Annex II to Council Decision 79/542/EEC as regards regionalisation for Argentina and the model certificates relating to the importation of bovine fresh meat from Brazil — (notified under document number C(2006) 896) — (Text with EEA relevance) — (2006/259/EC) — THE COMMISSION OF THE EUROPEAN COMMUNITIES,",
+      "n_words": 572,
+      "char_length": 3620,
+      "recital_count": 9,
+      "article_count": 3,
+      "citation_count": 2,
+      "parsed_path": "data/parsed/train-000027.json"
+    },
+    {
+      "doc_id": "train-000035",
+      "title": "COUNCIL DECISION of 23 November 1992 authorizing the Kingdom of the Netherlands to apply a measure derogating from Article 21 of the Sixth Directive 77/388/EEC on the harmonization of the laws of the Member States relating to turnover taxes (92/545/EEC)",
+      "n_words": 542,
+      "char_length": 3355,
+      "recital_count": 0,
+      "article_count": 3,
+      "citation_count": 3,
+      "parsed_path": "data/parsed/train-000035.json"
+    },
+    {
+      "doc_id": "train-000036",
+      "title": "Commission Regulation (EC) No 1429/2003 — of 11 August 2003 — amending Regulation (EC) No 2090/2002 laying down detailed rules for applying Council Regulation (EEC) No 386/90 as regards physical checks carried out when agricultural products qualifying for refunds are exported — THE COMMISSION OF THE EUROPEAN COMMUNITIES,",
+      "n_words": 1001,
+      "char_length": 5913,
+      "recital_count": 6,
+      "article_count": 2,
+      "citation_count": 2,
+      "parsed_path": "data/parsed/train-000036.json"
+    },
+    {
+      "doc_id": "train-000037",
+      "title": "Commission Regulation (EC) No 1930/2001 — of 1 October 2001 — amending Regulations (EC) No 1779/2001 and (EC) No 1780/2001 concerning the issue of A licences for the import of garlic — THE COMMISSION OF THE EUROPEAN COMMUNITIES,",
+      "n_words": 538,
+      "char_length": 3269,
+      "recital_count": 3,
+      "article_count": 3,
+      "citation_count": 2,
+      "parsed_path": "data/parsed/train-000037.json"
+    },
+    {
+      "doc_id": "train-000041",
+      "title": "Commission Regulation (EC) No 403/2004 — of 4 March 2004 — fixing the representative prices and the additional import duties for molasses in the sugar sector — THE COMMISSION OF THE EUROPEAN COMMUNITIES,",
+      "n_words": 656,
+      "char_length": 3987,
+      "recital_count": 9,
+      "article_count": 2,
+      "citation_count": 3,
+      "parsed_path": "data/parsed/train-000041.json"
+    },
+    {
+      "doc_id": "train-000049",
+      "title": "COMMISSION DECISION — of 25 January 2005 — on the application of Article 3(3)(e) of Directive 1999/5/EC of the European Parliament and of the Council to radio equipment intended to participate in the Automatic Identification System (AIS) — (notified under document number C(2005) 110) — (Text with EEA relevance) — (2005/53/EC) — THE COMMISSION OF THE EUROPEAN COMMUNITIES,",
+      "n_words": 587,
+      "char_length": 3806,
+      "recital_count": 8,
+      "article_count": 4,
+      "citation_count": 2,
+      "parsed_path": "data/parsed/train-000049.json"
+    },
+    {
+      "doc_id": "train-000051",
+      "title": "COUNCIL REGULATION (EEC) No 899/81 of 1 April 1981 amending Regulation (EEC) No 1837/80 on the common organization of the markets in sheepmeat and goatmeat",
+      "n_words": 903,
+      "char_length": 5300,
+      "recital_count": 0,
+      "article_count": 2,
+      "citation_count": 4,
+      "parsed_path": "data/parsed/train-000051.json"
+    },
+    {
+      "doc_id": "train-000052",
+      "title": "Council Regulation (EC) No 1309/2002 — of 12 July 2002 — amending Regulation (EC) No 517/94 on common rules for imports of textile products from certain third countries not covered by bilateral agreements, protocols or other arrangements, or by other specific Community import rules",
+      "n_words": 1337,
+      "char_length": 8409,
+      "recital_count": 9,
+      "article_count": 2,
+      "citation_count": 2,
+      "parsed_path": "data/parsed/train-000052.json"
+    },
+    {
+      "doc_id": "train-000054",
+      "title": "COMMISSION REGULATION (EC) No 482/2008 — of 30 May 2008 — establishing a software safety assurance system to be implemented by air navigation service providers and amending Annex II to Regulation (EC) No 2096/2005 — (Text with EEA relevance) — THE COMMISSION OF THE EUROPEAN COMMUNITIES,",
+      "n_words": 2204,
+      "char_length": 14440,
+      "recital_count": 7,
+      "article_count": 7,
+      "citation_count": 2,
+      "parsed_path": "data/parsed/train-000054.json"
+    },
+    {
+      "doc_id": "train-000058",
+      "title": "Commission Regulation (EC) No 1715/2001 — of 30 August 2001 — fixing the export refunds on milk and milk products — THE COMMISSION OF THE EUROPEAN COMMUNITIES,",
+      "n_words": 894,
+      "char_length": 5363,
+      "recital_count": 10,
+      "article_count": 2,
+      "citation_count": 2,
+      "parsed_path": "data/parsed/train-000058.json"
+    },
+    {
+      "doc_id": "train-000061",
+      "title": "COUNCIL DECISION of 16 February 1998 authorising the Kingdom of the Netherlands to apply a measure derogating from Articles 2 and 28a(1) of the Sixth Council Directive 77/388/EEC on the harmonisation of the laws of the Member States relating to turnover taxes (98/161/EC)",
+      "n_words": 680,
+      "char_length": 4221,
+      "recital_count": 0,
+      "article_count": 5,
+      "citation_count": 3,
+      "parsed_path": "data/parsed/train-000061.json"
+    },
+    {
+      "doc_id": "train-000062",
+      "title": "COMMISSION REGULATION (EEC) No 2347/91 of 29 July 1991 on the collection of samples of wine products for the purposes of cooperation between Member States and for analysis by nuclear magnetic resonance, including analysis for the purposes of the Community databank — THE COMMISSION OF THE EUROPEAN COMMUNITIES,",
+      "n_words": 2059,
+      "char_length": 12361,
+      "recital_count": 0,
+      "article_count": 7,
+      "citation_count": 2,
+      "parsed_path": "data/parsed/train-000062.json"
+    },
+    {
+      "doc_id": "train-000063",
+      "title": "***** — COMMISSION DECISION — of 12 June 1987 — on improving the efficiency of agricultural structures in Italy (Abruzzi) pursuant to Council Regulation (EEC) No 797/85 — (Only the Italian text is authentic) — (87/332/EEC) — THE COMMISSION OF THE EUROPEAN COMMUNITIES,",
+      "n_words": 843,
+      "char_length": 4996,
+      "recital_count": 0,
+      "article_count": 2,
+      "citation_count": 2,
+      "parsed_path": "data/parsed/train-000063.json"
+    },
+    {
+      "doc_id": "train-000067",
+      "title": "Commission Decision — of 3 December 2001 — approving the programmes for the monitoring for TSE presented for 2002 by the Member States and fixing the level of the Community's financial contribution — (notified under document number C(2001) 3819) — (2001/854/EC) — THE COMMISSION OF THE EUROPEAN COMMUNITIES,",
+      "n_words": 1367,
+      "char_length": 8140,
+      "recital_count": 9,
+      "article_count": 19,
+      "citation_count": 2,
+      "parsed_path": "data/parsed/train-000067.json"
+    },
+    {
+      "doc_id": "train-000069",
+      "title": "Commission Regulation (EC) No 2772/2000 — of 18 December 2000 — amending Regulation (EEC) No 1964/82 laying down the conditions for granting special export refunds on certain cuts of boned meat of bovine animals — THE COMMISSION OF THE EUROPEAN COMMUNITIES,",
+      "n_words": 1191,
+      "char_length": 7017,
+      "recital_count": 5,
+      "article_count": 2,
+      "citation_count": 2,
+      "parsed_path": "data/parsed/train-000069.json"
+    },
+    {
+      "doc_id": "train-000070",
+      "title": "COUNCIL REGULATION (EEC) N° 2839/89 — of 18 September 1989 — on the implementation of Decision N° 2/89 of the EEC-Finland Joint Committee amending Protocol 3 concerning the definition of the concept of originating products and methods of administrative cooperation and establishing provisions for the implementation of the Joint Declaration annexed to Decision N° 1/88 of the EEC-Finland Joint Committee",
+      "n_words": 588,
+      "char_length": 3601,
+      "recital_count": 0,
+      "article_count": 3,
+      "citation_count": 2,
+      "parsed_path": "data/parsed/train-000070.json"
+    },
+    {
+      "doc_id": "train-000072",
+      "title": "Council Decision — of 26 April 2004 — granting Cyprus, Malta and Poland certain temporary derogations from Directive 2002/96/EC on waste electrical and electronic equipment — (2004/486/EC)",
+      "n_words": 661,
+      "char_length": 4150,
+      "recital_count": 5,
+      "article_count": 2,
+      "citation_count": 4,
+      "parsed_path": "data/parsed/train-000072.json"
+    },
+    {
+      "doc_id": "train-000076",
+      "title": "***** — COMMISSION DECISION — of 15 July 1987 — approving an integrated Mediterranean programme for the Languedoc-Roussillon region — (Only the French text is authentic) — (88/24/EEC) — THE COMMISSION OF THE EUROPEAN COMMUNITIES,",
+      "n_words": 572,
+      "char_length": 3647,
+      "recital_count": 0,
+      "article_count": 5,
+      "citation_count": 2,
+      "parsed_path": "data/parsed/train-000076.json"
+    },
+    {
+      "doc_id": "train-000085",
+      "title": "Commission Regulation (EC) No 455/2004 — of 11 March 2004 — amending Regulation (EC) No 466/2001 as regards patulin — (Text with EEA relevance) — THE COMMISSION OF THE EUROPEAN COMMUNITIES,",
+      "n_words": 526,
+      "char_length": 3131,
+      "recital_count": 6,
+      "article_count": 2,
+      "citation_count": 2,
+      "parsed_path": "data/parsed/train-000085.json"
+    },
+    {
+      "doc_id": "train-000090",
+      "title": "Commission Regulation (EC) No 622/2002 — of 11 April 2002 — establishing deadlines for the submission of information for the evaluation of chemically defined flavouring substances used in or on foodstuffs — (Text with EEA relevance) — THE COMMISSION OF THE EUROPEAN COMMUNITIES,",
+      "n_words": 503,
+      "char_length": 3131,
+      "recital_count": 7,
+      "article_count": 2,
+      "citation_count": 2,
+      "parsed_path": "data/parsed/train-000090.json"
+    },
+    {
+      "doc_id": "train-000093",
+      "title": "COUNCIL REGULATION (EEC) No 1755/92 of 30 June 1992 amending Regulation (EEC) No 989/84 introducing a system of guarantee thresholds for certain processed fruit and vegetable products",
+      "n_words": 604,
+      "char_length": 3659,
+      "recital_count": 0,
+      "article_count": 2,
+      "citation_count": 3,
+      "parsed_path": "data/parsed/train-000093.json"
+    },
+    {
+      "doc_id": "train-000095",
+      "title": "COMMISSION REGULATION (EC) No 3168/94 of 21 December 1994 establishing in the field of application of Council Regulation (EC) No 517/94 on common rules for imports of textile products from third countries not covered by bilateral agreements, protocols or other arrangements or by other specific Community import rules a Community import licence and amending certain provisions of the Regulation — THE COMMISSION OF THE EUROPEAN COMMUNITIES,",
+      "n_words": 673,
+      "char_length": 4143,
+      "recital_count": 0,
+      "article_count": 2,
+      "citation_count": 2,
+      "parsed_path": "data/parsed/train-000095.json"
+    },
+    {
+      "doc_id": "train-000096",
+      "title": "COUNCIL DIRECTIVE 92/110/EEC of 14 December 1992 amending Directive 88/657/EEC laying down the requirements for the production of, and trade in, minced meat, meat in pieces of less than 100 grams and meat preparations",
+      "n_words": 961,
+      "char_length": 5730,
+      "recital_count": 0,
+      "article_count": 3,
+      "citation_count": 4,
+      "parsed_path": "data/parsed/train-000096.json"
+    },
+    {
+      "doc_id": "train-000100",
+      "title": "Commission Regulation (EC) No 2211/2001 — of 15 November 2001 — fixing the export refunds on white sugar and raw sugar exported in its unaltered state — THE COMMISSION OF THE EUROPEAN COMMUNITIES,",
+      "n_words": 535,
+      "char_length": 3138,
+      "recital_count": 9,
+      "article_count": 2,
+      "citation_count": 2,
+      "parsed_path": "data/parsed/train-000100.json"
+    },
+    {
+      "doc_id": "train-000111",
+      "title": "COMMISSION DECISION — of 30 May 2006 — amending Decision 2006/346/EC concerning certain protection measures relating to classical swine fever in Germany — (notified under document number C(2006) 2058) — (Text with EEA relevance) — (2006/391/EC) — THE COMMISSION OF THE EUROPEAN COMMUNITIES,",
+      "n_words": 1879,
+      "char_length": 11672,
+      "recital_count": 9,
+      "article_count": 3,
+      "citation_count": 4,
+      "parsed_path": "data/parsed/train-000111.json"
+    },
+    {
+      "doc_id": "train-000112",
+      "title": "COMMISSION DIRECTIVE 2006/65/EC — of 19 July 2006 — amending Council Directive 76/768/EEC, concerning cosmetic products, for the purpose of adapting Annexes II and III thereto to technical progress — (Text with EEA relevance) — THE COMMISSION OF THE EUROPEAN COMMUNITIES,",
+      "n_words": 614,
+      "char_length": 3810,
+      "recital_count": 8,
+      "article_count": 5,
+      "citation_count": 2,
+      "parsed_path": "data/parsed/train-000112.json"
+    },
+    {
+      "doc_id": "train-000116",
+      "title": "COUNCIL REGULATION (EC) No 602/98 — of 9 March 1998 — extending the coverage of Regulations (EC) No 3281/94 and No 1256/96 concerning Community schemes of generalised tariff preferences for the benefit of the least-developed countries",
+      "n_words": 535,
+      "char_length": 3391,
+      "recital_count": 0,
+      "article_count": 4,
+      "citation_count": 2,
+      "parsed_path": "data/parsed/train-000116.json"
+    },
+    {
+      "doc_id": "train-000119",
+      "title": "Commission Regulation (EC) No 2036/2003 — of 19 November 2003 — derogating from Regulation (EC) No 896/2001 as regards the fixing of adjustment coefficients to be applied to the reference quantity for each traditional operator under the tariff quotas for banana imports for 2004 — THE COMMISSION OF THE EUROPEAN COMMUNITIES,",
+      "n_words": 536,
+      "char_length": 3377,
+      "recital_count": 7,
+      "article_count": 2,
+      "citation_count": 2,
+      "parsed_path": "data/parsed/train-000119.json"
+    },
+    {
+      "doc_id": "train-000121",
+      "title": "***** — COMMISSION REGULATION (EEC) No 843/90 — of 30 March 1990 — reintroducing the levying of the customs duties on women's or girls' dresses, products of category No 16 (order No 40.0260) and women's or girls' suits and ensembles products of category No 29 (order No 40.0290) originating in Pakistan, to which the preferential tariff arrangements set out in Council Regulation (EEC) No 3897/89 apply — THE COMMISSION OF THE EUROPEAN COMMUNITIES,",
+      "n_words": 524,
+      "char_length": 2994,
+      "recital_count": 0,
+      "article_count": 2,
+      "citation_count": 2,
+      "parsed_path": "data/parsed/train-000121.json"
+    },
+    {
+      "doc_id": "train-000124",
+      "title": "COMMISSION DECISION of 4 July 1990 on loans granted by the Belgian authorities to two shipowners for the purchase of a 34 000 m3 LPG ship and two refrigerator ships (Only the French and Dutch texts are authentic) (90/627/EEC) — THE COMMISSION OF THE EUROPEAN COMMUNITIES,",
+      "n_words": 1938,
+      "char_length": 11308,
+      "recital_count": 0,
+      "article_count": 4,
+      "citation_count": 2,
+      "parsed_path": "data/parsed/train-000124.json"
+    },
+    {
+      "doc_id": "train-000125",
+      "title": "COMMISSION REGULATION (EC) No 464/1999 of 3 March 1999 laying down detailed rules for the application of Council Regulation (EC) No 2201/96 as regards aid arrangements for prunes — THE COMMISSION OF THE EUROPEAN COMMUNITIES,",
+      "n_words": 1086,
+      "char_length": 6624,
+      "recital_count": 0,
+      "article_count": 8,
+      "citation_count": 2,
+      "parsed_path": "data/parsed/train-000125.json"
+    },
+    {
+      "doc_id": "train-000130",
+      "title": "COMMISSION DECISION of 22 April 1997 on the approval of the single programming document for Community structural assistance in Lolland concerned by Objective 2 in Denmark (Only the Danish text is authentic) (97/444/EC) — THE COMMISSION OF THE EUROPEAN COMMUNITIES,",
+      "n_words": 1703,
+      "char_length": 10868,
+      "recital_count": 0,
+      "article_count": 9,
+      "citation_count": 2,
+      "parsed_path": "data/parsed/train-000130.json"
+    },
+    {
+      "doc_id": "train-000137",
+      "title": "COMMISSION REGULATION (EC) No 1960/95 of 9 August 1995 laying down detailed rules for the transitional application of the system of entry prices for grape juice and musts — THE COMMISSION OF THE EUROPEAN COMMUNITIES,",
+      "n_words": 628,
+      "char_length": 3665,
+      "recital_count": 0,
+      "article_count": 4,
+      "citation_count": 3,
+      "parsed_path": "data/parsed/train-000137.json"
+    },
+    {
+      "doc_id": "train-000140",
+      "title": "COUNCIL REGULATION (EEC) N° 3729/90 — of 13 December 1990 — opening and providing for the administration of Community tariff quotas for certain agricultural products orginating in Algeria, Morocco, Tunisia or Egypt (1991)",
+      "n_words": 1617,
+      "char_length": 9469,
+      "recital_count": 0,
+      "article_count": 6,
+      "citation_count": 2,
+      "parsed_path": "data/parsed/train-000140.json"
+    },
+    {
+      "doc_id": "train-000143",
+      "title": "COMMISSION DIRECTIVE of 3 December 1991 adapting to technical progress Annex I to Council Directive 76/769/EEC on the approximation of the laws, regulations and administrative provisions of the Member States relating to restrictions on the marketing and use of certain dangerous substances and preparations (asbestos) (91/659/EEC) — THE COMMISSION OF THE EUROPEAN COMMUNITIES,",
+      "n_words": 619,
+      "char_length": 4054,
+      "recital_count": 0,
+      "article_count": 3,
+      "citation_count": 2,
+      "parsed_path": "data/parsed/train-000143.json"
+    },
+    {
+      "doc_id": "train-000146",
+      "title": "Commission Regulation (EC) No 1443/2003 — of 13 August 2003 — opening a standing invitation to tender for the resale on the Community market of rice from the 1999 harvest held by the Italian intervention agency — THE COMMISSION OF THE EUROPEAN COMMUNITIES,",
+      "n_words": 2424,
+      "char_length": 14459,
+      "recital_count": 13,
+      "article_count": 13,
+      "citation_count": 2,
+      "parsed_path": "data/parsed/train-000146.json"
+    },
+    {
+      "doc_id": "train-000147",
+      "title": "COMMISSION REGULATION (EC) No 2388/96 of 16 December 1996 amending Regulation (EC) No 2146/95 on the transitional adjustment of the special arrangements for imports of olive oil originating in Algeria, Lebanon, Morocco, Tunisia and Turkey with a view to implementing the Agreement on agriculture concluded during the Uruguay Round of multilateral trade negotiations and derogating from Council Regulations (EEC) No 1514/76, (EEC) No 1620/77, (EEC) No 1521/76, (EEC) No 1508/76 and (EEC) No 1180/77 and providing for the reimbursement of import duties collected on certain imports from Morocco and Turkey — THE COMMISSION OF THE EUROPEAN COMMUNITIES,",
+      "n_words": 1292,
+      "char_length": 7787,
+      "recital_count": 0,
+      "article_count": 3,
+      "citation_count": 4,
+      "parsed_path": "data/parsed/train-000147.json"
+    },
+    {
+      "doc_id": "train-000148",
+      "title": "COMMISSION REGULATION (EC) No 3480/93 of 17 December 1993 laying down transitional measures for the management of base areas in Spain — THE COMMISSION OF THE EUROPEAN COMMUNITIES,",
+      "n_words": 542,
+      "char_length": 3295,
+      "recital_count": 0,
+      "article_count": 2,
+      "citation_count": 2,
+      "parsed_path": "data/parsed/train-000148.json"
+    },
+    {
+      "doc_id": "train-000149",
+      "title": "+++++ — ( 1 ) OJ NO C 23 , 28 . 1 . 1983 , P . 12 . — ( 2 ) OJ NO C 161 , 20 . 6 . 1983 , P . 172 . — ( 3 ) OJ NO C 211 , 8 . 8 . 1983 , P . 7 . — ( 4 ) OJ NO L 152 , 12 . 6 . 1975 , P . 3 . — COUNCIL DECISION OF 25 JULY 1983 ON THE COMMERCIAL INDEPENDENCE OF THE RAILWAYS IN THE MANAGEMENT OF THEIR INTERNATIONAL PASSENGER AND LUGGAGE TRAFFIC ( 83/418/EEC )",
+      "n_words": 990,
+      "char_length": 5461,
+      "recital_count": 4,
+      "article_count": 8,
+      "citation_count": 4,
+      "parsed_path": "data/parsed/train-000149.json"
+    },
+    {
+      "doc_id": "train-000150",
+      "title": "COMMISSION REGULATION (EC) No 1835/2005 — of 10 November 2005 — fixing the rates of the refunds applicable to certain cereal and rice products exported in the form of goods not covered by Annex I to the Treaty — THE COMMISSION OF THE EUROPEAN COMMUNITIES,",
+      "n_words": 701,
+      "char_length": 4124,
+      "recital_count": 8,
+      "article_count": 2,
+      "citation_count": 3,
+      "parsed_path": "data/parsed/train-000150.json"
+    },
+    {
+      "doc_id": "train-000153",
+      "title": "COMMISSION REGULATION (EEC) No 1905/91 of 28 June 1991 amending Regulation (EEC) No 2681/83 laying down detailed rules for the application of the subsidy system for oil seeds — THE COMMISSION OF THE EUROPEAN COMMUNITIES,",
+      "n_words": 1544,
+      "char_length": 9221,
+      "recital_count": 0,
+      "article_count": 1,
+      "citation_count": 2,
+      "parsed_path": "data/parsed/train-000153.json"
+    }
+  ],
+  "created_at": "2026-05-22T12:39:56.467455+00:00",
+  "selection_criteria": {
+    "min_words": 500,
+    "max_words": 2500,
+    "candidate_pool": 300,
+    "filter": "title>=5chars AND articles>=1 AND (recitals>=2 OR citations>=2) AND enacting>=200chars"
+  }
+}

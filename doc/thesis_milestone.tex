@@ -1,0 +1,144 @@
+\documentclass[11pt]{article}
+
+\usepackage[a4paper, margin=1in]{geometry}
+\usepackage{times}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{parskip}
+\usepackage{titlesec}
+\usepackage{pgfgantt}
+\usepackage{xcolor}
+
+\hypersetup{colorlinks=true, linkcolor=blue, urlcolor=blue}
+
+\titleformat{\section}{\normalfont\large\bfseries}{\thesection}{0.6em}{}
+\titleformat{\subsection}{\normalfont\normalsize\bfseries}{\thesubsection}{0.6em}{}
+\titlespacing*{\section}{0pt}{12pt}{6pt}
+\titlespacing*{\subsection}{0pt}{8pt}{2pt}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{4pt}
+
+\title{\textbf{Visual Analytics for Atomic Fact Annotation:\\
+Guideline Refinement through a Conflict-Aware Knowledge Graph}\\[0.4em]
+\large Master's Thesis --- Milestone Plan}
+\author{Zilong Yan \\[0.2em]
+\quad First Reviewer: Prof.\ Daniel A.\ Keim}
+\date{3 May 2026}
+
+\begin{document}
+\maketitle
+
+% ─────────────────────────────────────────────────────────────────────
+\subsection*{Phase 1 -- Data Pipeline \& Decontextualized Fact Extraction}
+\textit{15 May -- 30 June 2026}
+
+\begin{itemize}[leftmargin=1.5em, itemsep=2pt]
+    \item Collect and preprocess 50--80 EUR-Lex English regulatory documents.
+    \item Deploy Qwen3.5-4B, Gemma3-4B, and Phi4-mini via Ollama with sequential batch scheduling.
+    \item Implement the decontextualization extraction prompt with an editable rule section and RapidFuzz fuzzy matching for offset recovery.
+    \item Establish a source-agnostic JSON Schema to seamlessly support both LLM-generated and externally imported human-annotated facts.
+\end{itemize}
+
+\textbf{Milestone:} Multi-Model Fact Database with verified character offsets.
+
+% ─────────────────────────────────────────────────────────────────────
+\subsection*{Phase 2 -- Semantic Alignment \& Two-Layer Conflict Detection}
+\textit{16 June -- 15 August 2026}
+
+\begin{itemize}[leftmargin=1.5em, itemsep=2pt]
+    \item Implement the SBERT embedding pipeline with Hungarian one-to-one alignment.
+    \item Implement Layer~1 rule-based filter and deploy Qwen3.5-4B as the Layer~2 LLM arbitrator.
+    \item Run the two-layer detection mechanism across the full corpus to feed downstream KG colouring.
+    \item \textbf{Thesis Writing (Starts 1 July):} Draft the Introduction and Related Work chapters.
+\end{itemize}
+
+\textbf{Milestone:} Two-Layer Conflict Detection Operational; aligned pairs labelled with Green/Yellow/Red status.
+
+% ─────────────────────────────────────────────────────────────────────
+\subsection*{Phase 3 -- Conflict-Aware Knowledge Graph \& VA Interface}
+\textit{1 August -- 15 September 2026}
+
+\begin{itemize}[leftmargin=1.5em, itemsep=2pt]
+    \item Build the (Subject, Predicate, Object) triple store backed by a graph database (e.g., Neo4j) to support structural queries.
+    \item Implement global entity resolution via SBERT clustering to unify surface-form variants.
+    \item Develop a Python (Flask) back-end and Cytoscape.js front-end with conflict-typed styling.
+    \item Implement Text--Graph linking, in-tool fact verification, and an interactive constraint-editing panel allowing analysts to inject domain rules (e.g., cardinality) for automated multi-hop conflict detection.
+    \item \textbf{Thesis Writing:} Draft the Methodology and System Architecture chapters.
+\end{itemize}
+
+\textbf{Milestone:} VA Prototype operational with Neo4j backend and in-tool multi-hop constraint editing.
+
+% ─────────────────────────────────────────────────────────────────────
+\subsection*{Phase 4 -- Iterative Guideline Refinement Experiment}
+\textit{16 September -- 15 October 2026}
+
+\begin{itemize}[leftmargin=1.5em, itemsep=2pt]
+    \item Run the full pipeline under baseline guideline \texttt{v1} and author guideline revision \texttt{v2} based on the identified patterns.
+    \item Compute Conflict Type Distribution Shift, Total Conflict Count Reduction, and Layer~1 Filter Rate Change.
+    \item \textbf{Human-Model Validation:} Ingest a set of pre-annotated human facts to demonstrate the tool's capability in surfacing inter-annotator (human vs.\ model) conflicts without requiring a custom annotation UI.
+    \item \textbf{Thesis Writing:} Draft the VA Design chapter and document the Evaluation setup.
+\end{itemize}
+
+\textbf{Milestone:} Experimental Results --- distribution-shift evidence of convergence.
+
+% ─────────────────────────────────────────────────────────────────────
+\subsection*{Phase 5 -- Final Thesis Writing \& Submission}
+\textit{16 October -- 30 November 2026}
+
+\begin{itemize}[leftmargin=1.5em, itemsep=2pt]
+    \item Synthesize the previously drafted chapters into a cohesive manuscript.
+    \item Write the Evaluation results and Conclusion chapters based on the Phase 4 findings.
+    \item Finalize figures (KG screenshots, system architecture); produce camera-ready LaTeX formatting; document the codebase.
+    \item Submit thesis by 30 November 2026.
+\end{itemize}
+
+\textbf{Milestone:} Final Thesis Submitted.
+
+% ─────────────────────────────────────────────────────────────────────
+\section*{Project Timeline}
+
+\begin{center}
+\begin{ganttchart}[
+    hgrid,
+    vgrid={*{1}{dotted}},
+    x unit=0.65cm,
+    y unit title=0.55cm,
+    y unit chart=0.55cm,
+    title height=1,
+    title label font=\small\bfseries,
+    bar label font=\footnotesize,
+    milestone label font=\footnotesize\itshape,
+    bar/.append style={fill=gray!70, draw=gray!90},
+    milestone/.append style={fill=black, draw=black},
+    bar height=.55,
+]{1}{14}
+
+  \gantttitle{2026}{14} \\
+  \gantttitle{05}{2}
+  \gantttitle{06}{2}
+  \gantttitle{07}{2}
+  \gantttitle{08}{2}
+  \gantttitle{09}{2}
+  \gantttitle{10}{2}
+  \gantttitle{11}{2} \\
+
+  \ganttbar{P1: Data \& Extraction}{2}{4} \\
+  \ganttmilestone{M1: Fact DB Ready}{4} \\
+
+  \ganttbar{P2: Alignment \& Detection}{4}{7} \\
+  \ganttmilestone{M2: Detection Operational}{7} \\
+
+  \ganttbar{P3: KG \& VA Interface}{7}{9} \\
+  \ganttmilestone{M3: Neo4j \& VA Proto Ready}{9} \\
+
+  \ganttbar{P4: Refinement Experiment}{9}{11} \\
+  \ganttmilestone{M4: Experimental Results}{11} \\
+
+  \ganttbar{P5: Thesis Writing \& Submission}{5}{14} \\
+  \ganttmilestone{M5: Final Submission}{14} 
+
+\end{ganttchart}
+\end{center}
+
+\end{document}
