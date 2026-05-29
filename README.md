@@ -1,101 +1,71 @@
 # Visual Analytics for Atomic Fact Annotation
 
-MSc thesis prototype (Zilong Yan, University of Konstanz, DBvis).
-Three-pane web UI for inspecting atomic facts extracted by multiple LLM
-annotators, the alignment graph between them, and the conflicts that
-surface when annotators disagree.
-
-## Setup
+## Quick Start
 
 ```powershell
+# 1. Clone & install
 git clone <repo-url> MasterThesis
 cd MasterThesis
-
 python -m venv .venv
-.venv\Scripts\Activate.ps1            # Linux/macOS: source .venv/bin/activate
+.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
-```
 
-Python 3.10 / 3.11. No GPU required to view the demo.
+# 2. Download and parse 50 EUR-Lex docs from HuggingFace
+python -m scripts.select_short_docs --n 50
 
-## Generate the demo doc
-
-`data/parsed/` is gitignored, so you need to regenerate at least one
-parsed document before launching the UI:
-
-```powershell
-python -m scripts.run_dry_run --n 5
-```
-
-This downloads HuggingFace `coastalcph/lex_glue` on first run (~2 GB
-cache under `data/hf_cache/`) and writes 5 parsed JSONs into
-`data/parsed/`. The committed demo facts target `train-000000`, which is
-one of the 5.
-
-## Launch the UI
-
-```powershell
+# 3. Launch the UI
 python -m ui.app
 ```
 
-Open `http://127.0.0.1:5000/`. Pick `train-000000` from the doc selector.
-The three panes (text / KG / facts table) are coupled — click any fact,
-any KG edge, or any text highlight, and the other two panes follow.
+Open `http://127.0.0.1:5000/`. Pick any doc from the selector.
 
-That's enough to explore the prototype. Out of the box you'll see:
-- 32 real Qwen3.5-4B facts + 30 + 27 synthesized facts from two
-  simulated annotators (see §1 below for why),
-- ~107 aligned pairs across the three annotators,
-- a Cytoscape KG colored by conflict label (red contradiction, orange
-  granularity, blue redundancy).
+---
 
-## Re-running the pipeline
-
-Optional — only needed to regenerate data. Requires Ollama with the
-three annotator models pulled.
+## Full pipeline (optional — requires Ollama)
 
 ```powershell
-# 1. Install Ollama from https://ollama.com/download (auto-starts on Windows)
+# Pull models (~3 GB each)
+ollama pull qwen3.5:4b
+ollama pull gemma3:4b
+ollama pull phi4-mini
 
-# 2. Pull the three annotator models (~3 GB each, Q4_K_M quantization)
-ollama pull qwen3.5:4b      # required — Phase-1 main + Phase-2 Layer-2 arbitrator
-ollama pull gemma3:4b       # second annotator
-ollama pull phi4-mini       # third annotator
-
-# 3. Verify
-ollama list                 # all three should appear
-```
-
-Then drive the pipeline either from the UI (bottom drawer → "Background
-runs" tab) or from the CLI:
-
-```powershell
-# Phase-1: LLM fact extraction (one model × one doc)
+# Phase-1: extract facts (one model × one doc)
 python -m src.extractor extract --model qwen3.5:4b `
     --doc data\parsed\train-000000.json --guideline v1
 
-# Phase-2: alignment + conflict detection (drop --skip-layer2 to use LLM)
+# Phase-2: alignment + conflict detection
 python -m scripts.run_phase2 --doc train-000000 --skip-layer2
 
 # Tests
 python -m pytest tests/
 ```
 
-> On 6 GB GPU the three models cannot be co-resident — the extractor
-> evicts the previous model before loading the next, so per-cell latency
-> includes ~30 s of model swap. Plan for 3–5 min/cell.
+> 6 GB GPU: models cannot co-reside. Each cell includes ~30 s model swap → plan 3–5 min/cell.
+
+---
+
+## What you're looking at
+
+Three-pane web UI for inspecting atomic facts extracted by multiple LLM annotators:
+- **Left** — source document text with highlighted spans
+- **Center** — Cytoscape knowledge graph colored by conflict type (red = contradiction, orange = granularity, blue = redundancy)
+- **Right** — facts table
+
+All three panes are cross-linked: click any fact, KG edge, or text highlight and the others follow.
+
+You can also trigger background extraction runs from the UI: bottom drawer → "Background runs" tab.
+
+Out of the box (`train-000000`):
+- 32 real Qwen3.5-4B facts + 30 + 27 synthesized facts from two simulated annotators
+- ~107 aligned pairs across three annotators
+- Conflict labels from Phase-2 two-layer pipeline
+
+---
 
 ## Notes
 
-1. **Only `train-000000` has real Qwen output.** The gemma3 and
-   phi4-mini annotator files are deterministic perturbations generated
-   by `scripts/synthesize_facts.py` — Phase-2 needed two more annotators
-   before the full 3-model extraction matrix is run. Fields tagged
-   `extra.synthesized=true` mark them.
-2. **EUR-Lex is fronted by AWS WAF**, so the corpus is loaded via the
-   `coastalcph/lex_glue` HF dataset instead of direct fetch. Text only —
-   no annex tables.
-3. For full thesis context, see `PROJECT_STATE.md` and
-   `doc/thesis_proposal.tex`.
+- **Only `train-000000` has real Qwen output.** `gemma3` and `phi4-mini` files are deterministic perturbations from `scripts/synthesize_facts.py`. Fields tagged `extra.synthesized=true` mark them.
+- **EUR-Lex is WAF-blocked** — corpus loads via `coastalcph/lex_glue` HF dataset (~2 GB cache under `data/hf_cache/`).
+- For thesis context: `doc/thesis_proposal.tex`, `PROJECT_STATE.md`.
 
-Contact: yanzilongpaypal@gmail.com
+Contact: yanzilong5@gmail.com

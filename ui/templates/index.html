@@ -4,6 +4,12 @@
   <meta charset="utf-8">
   <title>Atomic Fact VA Prototype</title>
   <script src="https://unpkg.com/cytoscape@3.30.2/dist/cytoscape.min.js"></script>
+  <!-- Layout extensions: fcose ≈ FMMM-style multilevel, dagre ≈ Sugiyama hierarchical. -->
+  <script src="https://unpkg.com/layout-base/layout-base.js"></script>
+  <script src="https://unpkg.com/cose-base/cose-base.js"></script>
+  <script src="https://unpkg.com/cytoscape-fcose/cytoscape-fcose.js"></script>
+  <script src="https://unpkg.com/dagre@0.8.5/dist/dagre.min.js"></script>
+  <script src="https://unpkg.com/cytoscape-dagre@2.5.0/cytoscape-dagre.js"></script>
   <link rel="stylesheet" href="/static/app.css">
 </head>
 <body>
@@ -34,8 +40,18 @@
         <select id="layout-select">
           <option value="concentric" selected>concentric</option>
           <option value="cose">cose</option>
+          <option value="fcose">fcose (FMMM)</option>
+          <option value="dagre">dagre (Sugiyama)</option>
           <option value="breadthfirst">breadthfirst</option>
           <option value="grid">grid</option>
+        </select>
+      </label>
+      <label class="color-mode-label">Color by
+        <select id="color-mode-select">
+          <option value="fact" selected>fact</option>
+          <option value="annotator">annotator</option>
+          <option value="conflict">conflict</option>
+          <option value="none">none</option>
         </select>
       </label>
       <label>Search <input type="text" id="search-box" placeholder="subject/object…" size="14"></label>
@@ -92,6 +108,8 @@
           <span id="cy-edge-label-size-v">11</span></label>
         <label>Edge width <input type="range" id="cy-edge-width" min="1" max="8" step="0.5" value="3">
           <span id="cy-edge-width-v">3</span></label>
+        <label>Edge length <input type="range" id="cy-edge-length" min="40" max="400" step="10" value="160">
+          <span id="cy-edge-length-v">160</span></label>
         <label><input type="checkbox" id="cy-show-edge-labels" checked> Show edge labels</label>
         <label><input type="checkbox" id="cy-show-node-labels" checked> Show node labels</label>
         <button id="cy-settings-reset" class="tool-btn">Reset</button>

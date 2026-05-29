@@ -367,6 +367,42 @@ body.col-resizing * { cursor: col-resize !important; user-select: none !importan
 #doc-body mark.redundancy { background: #d5e5f9; border-bottom-color: var(--redundancy); }
 #doc-body mark.overlay-2 { box-shadow: inset 0 -4px 0 0 rgba(245, 124, 0, 0.4); }
 #doc-body mark.overlay-3 { box-shadow: inset 0 -4px 0 0 rgba(211, 47, 47, 0.5); }
+
+/* Per-fact unique color: a custom property --fact-color is set inline by JS
+   (HSL hash of fact_id). When the user picks "Color by: fact" mode we paint
+   the mark background with that color. Falls back to the existing yellow if
+   the var is missing. */
+body[data-color-mode="fact"] #doc-body mark[data-fact-id] {
+  background: var(--fact-color, #fff3a0);
+}
+body[data-color-mode="annotator"] #doc-body mark[data-fact-id] {
+  background: color-mix(in srgb, var(--annot-color, #94a3b8) 28%, #fff);
+}
+
+/* Tri-color S/P/O bands inside the selected mark. JS replaces the mark's
+   plain text with three child spans when a fact gets selected so the user
+   sees exactly which substring is subject / predicate / object. */
+:root {
+  --spo-subject: #2563eb;   /* blue */
+  --spo-predicate: #059669; /* green */
+  --spo-object: #dc2626;    /* red */
+}
+#doc-body mark .spo-subject  { background: color-mix(in srgb, var(--spo-subject)   38%, #fff); border-bottom: 2px solid var(--spo-subject);   padding: 0 1px; border-radius: 2px; }
+#doc-body mark .spo-predicate{ background: color-mix(in srgb, var(--spo-predicate) 38%, #fff); border-bottom: 2px solid var(--spo-predicate); padding: 0 1px; border-radius: 2px; }
+#doc-body mark .spo-object   { background: color-mix(in srgb, var(--spo-object)    38%, #fff); border-bottom: 2px solid var(--spo-object);    padding: 0 1px; border-radius: 2px; }
+#doc-body mark.spo-active { background: #fff !important; outline: 2px solid #eab308; }
+
+/* SPO tinting on the selected facts-table row. */
+#facts-table tbody tr.spo-active td.spo-subj-cell  { background: color-mix(in srgb, var(--spo-subject)   22%, #fff) !important; border-left: 3px solid var(--spo-subject); }
+#facts-table tbody tr.spo-active td.spo-pred-cell  { background: color-mix(in srgb, var(--spo-predicate) 22%, #fff) !important; border-left: 3px solid var(--spo-predicate); }
+#facts-table tbody tr.spo-active td.spo-obj-cell   { background: color-mix(in srgb, var(--spo-object)    22%, #fff) !important; border-left: 3px solid var(--spo-object); }
+
+/* Flash animation for the landing target on cross-view jumps. */
+@keyframes spo-flash {
+  0%   { box-shadow: 0 0 0 0 rgba(234, 179, 8, 0.75); }
+  100% { box-shadow: 0 0 0 8px rgba(234, 179, 8, 0); }
+}
+.spo-flash { animation: spo-flash 600ms ease-out 1; }
 #doc-body .section-head {
   display: block;
   color: var(--ink-faint);
@@ -374,6 +410,30 @@ body.col-resizing * { cursor: col-resize !important; user-select: none !importan
   font-family: -apple-system, sans-serif;
   font-size: 11px;
   margin: 8px 0 4px;
+}
+#doc-body .empty-section-hint {
+  display: inline-block;
+  font-size: 10.5px;
+  font-style: normal;
+  color: #b45309;
+  background: #fef3c7;
+  border: 1px dashed #fbbf24;
+  border-radius: 3px;
+  padding: 1px 6px;
+  margin-left: 6px;
+  font-family: -apple-system, sans-serif;
+}
+
+/* Color-by + edge-length controls */
+.color-mode-label, .edge-len-label {
+  font-size: 11px;
+  color: var(--ink-dim);
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: normal;
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
 }
 
 /* ============================================================

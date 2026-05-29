@@ -39,7 +39,54 @@ const state = {
   coverage: {},
   graph: null,
   jobs: new Map(),
+  // Phase-6: visual encoding + KG layout knobs
+  colorMode: "fact",         // "fact" | "annotator" | "conflict" | "none"
+  edgeLength: 160,            // px — drives ideal-edge-length for fcose/cose
 };
+
+// ============================================================
+// Color helpers (Phase-6)
+// ============================================================
+// Deterministic hash so the same fact_id always paints the same hue.
+function _hash32(s) {
+  let h = 2166136261 >>> 0;
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i);
+    h = (h * 16777619) >>> 0;
+  }
+  return h;
+}
+function colorForFact(factId) {
+  // Pastel, readable on white. Hue spread is uniform; sat/lum keep contrast.
+  const hue = _hash32(factId || "") % 360;
+  return `hsl(${hue}deg 70% 80%)`;
+}
+// Find the first case-insensitive index of `needle` in `hay` at or after pos.
+// Returns -1 when no match. Tolerates extra whitespace by collapsing both.
+function _findCI(hay, needle, pos = 0) {
+  if (!needle) return -1;
+  const lh = hay.toLowerCase();
+  const ln = needle.toLowerCase().trim();
+  if (!ln) return -1;
+  const i = lh.indexOf(ln, pos);
+  return i >= 0 ? i : -1;
+}
+// Build [{start,end,role}] spans for S/P/O substrings inside a quote string.
+// Uses greedy left-to-right matching so S→P→O don't overlap. Roles that
+// can't be located fall back to a "fill" segment so the rest still paints.
+function spoBands(quote, subject, predicate, object) {
+  const out = [];
+  let pos = 0;
+  for (const [role, text] of [["subject", subject], ["predicate", predicate], ["object", object]]) {
+    const i = _findCI(quote, text || "", pos);
+    if (i < 0) continue;
+    out.push({ start: i, end: i + (text || "").length, role });
+    pos = i + (text || "").length;
+  }
+  // Sort by start to keep DOM order deterministic.
+  out.sort((a, b) => a.start - b.start);
+  return out;
+}
 
 const $ = (sel) => document.querySelector(sel);
 
@@ -70,8 +117,37 @@ async function boot() {
 
   $("#layout-select").addEventListener("change", (e) => {
     state.layout = e.target.value;
-    if (state.cy) state.cy.layout({ name: state.layout, animate: false, padding: 18 }).run();
+    if (state.cy) state.cy.layout(_buildLayoutOpts(state.layout, state.cy.nodes().length)).run();
   });
+
+  // Color-by selector (paints text marks per fact / annotator / conflict / off)
+  const colorSel = $("#color-mode-select");
+  if (colorSel) {
+    colorSel.value = state.colorMode;
+    document.body.dataset.colorMode = state.colorMode;
+    colorSel.addEventListener("change", (e) => {
+      state.colorMode = e.target.value;
+      document.body.dataset.colorMode = state.colorMode;
+      refreshText();
+    });
+  } else {
+    document.body.dataset.colorMode = state.colorMode;
+  }
+
+  // Edge-length slider in #graph-settings panel.
+  const edgeLenSlider = $("#cy-edge-length");
+  const edgeLenVal = $("#cy-edge-length-v");
+  if (edgeLenSlider) {
+    let lenTimer = null;
+    edgeLenSlider.addEventListener("input", () => {
+      state.edgeLength = parseInt(edgeLenSlider.value, 10);
+      if (edgeLenVal) edgeLenVal.textContent = String(state.edgeLength);
+      clearTimeout(lenTimer);
+      lenTimer = setTimeout(() => {
+        if (state.cy) state.cy.layout(_buildLayoutOpts(state.layout, state.cy.nodes().length)).run();
+      }, 250);
+    });
+  }
 
   const slider = $("#merge-threshold");
   const sliderVal = $("#merge-threshold-value");
@@ -186,6 +262,12 @@ function renderSection(name, text, segs) {
   const h = document.createElement("div");
   h.className = "section-head";
   h.textContent = `— ${name} —`;
+  if (segs.length === 0) {
+    const hint = document.createElement("span");
+    hint.className = "empty-section-hint";
+    hint.textContent = "no atomic facts extracted in this section (v1-guideline blind spot)";
+    h.appendChild(hint);
+  }
   wrap.appendChild(h);
 
   // Count overlapping spans at each cursor so we can stack underline layers.
@@ -212,6 +294,9 @@ function renderSection(name, text, segs) {
       m.dataset.factId = seg.fact_id;
       m.className = seg.conflict + (seg.depth >= 2 ? " overlay-3" : seg.depth === 1 ? " overlay-2" : "");
       m.textContent = text.slice(start, end);
+      // Phase-6: paint a distinct color per fact (HSL hash of fact_id). The
+      // CSS rule body[data-color-mode="fact"] reads --fact-color from inline.
+      m.style.setProperty("--fact-color", colorForFact(seg.fact_id));
       m.addEventListener("click", () => selectFact(seg.fact_id));
       wrap.appendChild(m);
       if (!state.factSpans.has(seg.fact_id)) state.factSpans.set(seg.fact_id, m);
@@ -326,31 +411,79 @@ async function cycleVerify(btn) {
 // Graph pane
 // ============================================================
 
+// Cytoscape extension registration. The UMD bundles (cytoscape-fcose,
+// cytoscape-dagre) sometimes auto-register on window.cytoscape and sometimes
+// don't (depends on the load order and CDN variant). Calling `use()` again
+// when it's already registered is a no-op, so this is safe.
+function _registerCyExtensions() {
+  if (typeof cytoscape === "undefined") return;
+  try { if (typeof window.cytoscapeFcose === "function") cytoscape.use(window.cytoscapeFcose); } catch (e) { console.warn("fcose register:", e); }
+  try { if (typeof window.cytoscapeDagre === "function") cytoscape.use(window.cytoscapeDagre); } catch (e) { console.warn("dagre register:", e); }
+}
+_registerCyExtensions();
+
+// Returns true if the named layout is actually available on this cytoscape build.
+function _layoutAvailable(name) {
+  if (!["fcose", "dagre"].includes(name)) return true;       // built-ins always there
+  try {
+    const probe = cytoscape({ headless: true, elements: [] });
+    const out = !!probe.extension && !!probe.extension("layout", name);
+    probe.destroy && probe.destroy();
+    return out;
+  } catch { return false; }
+}
+
+// Shared layout-options builder so the dropdown AND the edge-length slider
+// can drive cytoscape with the same parameters. Picks safe defaults per
+// algorithm and folds in state.edgeLength as the ideal-edge-length / spacing.
+function _buildLayoutOpts(name, nodeCount) {
+  // If a third-party layout isn't registered, fall back to cose so the UI
+  // still works instead of throwing inside cy.layout().run().
+  if (!_layoutAvailable(name)) {
+    console.warn(`Layout "${name}" not registered — falling back to cose.`);
+    name = "cose";
+  }
+  // Tiny graphs render best with concentric — cose collapses them into a blob.
+  if (name === "cose" && nodeCount <= 30) name = "concentric";
+  const len = Math.max(40, state.edgeLength || 160);
+  const opts = {
+    name, animate: false, padding: 40,
+    nodeDimensionsIncludeLabels: true, avoidOverlap: true,
+  };
+  if (name === "cose") {
+    opts.idealEdgeLength = len;
+    opts.nodeOverlap = 30;
+    opts.nodeRepulsion = 8000;
+  } else if (name === "fcose") {
+    // fcose (FMMM-style multilevel force layout) — handles disconnected
+    // components and big graphs much better than cose.
+    opts.quality = "default";
+    opts.idealEdgeLength = len;
+    opts.nodeRepulsion = 4500;
+    opts.gravity = 0.25;
+    opts.numIter = 2500;
+    opts.randomize = false;
+  } else if (name === "dagre") {
+    // dagre = Sugiyama-style hierarchical (top-to-bottom by default).
+    opts.rankDir = "TB";
+    opts.nodeSep = Math.max(30, len * 0.35);
+    opts.rankSep = Math.max(60, len * 0.6);
+    opts.edgeSep = 16;
+  } else if (name === "concentric") {
+    opts.minNodeSpacing = 50;
+    opts.concentric = (n) => n.data("n_annotators") || 1;
+    opts.levelWidth = () => 1;
+  } else if (name === "breadthfirst") {
+    opts.spacingFactor = Math.max(1.0, len / 140);
+  }
+  return opts;
+}
+
 function renderGraph(graph) {
   if (state.cy) state.cy.destroy();
 
-  // Tune layout knobs by graph size — small toy graphs render much better
-  // under concentric than cose. Default to concentric for ≤30 nodes.
   const nodeCount = graph.nodes.length;
-  const layoutName = state.layout === "cose" && nodeCount <= 30 ? "concentric" : state.layout;
-  const layoutOpts = {
-    name: layoutName,
-    animate: false,
-    padding: 40,
-    nodeDimensionsIncludeLabels: true,
-    avoidOverlap: true,
-  };
-  if (layoutName === "cose") {
-    layoutOpts.idealEdgeLength = 180;
-    layoutOpts.nodeOverlap = 30;
-    layoutOpts.nodeRepulsion = 8000;
-  } else if (layoutName === "concentric") {
-    layoutOpts.minNodeSpacing = 50;
-    layoutOpts.concentric = (n) => n.data("n_annotators") || 1;
-    layoutOpts.levelWidth = () => 1;
-  } else if (layoutName === "breadthfirst") {
-    layoutOpts.spacingFactor = 1.4;
-  }
+  const layoutOpts = _buildLayoutOpts(state.layout, nodeCount);
 
   state.cy = cytoscape({
     container: document.getElementById("cy"),
@@ -401,6 +534,11 @@ function renderGraph(graph) {
       { selector: "edge[conflict_label = 'redundancy']",    style: { "line-color": "#1976d2", "target-arrow-color": "#1976d2", "width": 3 }},
       { selector: "edge.selected", style: { "line-color": "#eab308", "target-arrow-color": "#eab308", "width": 5 }},
       { selector: "edge.dimmed", style: { "opacity": 0.2 }},
+      // Phase-6 tri-color S/P/O: subject node = blue, object node = red,
+      // predicate edge = green. Stronger borders so they read over conflict colors.
+      { selector: "node.spo-subj", style: { "background-color": "#dbeafe", "border-color": "#2563eb", "border-width": 6 }},
+      { selector: "node.spo-obj",  style: { "background-color": "#fee2e2", "border-color": "#dc2626", "border-width": 6 }},
+      { selector: "edge.spo-pred", style: { "line-color": "#059669", "target-arrow-color": "#059669", "width": 6 }},
     ],
   });
 
@@ -633,23 +771,110 @@ async function pollJob(jobId) {
 // Cross-view selection
 // ============================================================
 
+// Restore the plain text of a mark element (the SPO-tinted children get
+// removed) so a fresh selection paints cleanly on top of the same span.
+function _restoreMarkText(m) {
+  if (!m) return;
+  const t = m.dataset.fullText;
+  if (t != null) { m.textContent = t; }
+}
+
+// Paint subject/predicate/object substrings inside the mark with the SPO
+// palette. We split the mark's textNode into up to 5 nodes (fill | S | gap
+// | P | gap | O | fill). When a band can't be located we silently skip it
+// — that fact's S/P/O didn't appear verbatim in the source quote.
+function _paintSpoInMark(m, fact) {
+  if (!m || !fact) return;
+  if (m.dataset.fullText == null) m.dataset.fullText = m.textContent;
+  const full = m.dataset.fullText;
+  const bands = spoBands(full, fact.subject, fact.predicate, fact.object);
+  if (bands.length === 0) return; // nothing to split — leave plain mark.
+
+  m.textContent = "";
+  let cursor = 0;
+  for (const b of bands) {
+    if (b.start < cursor) continue; // overlap — skip to keep sequence sane.
+    if (b.start > cursor) m.appendChild(document.createTextNode(full.slice(cursor, b.start)));
+    const span = document.createElement("span");
+    span.className = `spo-${b.role}`;
+    span.textContent = full.slice(b.start, b.end);
+    m.appendChild(span);
+    cursor = b.end;
+  }
+  if (cursor < full.length) m.appendChild(document.createTextNode(full.slice(cursor)));
+}
+
+function _flash(el) {
+  if (!el) return;
+  el.classList.remove("spo-flash");
+  // Force reflow so the animation restarts on repeat selections.
+  // eslint-disable-next-line no-unused-expressions
+  el.offsetWidth;
+  el.classList.add("spo-flash");
+  setTimeout(() => el.classList.remove("spo-flash"), 800);
+}
+
 function selectFact(factId) {
+  const prevId = state.selectedFactId;
   state.selectedFactId = factId;
-  for (const m of document.querySelectorAll("#doc-body mark.linked")) m.classList.remove("linked");
+  const fact = state.factsById.get(factId);
+
+  // ---- Text pane: restore previous SPO mark, paint new one, scroll+flash.
+  for (const m of document.querySelectorAll("#doc-body mark.linked, #doc-body mark.spo-active")) {
+    m.classList.remove("linked");
+    m.classList.remove("spo-active");
+    _restoreMarkText(m);
+  }
   const m = state.factSpans.get(factId);
-  if (m) { m.classList.add("linked"); m.scrollIntoView({ behavior: "smooth", block: "center" }); }
+  if (m && fact) {
+    m.classList.add("linked");
+    m.classList.add("spo-active");
+    _paintSpoInMark(m, fact);
+    m.scrollIntoView({ behavior: "smooth", block: "center" });
+    _flash(m);
+  }
 
+  // ---- Facts table: scroll to row + tint S/P/O cells.
   const tbody = $("#facts-table tbody");
-  for (const tr of tbody.querySelectorAll("tr")) tr.classList.remove("selected");
+  for (const tr of tbody.querySelectorAll("tr")) {
+    tr.classList.remove("selected");
+    tr.classList.remove("spo-active");
+    for (const td of tr.querySelectorAll("td.spo-subj-cell, td.spo-pred-cell, td.spo-obj-cell")) {
+      td.classList.remove("spo-subj-cell", "spo-pred-cell", "spo-obj-cell");
+    }
+  }
   const row = tbody.querySelector(`tr[data-fact-id="${factId}"]`);
-  if (row) { row.classList.add("selected"); row.scrollIntoView({ behavior: "smooth", block: "nearest" }); }
+  if (row) {
+    row.classList.add("selected");
+    row.classList.add("spo-active");
+    // tds: 0=annot, 1=subject, 2=predicate, 3=object, 4=section, 5=conflict, 6=verify
+    const tds = row.children;
+    if (tds[1]) tds[1].classList.add("spo-subj-cell");
+    if (tds[2]) tds[2].classList.add("spo-pred-cell");
+    if (tds[3]) tds[3].classList.add("spo-obj-cell");
+    row.scrollIntoView({ behavior: "smooth", block: "center" });
+    _flash(row);
+  }
 
+  // ---- KG: clear prior SPO, paint subject/object nodes + predicate edge,
+  //       and animate-zoom to the connected nodes.
   if (state.cy) {
-    state.cy.elements().removeClass("selected");
+    state.cy.elements().removeClass("selected spo-subj spo-obj spo-pred");
     const matchingEdges = state.cy.edges().filter(e => (e.data("fact_ids") || []).includes(factId));
-    matchingEdges.addClass("selected");
-    matchingEdges.connectedNodes().addClass("selected");
-    if (matchingEdges.length) state.cy.animate({ fit: { eles: matchingEdges.connectedNodes(), padding: 50 } }, { duration: 300 });
+    if (matchingEdges.length) {
+      // Pick the first matching edge for S/P/O painting (a fact = one S-P-O triple).
+      const e0 = matchingEdges[0];
+      e0.addClass("spo-pred");
+      e0.source().addClass("spo-subj");
+      e0.target().addClass("spo-obj");
+      // Keep the original yellow-selected highlight on every contributing edge
+      // (a node-merged graph can have multiple edges with the same fact_id).
+      matchingEdges.addClass("selected");
+      state.cy.animate(
+        { fit: { eles: matchingEdges.connectedNodes(), padding: 60 } },
+        { duration: 400 }
+      );
+    }
   }
 }
 
@@ -1713,6 +1938,317 @@ async function runPhase2() {
     initHSplitter();
     initLiveFactsRefresh();
     initJobCompletionReload();
+  }
+
+  if (document.readyState !== "loading") init();
+  else document.addEventListener("DOMContentLoaded", init);
+})();
+
+/* ============================================================
+ * Phase-5e additions:
+ *   - Build KG (single-doc Phase-2) button
+ *   - Per-annotator color stripes on text marks
+ *   - KG node click → highlight matching marks + facts rows
+ *   - Atomic-facts sort dropdown (alignment / model / section)
+ *   - Empty-facts CTA + "Extract here" single-doc Phase-1 button
+ *
+ * Strategy: this IIFE doesn't reach into the main IIFE's closure. Instead
+ * it caches facts independently via /api/facts, then uses MutationObservers
+ * to re-apply effects every time the main IIFE re-renders the text body or
+ * facts tbody.
+ * ============================================================ */
+(() => {
+  const $ = (s) => document.querySelector(s);
+  const $$ = (s) => document.querySelectorAll(s);
+
+  const PALETTE = ["#3b82f6", "#10b981", "#ef4444", "#f59e0b", "#8b5cf6",
+                   "#06b6d4", "#ec4899", "#84cc16", "#f97316", "#6366f1"];
+
+  const cache = {
+    docId: null,
+    factById: new Map(),        // fact_id → fact object (with _annotator)
+    annotators: [],             // sorted list, deterministic order
+    annotatorColor: new Map(),  // annotator → hex
+    pairsByFactId: new Map(),   // fact_id → cluster_id (smallest fact_id in pair)
+    sort: "default",
+    graph: null,                // cached graph for surface-form lookups
+  };
+
+  function colorFor(annot) {
+    return cache.annotatorColor.get(annot) || "#9ca3af";
+  }
+
+  async function refreshCacheFor(docId) {
+    cache.docId = docId;
+    cache.factById = new Map();
+    cache.annotators = [];
+    cache.annotatorColor = new Map();
+    cache.pairsByFactId = new Map();
+
+    try {
+      const facts = await fetch(`/api/facts/${encodeURIComponent(docId)}`)
+        .then(r => r.json());
+      const annotSet = new Set();
+      for (const f of facts.facts || []) {
+        cache.factById.set(f.fact_id, f);
+        annotSet.add(f._annotator);
+      }
+      cache.annotators = [...annotSet].sort();
+      cache.annotators.forEach((a, i) =>
+        cache.annotatorColor.set(a, PALETTE[i % PALETTE.length]));
+    } catch (e) {
+      console.warn("Phase-5e: facts cache failed", e);
+    }
+
+    try {
+      const pairs = await fetch(`/api/pairs/${encodeURIComponent(docId)}`)
+        .then(r => r.json());
+      // Each pair gives us an alignment cluster: union all fact_ids that
+      // appear together. Two facts in the same pair → same cluster id.
+      // Use simple union-find keyed by fact_id.
+      const parent = new Map();
+      const find = (x) => { while (parent.get(x) !== x) { parent.set(x, parent.get(parent.get(x))); x = parent.get(x); } return x; };
+      const union = (a, b) => {
+        if (!parent.has(a)) parent.set(a, a);
+        if (!parent.has(b)) parent.set(b, b);
+        parent.set(find(a), find(b));
+      };
+      for (const p of pairs || []) {
+        if (p.fact_a_id && p.fact_b_id) union(p.fact_a_id, p.fact_b_id);
+      }
+      for (const fid of cache.factById.keys()) {
+        if (!parent.has(fid)) parent.set(fid, fid);
+        cache.pairsByFactId.set(fid, find(fid));
+      }
+    } catch {}
+
+    try {
+      cache.graph = await fetch(`/api/graph/${encodeURIComponent(docId)}`)
+        .then(r => r.json());
+    } catch { cache.graph = null; }
+  }
+
+  // ---------- Annotator legend (above doc-body) -------------------
+  function renderAnnotatorLegend() {
+    let leg = $("#annotator-legend");
+    if (!leg) {
+      leg = document.createElement("div");
+      leg.id = "annotator-legend";
+      const docTitle = $("#doc-title");
+      docTitle?.parentNode?.insertBefore(leg, docTitle.nextSibling);
+    }
+    leg.innerHTML = "";
+    for (const a of cache.annotators) {
+      const c = colorFor(a);
+      const span = document.createElement("span");
+      span.className = "leg";
+      span.innerHTML = `<span class="sw" style="background:${c}"></span>${a}`;
+      leg.appendChild(span);
+    }
+  }
+
+  // ---------- Apply colors to text marks --------------------------
+  function applyMarkColors() {
+    const marks = $$("#doc-body mark[data-fact-id]");
+    for (const m of marks) {
+      const f = cache.factById.get(m.dataset.factId);
+      if (!f) continue;
+      const c = colorFor(f._annotator);
+      m.style.setProperty("--annot-color", c);
+      m.setAttribute("data-annotator-color", "1");
+      m.dataset.annotator = f._annotator;
+    }
+  }
+
+  // ---------- Empty-facts CTA -------------------------------------
+  function updateEmptyCTA() {
+    const cta = $("#facts-empty-cta");
+    const tbody = document.querySelector("#facts-table tbody");
+    if (!cta) return;
+    const hasNone = cache.factById.size === 0;
+    cta.classList.toggle("hidden", !hasNone);
+    if (tbody) tbody.parentElement?.classList.toggle("hidden", hasNone);
+  }
+
+  // ---------- Sort the facts tbody --------------------------------
+  function sortTbody() {
+    const tbody = document.querySelector("#facts-table tbody");
+    if (!tbody || cache.sort === "default") return;
+    const rows = [...tbody.querySelectorAll("tr[data-fact-id]")];
+    const keyOf = (tr) => {
+      const f = cache.factById.get(tr.dataset.factId);
+      if (!f) return "";
+      switch (cache.sort) {
+        case "alignment":
+          return (cache.pairsByFactId.get(f.fact_id) || f.fact_id) + "|" + f._annotator;
+        case "model":
+          return (f._annotator || "") + "|" + (f.source_locator?.section_path || "");
+        case "section":
+          return (f.source_locator?.section_path || "") + "|" + (f._annotator || "");
+        default:
+          return "";
+      }
+    };
+    rows.sort((a, b) => keyOf(a).localeCompare(keyOf(b)));
+    rows.forEach(r => tbody.appendChild(r));
+  }
+
+  // ---------- KG node click → text + table highlight --------------
+  function clearNodeHighlight() {
+    for (const m of $$("#doc-body mark.node-highlight")) {
+      m.classList.remove("node-highlight");
+      m.style.removeProperty("--node-color");
+    }
+    for (const tr of $$("#facts-table tbody tr.node-highlight")) {
+      tr.classList.remove("node-highlight");
+      tr.style.removeProperty("--node-color");
+    }
+  }
+
+  function highlightByNode(nodeId, nodeData) {
+    clearNodeHighlight();
+    if (!nodeData) return;
+    const surfaceForms = new Set(nodeData.surface_forms || []);
+    const factIds = new Set(nodeData.fact_ids || []);
+    const conflictColor = {
+      contradiction: "#d32f2f",
+      granularity: "#f57c00",
+      redundancy: "#1976d2",
+    }[nodeData.conflict_label] || "#2563eb";
+
+    for (const m of $$("#doc-body mark[data-fact-id]")) {
+      const f = cache.factById.get(m.dataset.factId);
+      if (!f) continue;
+      const hit = factIds.has(f.fact_id)
+        || surfaceForms.has(f.subject) || surfaceForms.has(f.object);
+      if (hit) {
+        m.classList.add("node-highlight");
+        m.style.setProperty("--node-color", conflictColor);
+      }
+    }
+    for (const tr of $$("#facts-table tbody tr[data-fact-id]")) {
+      const f = cache.factById.get(tr.dataset.factId);
+      if (!f) continue;
+      const hit = factIds.has(f.fact_id)
+        || surfaceForms.has(f.subject) || surfaceForms.has(f.object);
+      if (hit) {
+        tr.classList.add("node-highlight");
+        tr.style.setProperty("--node-color", conflictColor);
+      }
+    }
+  }
+
+  // Attach a node-tap handler to the *current* cytoscape instance. The main
+  // IIFE re-creates `window.__cyInstance` on every render, so we re-bind.
+  let _lastBoundCy = null;
+  function attachCyHandler() {
+    const cy = window.__cyInstance;
+    if (!cy || cy === _lastBoundCy) return;
+    _lastBoundCy = cy;
+    cy.on("tap", "node", (evt) => {
+      const n = evt.target;
+      highlightByNode(n.id(), n.data());
+    });
+    // Tapping the background clears the highlight.
+    cy.on("tap", (evt) => { if (evt.target === cy) clearNodeHighlight(); });
+  }
+
+  // ---------- "Build KG" — re-run Phase-2 alignment for current doc ------
+  async function buildKGForCurrentDoc() {
+    const docId = $("#doc-select")?.value;
+    if (!docId) return;
+    const btn = $("#cy-rebuild-btn");
+    const orig = btn?.textContent;
+    if (btn) { btn.disabled = true; btn.textContent = "Building…"; }
+    try {
+      const r = await fetch("/api/run_phase2", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ doc_subset: [docId], skip_layer2: true }),
+      });
+      if (!r.ok) { alert("Build KG failed: HTTP " + r.status); return; }
+    } catch (e) {
+      alert("Build KG request failed: " + e.message);
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = orig || "Build KG"; }
+    }
+  }
+
+  // ---------- "Extract here" — single-doc Phase-1 -----------------------
+  async function extractForCurrentDoc() {
+    const docId = $("#doc-select")?.value;
+    if (!docId) return;
+    const btn = $("#facts-extract-btn");
+    const orig = btn?.textContent;
+    if (btn) { btn.disabled = true; btn.textContent = "Extracting…"; }
+    try {
+      const r = await fetch("/api/run_phase1", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ models: ["qwen3.5:4b"], doc_subset: [docId] }),
+      });
+      if (!r.ok) { alert("Extract failed: HTTP " + r.status); return; }
+    } catch (e) {
+      alert("Extract request failed: " + e.message);
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = orig || "Extract here"; }
+    }
+  }
+
+  // ---------- Wire-up ---------------------------------------------
+  function watchDocChanges() {
+    const sel = $("#doc-select");
+    if (!sel) return;
+    const onChange = async () => {
+      const docId = sel.value;
+      if (!docId) return;
+      await refreshCacheFor(docId);
+      renderAnnotatorLegend();
+      setTimeout(() => {
+        applyMarkColors();
+        sortTbody();
+        updateEmptyCTA();
+        attachCyHandler();
+      }, 250);
+    };
+    sel.addEventListener("change", onChange);
+    if (sel.value) onChange();
+  }
+
+  function setupObservers() {
+    const docBody = document.getElementById("doc-body");
+    if (docBody) {
+      const ob = new MutationObserver(() => applyMarkColors());
+      ob.observe(docBody, { childList: true, subtree: true });
+    }
+    const tbody = document.querySelector("#facts-table tbody");
+    if (tbody) {
+      const ob = new MutationObserver(() => {
+        sortTbody();
+        updateEmptyCTA();
+      });
+      ob.observe(tbody, { childList: true });
+    }
+    const cyEl = document.getElementById("cy");
+    if (cyEl) {
+      const ob = new MutationObserver(() => setTimeout(attachCyHandler, 100));
+      ob.observe(cyEl, { childList: true });
+    }
+  }
+
+  function initSortDropdown() {
+    const sel = $("#facts-sort");
+    if (!sel) return;
+    sel.addEventListener("change", () => {
+      cache.sort = sel.value;
+      sortTbody();
+    });
+  }
+
+  function init() {
+    initSortDropdown();
+    $("#cy-rebuild-btn")?.addEventListener("click", buildKGForCurrentDoc);
+    $("#facts-extract-btn")?.addEventListener("click", extractForCurrentDoc);
+    setupObservers();
+    setTimeout(watchDocChanges, 400);
   }
 
   if (document.readyState !== "loading") init();
