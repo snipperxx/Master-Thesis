@@ -43,6 +43,7 @@ import hashlib
 import json
 import logging
 import sys
+import time
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Iterator
@@ -172,11 +173,36 @@ def render_prompt(template: str, *, doc_title: str, section: Section,
 # ---------------------------------------------------------------------------
 
 
-def _post(base_url: str, path: str, payload: dict, *, timeout: float = DEFAULT_TIMEOUT_S) -> dict:
+def _post(base_url: str, path: str, payload: dict, *, timeout: float = DEFAULT_TIMEOUT_S,
+          transient_retries: int = 2) -> dict:
+    """POST with retry on *transient* failures (HTTP 5xx, connection refused).
+
+    On the 6 GB card, Ollama can 500 transiently while a model is being
+    evicted/loaded (observed 2026-06-10: first qwen3.5:4b call of a pipeline
+    run 500'd; the identical request succeeded seconds later). Treating that
+    as fatal kills a whole batch cell, so retry with backoff before raising.
+    Client errors (4xx) still raise immediately — those are real bugs.
+    """
     url = f"{base_url.rstrip('/')}{path}"
-    resp = requests.post(url, json=payload, timeout=timeout)
-    resp.raise_for_status()
-    return resp.json()
+    delay = 3.0
+    for attempt in range(transient_retries + 1):
+        try:
+            resp = requests.post(url, json=payload, timeout=timeout)
+            if resp.status_code >= 500 and attempt < transient_retries:
+                logger.warning("Ollama %s -> HTTP %s (attempt %d/%d) — retrying in %.0fs",
+                               path, resp.status_code, attempt + 1, transient_retries + 1, delay)
+                time.sleep(delay); delay *= 2
+                continue
+            resp.raise_for_status()
+            return resp.json()
+        except requests.ConnectionError:
+            if attempt < transient_retries:
+                logger.warning("Ollama connection error on %s (attempt %d/%d) — retrying in %.0fs",
+                               path, attempt + 1, transient_retries + 1, delay)
+                time.sleep(delay); delay *= 2
+                continue
+            raise
+    raise RuntimeError("unreachable")
 
 
 def _get(base_url: str, path: str, *, timeout: float = 10) -> dict:
@@ -459,7 +485,8 @@ def extract(model_name: str,
             retries: int = 2,
             ensure_solo: bool = True,
             unload_after: bool = False,
-            prompt_path: Path | None = None) -> list[AtomicFact]:
+            prompt_path: Path | None = None,
+            on_progress=None) -> list[AtomicFact]:
     """Extract atomic facts from one parsed document using one Ollama model.
 
     Parameters
@@ -493,7 +520,13 @@ def extract(model_name: str,
         _unload_others(keep=model_name, base_url=base_url)
 
     all_facts: list[AtomicFact] = []
-    for section in enumerate_sections(parsed_doc):
+    sections = list(enumerate_sections(parsed_doc))
+    for i, section in enumerate(sections):
+        if on_progress is not None:
+            try:
+                on_progress(i, len(sections), section.section_path)
+            except Exception:                       # never let UI hooks kill a run
+                pass
         all_facts.extend(_extract_one_section(
             model_name, parsed_doc, section, template,
             guideline_version=guideline_version,

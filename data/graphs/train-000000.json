@@ -1,19 +1,22 @@
 {
   "doc_id": "train-000000",
   "params": {
-    "align_threshold": 0.55,
-    "redundancy_cosine": 0.9,
+    "align_threshold": 0.78,
+    "redundancy_cosine": 0.95,
     "merge_threshold": 0.78,
-    "layer2_model": "stub"
+    "layer2_model": "stub",
+    "facts_root": "C:\\Users\\Administrator\\Desktop\\Coding\\Python\\MasterThesis\\data\\facts",
+    "variant": null,
+    "core_entities": true
   },
   "nodes": [
     {
       "data": {
-        "id": "ent_the_council_051",
+        "id": "ent_the_council_010",
         "label": "the Council",
         "surface_forms": [
-          "the Council",
-          "the EU Council"
+          "Council Decision on the existence of an excessive deficit",
+          "the Council"
         ],
         "annotators": [
           "gemma3-4b-sim",
@@ -27,18 +30,26 @@
     },
     {
       "data": {
-        "id": "ent_that_an_excessive_defici_001",
-        "label": "that an excessive deficit existed in the Netherlands",
+        "id": "ent_the_excessive_deficit_si_060",
+        "label": "the excessive deficit situation",
         "surface_forms": [
-          "that an excessive deficit existed in the Netherlands"
+          "The data for the excessive deficit procedure",
+          "after the excessive deficit has been corrected",
+          "correction of the excessive deficit situation in Netherlands",
+          "correction of the excessive deficit situation in the Netherlands",
+          "that an excessive deficit existed in the Netherlands",
+          "the excessive deficit situation",
+          "when the excessive deficit in the Member State concerned has, in the view of Council of the European Union, been corrected",
+          "when the excessive deficit in the Member State concerned has, in the view of the Council, been corrected"
         ],
         "annotators": [
           "gemma3-4b-sim",
+          "phi4-mini-sim",
           "qwen3.5:4b"
         ],
-        "n_surface": 1,
-        "n_annotators": 2,
-        "conflict_label": "redundancy"
+        "n_surface": 8,
+        "n_annotators": 3,
+        "conflict_label": "granularity"
       }
     },
     {
@@ -77,10 +88,27 @@
     },
     {
       "data": {
-        "id": "ent_council_of_the_european_004",
-        "label": "Council of the European Union",
+        "id": "ent_the_eu_council_051",
+        "label": "the EU Council",
         "surface_forms": [
-          "Council of the European Union"
+          "Council of the European Union",
+          "the EU Council"
+        ],
+        "annotators": [
+          "gemma3-4b-sim",
+          "phi4-mini-sim"
+        ],
+        "n_surface": 2,
+        "n_annotators": 2,
+        "conflict_label": "granularity"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_on_2_june_2004_addressed_005",
+        "label": "on 2 June 2004 addressed to the Kingdom of the Netherlands",
+        "surface_forms": [
+          "on 2 June 2004 addressed to the Kingdom of the Netherlands"
         ],
         "annotators": [
           "gemma3-4b-sim"
@@ -92,28 +120,10 @@
     },
     {
       "data": {
-        "id": "ent_on_2_june_2004_addressed_052",
-        "label": "on 2 June 2004 addressed to the Netherlands",
+        "id": "ent_by_the_recommendation_007",
+        "label": "by the Recommendation",
         "surface_forms": [
-          "on 2 June 2004 addressed to the Kingdom of the Netherlands",
-          "on 2 June 2004 addressed to the Netherlands"
-        ],
-        "annotators": [
-          "gemma3-4b-sim",
-          "phi4-mini-sim",
-          "qwen3.5:4b"
-        ],
-        "n_surface": 2,
-        "n_annotators": 3,
-        "conflict_label": "granularity"
-      }
-    },
-    {
-      "data": {
-        "id": "ent_the_excessive_deficit_si_006",
-        "label": "the excessive deficit situation",
-        "surface_forms": [
-          "the excessive deficit situation"
+          "by the Recommendation"
         ],
         "annotators": [
           "gemma3-4b-sim",
@@ -130,7 +140,6 @@
         "id": "ent_the_recommendation_008",
         "label": "the Recommendation",
         "surface_forms": [
-          "by the Recommendation",
           "the Recommendation"
         ],
         "annotators": [
@@ -138,16 +147,17 @@
           "phi4-mini-sim",
           "qwen3.5:4b"
         ],
-        "n_surface": 2,
+        "n_surface": 1,
         "n_annotators": 3,
-        "conflict_label": "granularity"
+        "conflict_label": "redundancy"
       }
     },
     {
       "data": {
-        "id": "ent_of_2005_at_the_latest_fo_009",
-        "label": "of 2005 at the latest for the correction of the excessive deficit",
+        "id": "ent_in_2004_044",
+        "label": "in 2004",
         "surface_forms": [
+          "in 2004",
           "of 2005 at the latest for the correction of the excessive deficit"
         ],
         "annotators": [
@@ -155,44 +165,9 @@
           "phi4-mini-sim",
           "qwen3.5:4b"
         ],
-        "n_surface": 1,
-        "n_annotators": 3,
-        "conflict_label": "granularity"
-      }
-    },
-    {
-      "data": {
-        "id": "ent_council_decision_on_the_010",
-        "label": "Council Decision on the existence of an excessive deficit",
-        "surface_forms": [
-          "Council Decision on the existence of an excessive deficit"
-        ],
-        "annotators": [
-          "gemma3-4b-sim",
-          "phi4-mini-sim",
-          "qwen3.5:4b"
-        ],
-        "n_surface": 1,
-        "n_annotators": 3,
-        "conflict_label": "granularity"
-      }
-    },
-    {
-      "data": {
-        "id": "ent_when_the_excessive_defic_053",
-        "label": "when the excessive deficit in the Member State concerned has, in the view of the Council, been corrected",
-        "surface_forms": [
-          "when the excessive deficit in the Member State concerned has, in the view of Council of the European Union, been corrected",
-          "when the excessive deficit in the Member State concerned has, in the view of the Council, been corrected"
-        ],
-        "annotators": [
-          "gemma3-4b-sim",
-          "phi4-mini-sim",
-          "qwen3.5:4b"
-        ],
         "n_surface": 2,
         "n_annotators": 3,
-        "conflict_label": "granularity"
+        "conflict_label": "redundancy"
       }
     },
     {
@@ -231,28 +206,27 @@
     },
     {
       "data": {
-        "id": "ent_the_data_for_the_excessi_014",
-        "label": "The data for the excessive deficit procedure",
+        "id": "ent_by_the_commission_015",
+        "label": "by the Commission",
         "surface_forms": [
-          "The data for the excessive deficit procedure"
+          "by the Commission"
         ],
         "annotators": [
           "gemma3-4b-sim",
-          "phi4-mini-sim",
           "qwen3.5:4b"
         ],
         "n_surface": 1,
-        "n_annotators": 3,
+        "n_annotators": 2,
         "conflict_label": "granularity"
       }
     },
     {
       "data": {
-        "id": "ent_the_commission_049",
-        "label": "the Commission",
+        "id": "ent_government_deficit_022",
+        "label": "government deficit",
         "surface_forms": [
-          "by the Commission",
-          "the Commission"
+          "general government deficit",
+          "government deficit"
         ],
         "annotators": [
           "gemma3-4b-sim",
@@ -266,34 +240,29 @@
     },
     {
       "data": {
-        "id": "ent_general_government_defic_016",
-        "label": "general government deficit",
+        "id": "ent_0_5_of_gdp_040",
+        "label": "0,5 % of GDP",
         "surface_forms": [
-          "general government deficit"
+          "0,0 % of GDP in 2006",
+          "0,4 % of GDP in 2005",
+          "0,5 % of GDP",
+          "1,2 % of GDP",
+          "1,2 % of GDP in 2004",
+          "1,6 % of GDP in 2006",
+          "1,9 % of GDP in 2006",
+          "2,0 % of GDP in 2003",
+          "2,3 % of GDP in 2004",
+          "2,8 % of GDP in 2004",
+          "another 0,8 % of GDP",
+          "to 2,0 % of GDP"
         ],
         "annotators": [
           "gemma3-4b-sim",
           "phi4-mini-sim",
           "qwen3.5:4b"
         ],
-        "n_surface": 1,
+        "n_surface": 12,
         "n_annotators": 3,
-        "conflict_label": "contradiction"
-      }
-    },
-    {
-      "data": {
-        "id": "ent_2_3_of_gdp_in_2004_017",
-        "label": "2,3 % of GDP in 2004",
-        "surface_forms": [
-          "2,3 % of GDP in 2004"
-        ],
-        "annotators": [
-          "gemma3-4b-sim",
-          "qwen3.5:4b"
-        ],
-        "n_surface": 1,
-        "n_annotators": 2,
         "conflict_label": "contradiction"
       }
     },
@@ -345,7 +314,7 @@
         ],
         "n_surface": 1,
         "n_annotators": 3,
-        "conflict_label": "redundancy"
+        "conflict_label": "granularity"
       }
     },
     {
@@ -354,23 +323,6 @@
         "label": "the Council recommendation issued under Article 104(7) of the Treaty",
         "surface_forms": [
           "the Council recommendation issued under Article 104(7) of the Treaty"
-        ],
-        "annotators": [
-          "gemma3-4b-sim",
-          "phi4-mini-sim",
-          "qwen3.5:4b"
-        ],
-        "n_surface": 1,
-        "n_annotators": 3,
-        "conflict_label": "redundancy"
-      }
-    },
-    {
-      "data": {
-        "id": "ent_government_deficit_022",
-        "label": "government deficit",
-        "surface_forms": [
-          "government deficit"
         ],
         "annotators": [
           "gemma3-4b-sim",
@@ -418,34 +370,39 @@
     },
     {
       "data": {
-        "id": "ent_in_the_form_025",
+        "id": "ent_in_the_form_065",
         "label": "in the form",
         "surface_forms": [
-          "in the form"
+          "in the form",
+          "in the form of substantial fiscal measures",
+          "in the form of substantial savings measures"
         ],
         "annotators": [
-          "gemma3-4b-sim"
+          "gemma3-4b-sim",
+          "phi4-mini-sim",
+          "qwen3.5:4b"
         ],
-        "n_surface": 1,
-        "n_annotators": 1,
-        "conflict_label": "unlabeled"
+        "n_surface": 3,
+        "n_annotators": 3,
+        "conflict_label": "granularity"
       }
     },
     {
       "data": {
-        "id": "ent_substantial_savings_meas_065",
-        "label": "substantial savings measures",
+        "id": "ent_savings_measures_029",
+        "label": "savings measures",
         "surface_forms": [
-          "in the form of substantial savings measures",
+          "savings measures",
           "substantial savings measures"
         ],
         "annotators": [
           "gemma3-4b-sim",
+          "phi4-mini-sim",
           "qwen3.5:4b"
         ],
         "n_surface": 2,
-        "n_annotators": 2,
-        "conflict_label": "granularity"
+        "n_annotators": 3,
+        "conflict_label": "contradiction"
       }
     },
     {
@@ -483,23 +440,6 @@
     },
     {
       "data": {
-        "id": "ent_savings_measures_029",
-        "label": "savings measures",
-        "surface_forms": [
-          "savings measures"
-        ],
-        "annotators": [
-          "gemma3-4b-sim",
-          "phi4-mini-sim",
-          "qwen3.5:4b"
-        ],
-        "n_surface": 1,
-        "n_annotators": 3,
-        "conflict_label": "contradiction"
-      }
-    },
-    {
-      "data": {
         "id": "ent_the_additional_consolida_030",
         "label": "the additional consolidation package on 14 April 2004",
         "surface_forms": [
@@ -512,56 +452,7 @@
         ],
         "n_surface": 1,
         "n_annotators": 3,
-        "conflict_label": "granularity"
-      }
-    },
-    {
-      "data": {
-        "id": "ent_to_2_0_of_gdp_031",
-        "label": "to 2,0 % of GDP",
-        "surface_forms": [
-          "to 2,0 % of GDP"
-        ],
-        "annotators": [
-          "gemma3-4b-sim",
-          "phi4-mini-sim",
-          "qwen3.5:4b"
-        ],
-        "n_surface": 1,
-        "n_annotators": 3,
-        "conflict_label": "granularity"
-      }
-    },
-    {
-      "data": {
-        "id": "ent_0_5_of_gdp_032",
-        "label": "0,5 % of GDP",
-        "surface_forms": [
-          "0,5 % of GDP"
-        ],
-        "annotators": [
-          "gemma3-4b-sim",
-          "qwen3.5:4b"
-        ],
-        "n_surface": 1,
-        "n_annotators": 2,
-        "conflict_label": "contradiction"
-      }
-    },
-    {
-      "data": {
-        "id": "ent_1_6_of_gdp_in_2006_033",
-        "label": "1,6 % of GDP in 2006",
-        "surface_forms": [
-          "1,6 % of GDP in 2006"
-        ],
-        "annotators": [
-          "gemma3-4b-sim",
-          "qwen3.5:4b"
-        ],
-        "n_surface": 1,
-        "n_annotators": 2,
-        "conflict_label": "contradiction"
+        "conflict_label": "redundancy"
       }
     },
     {
@@ -582,45 +473,9 @@
     },
     {
       "data": {
-        "id": "ent_1_2_of_gdp_058",
-        "label": "1,2 % of GDP",
+        "id": "ent_cyclically_adjusted_defi_037",
+        "label": "cyclically adjusted deficit",
         "surface_forms": [
-          "1,2 % of GDP",
-          "1,2 % of GDP in 2004"
-        ],
-        "annotators": [
-          "gemma3-4b-sim",
-          "phi4-mini-sim",
-          "qwen3.5:4b"
-        ],
-        "n_surface": 2,
-        "n_annotators": 3,
-        "conflict_label": "contradiction"
-      }
-    },
-    {
-      "data": {
-        "id": "ent_2_0_of_gdp_in_2003_036",
-        "label": "2,0 % of GDP in 2003",
-        "surface_forms": [
-          "2,0 % of GDP in 2003"
-        ],
-        "annotators": [
-          "gemma3-4b-sim",
-          "phi4-mini-sim",
-          "qwen3.5:4b"
-        ],
-        "n_surface": 1,
-        "n_annotators": 3,
-        "conflict_label": "redundancy"
-      }
-    },
-    {
-      "data": {
-        "id": "ent_cyclically_adjusted_bala_061",
-        "label": "cyclically adjusted balance",
-        "surface_forms": [
-          "cyclically adjusted balance",
           "cyclically adjusted deficit"
         ],
         "annotators": [
@@ -628,59 +483,9 @@
           "phi4-mini-sim",
           "qwen3.5:4b"
         ],
-        "n_surface": 2,
-        "n_annotators": 3,
-        "conflict_label": "granularity"
-      }
-    },
-    {
-      "data": {
-        "id": "ent_another_0_8_of_gdp_038",
-        "label": "another 0,8 % of GDP",
-        "surface_forms": [
-          "another 0,8 % of GDP"
-        ],
-        "annotators": [
-          "gemma3-4b-sim",
-          "phi4-mini-sim",
-          "qwen3.5:4b"
-        ],
-        "n_surface": 1,
-        "n_annotators": 3,
-        "conflict_label": "redundancy"
-      }
-    },
-    {
-      "data": {
-        "id": "ent_0_4_of_gdp_in_2005_039",
-        "label": "0,4 % of GDP in 2005",
-        "surface_forms": [
-          "0,4 % of GDP in 2005"
-        ],
-        "annotators": [
-          "gemma3-4b-sim",
-          "phi4-mini-sim",
-          "qwen3.5:4b"
-        ],
         "n_surface": 1,
         "n_annotators": 3,
         "conflict_label": "granularity"
-      }
-    },
-    {
-      "data": {
-        "id": "ent_0_0_of_gdp_in_2006_040",
-        "label": "0,0 % of GDP in 2006",
-        "surface_forms": [
-          "0,0 % of GDP in 2006"
-        ],
-        "annotators": [
-          "gemma3-4b-sim",
-          "qwen3.5:4b"
-        ],
-        "n_surface": 1,
-        "n_annotators": 2,
-        "conflict_label": "unlabeled"
       }
     },
     {
@@ -719,41 +524,6 @@
     },
     {
       "data": {
-        "id": "ent_correction_of_the_excess_063",
-        "label": "correction of the excessive deficit situation in Netherlands",
-        "surface_forms": [
-          "correction of the excessive deficit situation in Netherlands",
-          "correction of the excessive deficit situation in the Netherlands"
-        ],
-        "annotators": [
-          "gemma3-4b-sim",
-          "phi4-mini-sim",
-          "qwen3.5:4b"
-        ],
-        "n_surface": 2,
-        "n_annotators": 3,
-        "conflict_label": "granularity"
-      }
-    },
-    {
-      "data": {
-        "id": "ent_in_2004_044",
-        "label": "in 2004",
-        "surface_forms": [
-          "in 2004"
-        ],
-        "annotators": [
-          "gemma3-4b-sim",
-          "phi4-mini-sim",
-          "qwen3.5:4b"
-        ],
-        "n_surface": 1,
-        "n_annotators": 3,
-        "conflict_label": "granularity"
-      }
-    },
-    {
-      "data": {
         "id": "ent_under_the_terms_of_the_r_064",
         "label": "under the terms of the recommendation addressed to Netherlands on 2 June 2004",
         "surface_forms": [
@@ -767,24 +537,22 @@
         ],
         "n_surface": 2,
         "n_annotators": 3,
-        "conflict_label": "granularity"
+        "conflict_label": "redundancy"
       }
     },
     {
       "data": {
-        "id": "ent_in_accordance_with_artic_066",
+        "id": "ent_in_accordance_with_artic_046",
         "label": "in accordance with Article 104(7)",
         "surface_forms": [
-          "in accordance with Article 104(7)",
-          "in accordance with Article 104(7) of the Treaty"
+          "in accordance with Article 104(7)"
         ],
         "annotators": [
-          "gemma3-4b-sim",
-          "qwen3.5:4b"
+          "gemma3-4b-sim"
         ],
-        "n_surface": 2,
-        "n_annotators": 2,
-        "conflict_label": "redundancy"
+        "n_surface": 1,
+        "n_annotators": 1,
+        "conflict_label": "granularity"
       }
     },
     {
@@ -800,6 +568,22 @@
         "n_surface": 1,
         "n_annotators": 1,
         "conflict_label": "unlabeled"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_the_commission_049",
+        "label": "the Commission",
+        "surface_forms": [
+          "the Commission"
+        ],
+        "annotators": [
+          "phi4-mini-sim",
+          "qwen3.5:4b"
+        ],
+        "n_surface": 1,
+        "n_annotators": 2,
+        "conflict_label": "redundancy"
       }
     },
     {
@@ -820,40 +604,26 @@
     },
     {
       "data": {
-        "id": "ent_by_european_commission_054",
-        "label": "by European Commission",
+        "id": "ent_on_2_june_2004_addressed_052",
+        "label": "on 2 June 2004 addressed to the Netherlands",
         "surface_forms": [
-          "by European Commission"
+          "on 2 June 2004 addressed to the Netherlands"
         ],
         "annotators": [
-          "phi4-mini-sim"
+          "phi4-mini-sim",
+          "qwen3.5:4b"
         ],
         "n_surface": 1,
-        "n_annotators": 1,
+        "n_annotators": 2,
         "conflict_label": "granularity"
       }
     },
     {
       "data": {
-        "id": "ent_2_8_of_gdp_in_2004_055",
-        "label": "2,8 % of GDP in 2004",
+        "id": "ent_by_european_commission_054",
+        "label": "by European Commission",
         "surface_forms": [
-          "2,8 % of GDP in 2004"
-        ],
-        "annotators": [
-          "phi4-mini-sim"
-        ],
-        "n_surface": 1,
-        "n_annotators": 1,
-        "conflict_label": "contradiction"
-      }
-    },
-    {
-      "data": {
-        "id": "ent_in_the_form_of_substanti_056",
-        "label": "in the form of substantial fiscal measures",
-        "surface_forms": [
-          "in the form of substantial fiscal measures"
+          "by European Commission"
         ],
         "annotators": [
           "phi4-mini-sim"
@@ -875,37 +645,21 @@
         ],
         "n_surface": 1,
         "n_annotators": 1,
-        "conflict_label": "granularity"
+        "conflict_label": "unlabeled"
       }
     },
     {
       "data": {
-        "id": "ent_1_9_of_gdp_in_2006_059",
-        "label": "1,9 % of GDP in 2006",
+        "id": "ent_cyclically_adjusted_bala_061",
+        "label": "cyclically adjusted balance",
         "surface_forms": [
-          "1,9 % of GDP in 2006"
+          "cyclically adjusted balance"
         ],
         "annotators": [
           "phi4-mini-sim"
         ],
         "n_surface": 1,
         "n_annotators": 1,
-        "conflict_label": "contradiction"
-      }
-    },
-    {
-      "data": {
-        "id": "ent_after_the_excessive_defi_060",
-        "label": "after the excessive deficit has been corrected",
-        "surface_forms": [
-          "after the excessive deficit has been corrected"
-        ],
-        "annotators": [
-          "phi4-mini-sim",
-          "qwen3.5:4b"
-        ],
-        "n_surface": 1,
-        "n_annotators": 2,
         "conflict_label": "granularity"
       }
     },
@@ -923,6 +677,21 @@
         "n_surface": 1,
         "n_annotators": 2,
         "conflict_label": "redundancy"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_in_accordance_with_artic_066",
+        "label": "in accordance with Article 104(7) of the Treaty",
+        "surface_forms": [
+          "in accordance with Article 104(7) of the Treaty"
+        ],
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "n_surface": 1,
+        "n_annotators": 1,
+        "conflict_label": "granularity"
       }
     },
     {
@@ -959,9 +728,9 @@
   "edges": [
     {
       "data": {
-        "id": "e_ent_the_council_051__decided__ent_that_an_excessive_defici_001",
-        "source": "ent_the_council_051",
-        "target": "ent_that_an_excessive_defici_001",
+        "id": "e_ent_the_council_010__decided__ent_the_excessive_deficit_si_060",
+        "source": "ent_the_council_010",
+        "target": "ent_the_excessive_deficit_si_060",
         "label": "decided",
         "annotators": [
           "gemma3-4b-sim",
@@ -1001,9 +770,9 @@
     },
     {
       "data": {
-        "id": "e_ent_council_of_the_european_004__made_a_recommendation__ent_on_2_june_2004_addressed_052",
-        "source": "ent_council_of_the_european_004",
-        "target": "ent_on_2_june_2004_addressed_052",
+        "id": "e_ent_the_eu_council_051__made_a_recommendation__ent_on_2_june_2004_addressed_005",
+        "source": "ent_the_eu_council_051",
+        "target": "ent_on_2_june_2004_addressed_005",
         "label": "made a recommendation",
         "annotators": [
           "gemma3-4b-sim"
@@ -1020,9 +789,9 @@
     },
     {
       "data": {
-        "id": "e_ent_the_excessive_deficit_si_006__was_to_be_brought_to_an___ent_the_recommendation_008",
-        "source": "ent_the_excessive_deficit_si_006",
-        "target": "ent_the_recommendation_008",
+        "id": "e_ent_the_excessive_deficit_si_060__was_to_be_brought_to_an___ent_by_the_recommendation_007",
+        "source": "ent_the_excessive_deficit_si_060",
+        "target": "ent_by_the_recommendation_007",
         "label": "was to be brought to an end",
         "annotators": [
           "gemma3-4b-sim",
@@ -1043,9 +812,9 @@
     },
     {
       "data": {
-        "id": "e_ent_the_recommendation_008__fixed_a_deadline__ent_of_2005_at_the_latest_fo_009",
+        "id": "e_ent_the_recommendation_008__fixed_a_deadline__ent_in_2004_044",
         "source": "ent_the_recommendation_008",
-        "target": "ent_of_2005_at_the_latest_fo_009",
+        "target": "ent_in_2004_044",
         "label": "fixed a deadline",
         "annotators": [
           "gemma3-4b-sim",
@@ -1058,15 +827,15 @@
         "section_paths": [
           "preamble.recitals[1]"
         ],
-        "conflict_label": "granularity",
+        "conflict_label": "redundancy",
         "n_annotators": 2
       }
     },
     {
       "data": {
-        "id": "e_ent_council_decision_on_the_010__is_to_be_abrogated__ent_when_the_excessive_defic_053",
-        "source": "ent_council_decision_on_the_010",
-        "target": "ent_when_the_excessive_defic_053",
+        "id": "e_ent_the_council_010__is_to_be_abrogated__ent_the_excessive_deficit_si_060",
+        "source": "ent_the_council_010",
+        "target": "ent_the_excessive_deficit_si_060",
         "label": "is to be abrogated",
         "annotators": [
           "gemma3-4b-sim",
@@ -1108,9 +877,9 @@
     },
     {
       "data": {
-        "id": "e_ent_the_data_for_the_excessi_014__are_provided__ent_the_commission_049",
-        "source": "ent_the_data_for_the_excessi_014",
-        "target": "ent_the_commission_049",
+        "id": "e_ent_the_excessive_deficit_si_060__are_provided__ent_by_the_commission_015",
+        "source": "ent_the_excessive_deficit_si_060",
+        "target": "ent_by_the_commission_015",
         "label": "are provided",
         "annotators": [
           "gemma3-4b-sim",
@@ -1129,23 +898,25 @@
     },
     {
       "data": {
-        "id": "e_ent_general_government_defic_016__is_estimated_at__ent_2_3_of_gdp_in_2004_017",
-        "source": "ent_general_government_defic_016",
-        "target": "ent_2_3_of_gdp_in_2004_017",
+        "id": "e_ent_government_deficit_022__is_estimated_at__ent_0_5_of_gdp_040",
+        "source": "ent_government_deficit_022",
+        "target": "ent_0_5_of_gdp_040",
         "label": "is estimated at",
         "annotators": [
           "gemma3-4b-sim",
+          "phi4-mini-sim",
           "qwen3.5:4b"
         ],
         "fact_ids": [
           "1fbfc733860799f2",
-          "5856143e153b7cd4"
+          "5856143e153b7cd4",
+          "844a9393302ecf4e"
         ],
         "section_paths": [
           "preamble.recitals[4]"
         ],
-        "conflict_label": "contradiction",
-        "n_annotators": 2
+        "conflict_label": "redundancy",
+        "n_annotators": 3
       }
     },
     {
@@ -1182,7 +953,7 @@
         "section_paths": [
           "preamble.recitals[4]"
         ],
-        "conflict_label": "redundancy",
+        "conflict_label": "granularity",
         "n_annotators": 1
       }
     },
@@ -1209,28 +980,32 @@
     },
     {
       "data": {
-        "id": "e_ent_fiscal_adjustment_024__was_pursued_in_2004__ent_in_the_form_025",
+        "id": "e_ent_fiscal_adjustment_024__was_pursued_in_2004__ent_in_the_form_065",
         "source": "ent_fiscal_adjustment_024",
-        "target": "ent_in_the_form_025",
+        "target": "ent_in_the_form_065",
         "label": "was pursued in 2004",
         "annotators": [
-          "gemma3-4b-sim"
+          "gemma3-4b-sim",
+          "phi4-mini-sim",
+          "qwen3.5:4b"
         ],
         "fact_ids": [
-          "13b9e1524b5dff06"
+          "13b9e1524b5dff06",
+          "52807291a34d9217",
+          "63437a1f3668bb3b"
         ],
         "section_paths": [
           "preamble.recitals[4]"
         ],
-        "conflict_label": "unlabeled",
-        "n_annotators": 1
+        "conflict_label": "granularity",
+        "n_annotators": 3
       }
     },
     {
       "data": {
-        "id": "e_ent_fiscal_adjustment_024__qualified_of__ent_substantial_savings_meas_065",
+        "id": "e_ent_fiscal_adjustment_024__qualified_of__ent_savings_measures_029",
         "source": "ent_fiscal_adjustment_024",
-        "target": "ent_substantial_savings_meas_065",
+        "target": "ent_savings_measures_029",
         "label": "qualified of",
         "annotators": [
           "gemma3-4b-sim"
@@ -1279,15 +1054,15 @@
         "section_paths": [
           "preamble.recitals[4]"
         ],
-        "conflict_label": "granularity",
+        "conflict_label": "redundancy",
         "n_annotators": 1
       }
     },
     {
       "data": {
-        "id": "e_ent_general_government_balan_018__was_projected_to_show_a___ent_to_2_0_of_gdp_031",
+        "id": "e_ent_general_government_balan_018__was_projected_to_show_a___ent_0_5_of_gdp_040",
         "source": "ent_general_government_balan_018",
-        "target": "ent_to_2_0_of_gdp_031",
+        "target": "ent_0_5_of_gdp_040",
         "label": "was projected to show a further decline in 2005",
         "annotators": [
           "gemma3-4b-sim",
@@ -1306,30 +1081,32 @@
     },
     {
       "data": {
-        "id": "e_ent_savings_measures_029__added_up_to__ent_0_5_of_gdp_032",
+        "id": "e_ent_savings_measures_029__added_up_to__ent_0_5_of_gdp_040",
         "source": "ent_savings_measures_029",
-        "target": "ent_0_5_of_gdp_032",
+        "target": "ent_0_5_of_gdp_040",
         "label": "added up to",
         "annotators": [
           "gemma3-4b-sim",
+          "phi4-mini-sim",
           "qwen3.5:4b"
         ],
         "fact_ids": [
           "4353ef6266c7d4e8",
+          "b476e28294cf1d15",
           "c57b0783bf5f8613"
         ],
         "section_paths": [
           "preamble.recitals[4]"
         ],
         "conflict_label": "contradiction",
-        "n_annotators": 2
+        "n_annotators": 3
       }
     },
     {
       "data": {
-        "id": "e_ent_general_government_balan_018__was_forecast_to_hit__ent_1_6_of_gdp_in_2006_033",
+        "id": "e_ent_general_government_balan_018__was_forecast_to_hit__ent_0_5_of_gdp_040",
         "source": "ent_general_government_balan_018",
-        "target": "ent_1_6_of_gdp_in_2006_033",
+        "target": "ent_0_5_of_gdp_040",
         "label": "was forecast to hit",
         "annotators": [
           "gemma3-4b-sim"
@@ -1346,9 +1123,9 @@
     },
     {
       "data": {
-        "id": "e_ent_structural_deficit_034__declined_to__ent_1_2_of_gdp_058",
+        "id": "e_ent_structural_deficit_034__declined_to__ent_0_5_of_gdp_040",
         "source": "ent_structural_deficit_034",
-        "target": "ent_1_2_of_gdp_058",
+        "target": "ent_0_5_of_gdp_040",
         "label": "declined to",
         "annotators": [
           "gemma3-4b-sim"
@@ -1359,15 +1136,15 @@
         "section_paths": [
           "preamble.recitals[4]"
         ],
-        "conflict_label": "unlabeled",
+        "conflict_label": "granularity",
         "n_annotators": 1
       }
     },
     {
       "data": {
-        "id": "e_ent_structural_deficit_034__compared_with__ent_2_0_of_gdp_in_2003_036",
+        "id": "e_ent_structural_deficit_034__compared_with__ent_0_5_of_gdp_040",
         "source": "ent_structural_deficit_034",
-        "target": "ent_2_0_of_gdp_in_2003_036",
+        "target": "ent_0_5_of_gdp_040",
         "label": "compared with",
         "annotators": [
           "gemma3-4b-sim"
@@ -1384,9 +1161,9 @@
     },
     {
       "data": {
-        "id": "e_ent_cyclically_adjusted_bala_061__was_projected_to_decreas__ent_another_0_8_of_gdp_038",
-        "source": "ent_cyclically_adjusted_bala_061",
-        "target": "ent_another_0_8_of_gdp_038",
+        "id": "e_ent_cyclically_adjusted_defi_037__was_projected_to_decreas__ent_0_5_of_gdp_040",
+        "source": "ent_cyclically_adjusted_defi_037",
+        "target": "ent_0_5_of_gdp_040",
         "label": "was projected to decrease in 2005 by",
         "annotators": [
           "gemma3-4b-sim",
@@ -1407,9 +1184,9 @@
     },
     {
       "data": {
-        "id": "e_ent_cyclically_adjusted_bala_061__was_forecast_to_hit__ent_0_4_of_gdp_in_2005_039",
-        "source": "ent_cyclically_adjusted_bala_061",
-        "target": "ent_0_4_of_gdp_in_2005_039",
+        "id": "e_ent_cyclically_adjusted_defi_037__was_forecast_to_hit__ent_0_5_of_gdp_040",
+        "source": "ent_cyclically_adjusted_defi_037",
+        "target": "ent_0_5_of_gdp_040",
         "label": "was forecast to hit",
         "annotators": [
           "gemma3-4b-sim"
@@ -1426,9 +1203,9 @@
     },
     {
       "data": {
-        "id": "e_ent_cyclically_adjusted_bala_061__was_forecast_to_drop_to__ent_0_0_of_gdp_in_2006_040",
-        "source": "ent_cyclically_adjusted_bala_061",
-        "target": "ent_0_0_of_gdp_in_2006_040",
+        "id": "e_ent_cyclically_adjusted_defi_037__was_forecast_to_drop_to__ent_0_5_of_gdp_040",
+        "source": "ent_cyclically_adjusted_defi_037",
+        "target": "ent_0_5_of_gdp_040",
         "label": "was forecast to drop to",
         "annotators": [
           "gemma3-4b-sim"
@@ -1439,7 +1216,7 @@
         "section_paths": [
           "preamble.recitals[4]"
         ],
-        "conflict_label": "unlabeled",
+        "conflict_label": "granularity",
         "n_annotators": 1
       }
     },
@@ -1468,8 +1245,8 @@
     },
     {
       "data": {
-        "id": "e_ent_correction_of_the_excess_063__was_finalised__ent_in_2004_044",
-        "source": "ent_correction_of_the_excess_063",
+        "id": "e_ent_the_excessive_deficit_si_060__was_finalised__ent_in_2004_044",
+        "source": "ent_the_excessive_deficit_si_060",
         "target": "ent_in_2004_044",
         "label": "was finalised",
         "annotators": [
@@ -1481,14 +1258,14 @@
         "section_paths": [
           "enacting.article_1"
         ],
-        "conflict_label": "granularity",
+        "conflict_label": "redundancy",
         "n_annotators": 1
       }
     },
     {
       "data": {
-        "id": "e_ent_correction_of_the_excess_063__was_concluded__ent_under_the_terms_of_the_r_064",
-        "source": "ent_correction_of_the_excess_063",
+        "id": "e_ent_the_excessive_deficit_si_060__was_concluded__ent_under_the_terms_of_the_r_064",
+        "source": "ent_the_excessive_deficit_si_060",
         "target": "ent_under_the_terms_of_the_r_064",
         "label": "was concluded",
         "annotators": [
@@ -1502,35 +1279,33 @@
         "section_paths": [
           "enacting.article_1"
         ],
-        "conflict_label": "granularity",
-        "n_annotators": 2
-      }
-    },
-    {
-      "data": {
-        "id": "e_ent_correction_of_the_excess_063__was_completed__ent_in_accordance_with_artic_066",
-        "source": "ent_correction_of_the_excess_063",
-        "target": "ent_in_accordance_with_artic_066",
-        "label": "was completed",
-        "annotators": [
-          "gemma3-4b-sim",
-          "qwen3.5:4b"
-        ],
-        "fact_ids": [
-          "a1e857aa4fdeb260",
-          "d9f359d6238edb39"
-        ],
-        "section_paths": [
-          "enacting.article_1"
-        ],
         "conflict_label": "redundancy",
         "n_annotators": 2
       }
     },
     {
       "data": {
-        "id": "e_ent_correction_of_the_excess_063__qualified_of__ent_the_treaty_047",
-        "source": "ent_correction_of_the_excess_063",
+        "id": "e_ent_the_excessive_deficit_si_060__was_completed__ent_in_accordance_with_artic_046",
+        "source": "ent_the_excessive_deficit_si_060",
+        "target": "ent_in_accordance_with_artic_046",
+        "label": "was completed",
+        "annotators": [
+          "gemma3-4b-sim"
+        ],
+        "fact_ids": [
+          "d9f359d6238edb39"
+        ],
+        "section_paths": [
+          "enacting.article_1"
+        ],
+        "conflict_label": "granularity",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_the_excessive_deficit_si_060__qualified_of__ent_the_treaty_047",
+        "source": "ent_the_excessive_deficit_si_060",
         "target": "ent_the_treaty_047",
         "label": "qualified of",
         "annotators": [
@@ -1569,29 +1344,27 @@
     },
     {
       "data": {
-        "id": "e_ent_the_council_051__made_a_recommendation__ent_on_2_june_2004_addressed_052",
-        "source": "ent_the_council_051",
+        "id": "e_ent_the_eu_council_051__made_a_recommendation__ent_on_2_june_2004_addressed_052",
+        "source": "ent_the_eu_council_051",
         "target": "ent_on_2_june_2004_addressed_052",
         "label": "made a recommendation",
         "annotators": [
-          "phi4-mini-sim",
-          "qwen3.5:4b"
+          "phi4-mini-sim"
         ],
         "fact_ids": [
-          "4c8843a6d9575d76",
           "716c164941cd4332"
         ],
         "section_paths": [
           "preamble.recitals[1]"
         ],
         "conflict_label": "granularity",
-        "n_annotators": 2
+        "n_annotators": 1
       }
     },
     {
       "data": {
-        "id": "e_ent_the_data_for_the_excessi_014__are_supplied__ent_by_european_commission_054",
-        "source": "ent_the_data_for_the_excessi_014",
+        "id": "e_ent_the_excessive_deficit_si_060__are_supplied__ent_by_european_commission_054",
+        "source": "ent_the_excessive_deficit_si_060",
         "target": "ent_by_european_commission_054",
         "label": "are supplied",
         "annotators": [
@@ -1609,27 +1382,8 @@
     },
     {
       "data": {
-        "id": "e_ent_general_government_defic_016__is_estimated_at__ent_2_8_of_gdp_in_2004_055",
-        "source": "ent_general_government_defic_016",
-        "target": "ent_2_8_of_gdp_in_2004_055",
-        "label": "is estimated at",
-        "annotators": [
-          "phi4-mini-sim"
-        ],
-        "fact_ids": [
-          "844a9393302ecf4e"
-        ],
-        "section_paths": [
-          "preamble.recitals[4]"
-        ],
-        "conflict_label": "contradiction",
-        "n_annotators": 1
-      }
-    },
-    {
-      "data": {
-        "id": "e_ent_general_government_defic_016__was__ent_3_2_in_2003_019",
-        "source": "ent_general_government_defic_016",
+        "id": "e_ent_government_deficit_022__was__ent_3_2_in_2003_019",
+        "source": "ent_government_deficit_022",
         "target": "ent_3_2_in_2003_019",
         "label": "was",
         "annotators": [
@@ -1664,7 +1418,7 @@
         "section_paths": [
           "preamble.recitals[4]"
         ],
-        "conflict_label": "redundancy",
+        "conflict_label": "granularity",
         "n_annotators": 2
       }
     },
@@ -1679,25 +1433,6 @@
         ],
         "fact_ids": [
           "ca95e7dd6a1039b0"
-        ],
-        "section_paths": [
-          "preamble.recitals[4]"
-        ],
-        "conflict_label": "granularity",
-        "n_annotators": 1
-      }
-    },
-    {
-      "data": {
-        "id": "e_ent_fiscal_adjustment_024__was_pursued_in_2004__ent_in_the_form_of_substanti_056",
-        "source": "ent_fiscal_adjustment_024",
-        "target": "ent_in_the_form_of_substanti_056",
-        "label": "was pursued in 2004",
-        "annotators": [
-          "phi4-mini-sim"
-        ],
-        "fact_ids": [
-          "52807291a34d9217"
         ],
         "section_paths": [
           "preamble.recitals[4]"
@@ -1740,15 +1475,15 @@
         "section_paths": [
           "preamble.recitals[4]"
         ],
-        "conflict_label": "granularity",
+        "conflict_label": "unlabeled",
         "n_annotators": 1
       }
     },
     {
       "data": {
-        "id": "e_ent_general_government_balan_018__was_forecast_to_decline___ent_to_2_0_of_gdp_031",
+        "id": "e_ent_general_government_balan_018__was_forecast_to_decline___ent_0_5_of_gdp_040",
         "source": "ent_general_government_balan_018",
-        "target": "ent_to_2_0_of_gdp_031",
+        "target": "ent_0_5_of_gdp_040",
         "label": "was forecast to decline further in 2005",
         "annotators": [
           "phi4-mini-sim"
@@ -1765,47 +1500,30 @@
     },
     {
       "data": {
-        "id": "e_ent_savings_measures_029__added_up_to__ent_1_2_of_gdp_058",
-        "source": "ent_savings_measures_029",
-        "target": "ent_1_2_of_gdp_058",
-        "label": "added up to",
-        "annotators": [
-          "phi4-mini-sim"
-        ],
-        "fact_ids": [
-          "b476e28294cf1d15"
-        ],
-        "section_paths": [
-          "preamble.recitals[4]"
-        ],
-        "conflict_label": "contradiction",
-        "n_annotators": 1
-      }
-    },
-    {
-      "data": {
-        "id": "e_ent_general_government_defic_016__was_projected_to_reach__ent_1_9_of_gdp_in_2006_059",
-        "source": "ent_general_government_defic_016",
-        "target": "ent_1_9_of_gdp_in_2006_059",
+        "id": "e_ent_government_deficit_022__was_projected_to_reach__ent_0_5_of_gdp_040",
+        "source": "ent_government_deficit_022",
+        "target": "ent_0_5_of_gdp_040",
         "label": "was projected to reach",
         "annotators": [
-          "phi4-mini-sim"
+          "phi4-mini-sim",
+          "qwen3.5:4b"
         ],
         "fact_ids": [
+          "cf31204d8676cb99",
           "dcfce0c5dd6e36b0"
         ],
         "section_paths": [
           "preamble.recitals[4]"
         ],
-        "conflict_label": "contradiction",
-        "n_annotators": 1
+        "conflict_label": "redundancy",
+        "n_annotators": 2
       }
     },
     {
       "data": {
-        "id": "e_ent_structural_deficit_034__was_expected_to_reach_cl__ent_after_the_excessive_defi_060",
+        "id": "e_ent_structural_deficit_034__was_expected_to_reach_cl__ent_the_excessive_deficit_si_060",
         "source": "ent_structural_deficit_034",
-        "target": "ent_after_the_excessive_defi_060",
+        "target": "ent_the_excessive_deficit_si_060",
         "label": "was expected to reach close to balance",
         "annotators": [
           "phi4-mini-sim"
@@ -1822,30 +1540,28 @@
     },
     {
       "data": {
-        "id": "e_ent_cyclically_adjusted_bala_061__fell_to__ent_1_2_of_gdp_058",
+        "id": "e_ent_cyclically_adjusted_bala_061__fell_to__ent_0_5_of_gdp_040",
         "source": "ent_cyclically_adjusted_bala_061",
-        "target": "ent_1_2_of_gdp_058",
+        "target": "ent_0_5_of_gdp_040",
         "label": "fell to",
         "annotators": [
-          "phi4-mini-sim",
-          "qwen3.5:4b"
+          "phi4-mini-sim"
         ],
         "fact_ids": [
-          "a8508a238ca8bab7",
           "c9ef1b6bc068a293"
         ],
         "section_paths": [
           "preamble.recitals[4]"
         ],
         "conflict_label": "granularity",
-        "n_annotators": 2
+        "n_annotators": 1
       }
     },
     {
       "data": {
-        "id": "e_ent_cyclically_adjusted_bala_061__was_compared_to__ent_2_0_of_gdp_in_2003_036",
-        "source": "ent_cyclically_adjusted_bala_061",
-        "target": "ent_2_0_of_gdp_in_2003_036",
+        "id": "e_ent_cyclically_adjusted_defi_037__was_compared_to__ent_0_5_of_gdp_040",
+        "source": "ent_cyclically_adjusted_defi_037",
+        "target": "ent_0_5_of_gdp_040",
         "label": "was compared to",
         "annotators": [
           "phi4-mini-sim",
@@ -1864,9 +1580,9 @@
     },
     {
       "data": {
-        "id": "e_ent_cyclically_adjusted_bala_061__was_expected_to_reach__ent_0_4_of_gdp_in_2005_039",
+        "id": "e_ent_cyclically_adjusted_bala_061__was_expected_to_reach__ent_0_5_of_gdp_040",
         "source": "ent_cyclically_adjusted_bala_061",
-        "target": "ent_0_4_of_gdp_in_2005_039",
+        "target": "ent_0_5_of_gdp_040",
         "label": "was expected to reach",
         "annotators": [
           "phi4-mini-sim"
@@ -1904,8 +1620,8 @@
     },
     {
       "data": {
-        "id": "e_ent_correction_of_the_excess_063__was_completed__ent_in_2004_044",
-        "source": "ent_correction_of_the_excess_063",
+        "id": "e_ent_the_excessive_deficit_si_060__was_completed__ent_in_2004_044",
+        "source": "ent_the_excessive_deficit_si_060",
         "target": "ent_in_2004_044",
         "label": "was completed",
         "annotators": [
@@ -1919,15 +1635,34 @@
         "section_paths": [
           "enacting.article_1"
         ],
-        "conflict_label": "granularity",
+        "conflict_label": "redundancy",
         "n_annotators": 2
       }
     },
     {
       "data": {
-        "id": "e_ent_the_recommendation_008__established_a_deadline__ent_of_2005_at_the_latest_fo_009",
+        "id": "e_ent_the_council_010__made_a_recommendation__ent_on_2_june_2004_addressed_052",
+        "source": "ent_the_council_010",
+        "target": "ent_on_2_june_2004_addressed_052",
+        "label": "made a recommendation",
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "4c8843a6d9575d76"
+        ],
+        "section_paths": [
+          "preamble.recitals[1]"
+        ],
+        "conflict_label": "granularity",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_the_recommendation_008__established_a_deadline__ent_in_2004_044",
         "source": "ent_the_recommendation_008",
-        "target": "ent_of_2005_at_the_latest_fo_009",
+        "target": "ent_in_2004_044",
         "label": "established a deadline",
         "annotators": [
           "qwen3.5:4b"
@@ -1938,7 +1673,7 @@
         "section_paths": [
           "preamble.recitals[1]"
         ],
-        "conflict_label": "granularity",
+        "conflict_label": "redundancy",
         "n_annotators": 1
       }
     },
@@ -1958,25 +1693,6 @@
           "preamble.recitals[3]"
         ],
         "conflict_label": "redundancy",
-        "n_annotators": 1
-      }
-    },
-    {
-      "data": {
-        "id": "e_ent_fiscal_adjustment_024__was_pursued_in_2004__ent_substantial_savings_meas_065",
-        "source": "ent_fiscal_adjustment_024",
-        "target": "ent_substantial_savings_meas_065",
-        "label": "was pursued in 2004",
-        "annotators": [
-          "qwen3.5:4b"
-        ],
-        "fact_ids": [
-          "63437a1f3668bb3b"
-        ],
-        "section_paths": [
-          "preamble.recitals[4]"
-        ],
-        "conflict_label": "granularity",
         "n_annotators": 1
       }
     },
@@ -2014,34 +1730,15 @@
         "section_paths": [
           "preamble.recitals[4]"
         ],
-        "conflict_label": "granularity",
+        "conflict_label": "redundancy",
         "n_annotators": 1
       }
     },
     {
       "data": {
-        "id": "e_ent_general_government_defic_016__was_projected_to_reach__ent_1_6_of_gdp_in_2006_033",
-        "source": "ent_general_government_defic_016",
-        "target": "ent_1_6_of_gdp_in_2006_033",
-        "label": "was projected to reach",
-        "annotators": [
-          "qwen3.5:4b"
-        ],
-        "fact_ids": [
-          "cf31204d8676cb99"
-        ],
-        "section_paths": [
-          "preamble.recitals[4]"
-        ],
-        "conflict_label": "contradiction",
-        "n_annotators": 1
-      }
-    },
-    {
-      "data": {
-        "id": "e_ent_cyclically_adjusted_bala_061__was_expected_to_reach_cl__ent_after_the_excessive_defi_060",
-        "source": "ent_cyclically_adjusted_bala_061",
-        "target": "ent_after_the_excessive_defi_060",
+        "id": "e_ent_cyclically_adjusted_defi_037__was_expected_to_reach_cl__ent_the_excessive_deficit_si_060",
+        "source": "ent_cyclically_adjusted_defi_037",
+        "target": "ent_the_excessive_deficit_si_060",
         "label": "was expected to reach close to balance",
         "annotators": [
           "qwen3.5:4b"
@@ -2058,9 +1755,28 @@
     },
     {
       "data": {
-        "id": "e_ent_cyclically_adjusted_bala_061__was_projected_to_reach__ent_0_4_of_gdp_in_2005_039",
-        "source": "ent_cyclically_adjusted_bala_061",
-        "target": "ent_0_4_of_gdp_in_2005_039",
+        "id": "e_ent_cyclically_adjusted_defi_037__fell_to__ent_0_5_of_gdp_040",
+        "source": "ent_cyclically_adjusted_defi_037",
+        "target": "ent_0_5_of_gdp_040",
+        "label": "fell to",
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "a8508a238ca8bab7"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "conflict_label": "granularity",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_cyclically_adjusted_defi_037__was_projected_to_reach__ent_0_5_of_gdp_040",
+        "source": "ent_cyclically_adjusted_defi_037",
+        "target": "ent_0_5_of_gdp_040",
         "label": "was projected to reach",
         "annotators": [
           "qwen3.5:4b"
@@ -2077,9 +1793,9 @@
     },
     {
       "data": {
-        "id": "e_ent_cyclically_adjusted_bala_061__was_projected_to_fall_to__ent_0_0_of_gdp_in_2006_040",
-        "source": "ent_cyclically_adjusted_bala_061",
-        "target": "ent_0_0_of_gdp_in_2006_040",
+        "id": "e_ent_cyclically_adjusted_defi_037__was_projected_to_fall_to__ent_0_5_of_gdp_040",
+        "source": "ent_cyclically_adjusted_defi_037",
+        "target": "ent_0_5_of_gdp_040",
         "label": "was projected to fall to",
         "annotators": [
           "qwen3.5:4b"
@@ -2090,14 +1806,14 @@
         "section_paths": [
           "preamble.recitals[4]"
         ],
-        "conflict_label": "unlabeled",
+        "conflict_label": "granularity",
         "n_annotators": 1
       }
     },
     {
       "data": {
-        "id": "e_ent_correction_of_the_excess_063__was_completed__ent_under_the_terms_of_the_r_064",
-        "source": "ent_correction_of_the_excess_063",
+        "id": "e_ent_the_excessive_deficit_si_060__was_completed__ent_under_the_terms_of_the_r_064",
+        "source": "ent_the_excessive_deficit_si_060",
         "target": "ent_under_the_terms_of_the_r_064",
         "label": "was completed",
         "annotators": [
@@ -2105,6 +1821,25 @@
         ],
         "fact_ids": [
           "f79af17ab271765e"
+        ],
+        "section_paths": [
+          "enacting.article_1"
+        ],
+        "conflict_label": "redundancy",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_the_excessive_deficit_si_060__was_completed__ent_in_accordance_with_artic_066",
+        "source": "ent_the_excessive_deficit_si_060",
+        "target": "ent_in_accordance_with_artic_066",
+        "label": "was completed",
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "a1e857aa4fdeb260"
         ],
         "section_paths": [
           "enacting.article_1"
@@ -2134,13 +1869,13 @@
     }
   ],
   "summary": {
-    "n_nodes": 57,
-    "n_edges": 59,
+    "n_nodes": 42,
+    "n_edges": 57,
     "edge_label_counts": {
-      "redundancy": 13,
-      "granularity": 32,
-      "contradiction": 6,
-      "unlabeled": 8
+      "redundancy": 20,
+      "granularity": 31,
+      "contradiction": 1,
+      "unlabeled": 5
     }
   }
 }

@@ -60,7 +60,40 @@ def discover_all_doc_ids(facts_root: Path) -> list:
     return sorted(d for d, a in by_doc.items() if len(a) >= 2)
 
 
-def cluster_entities(facts_per_annotator: dict, *, merge_threshold: float = 0.78) -> dict:
+_DET_RE = re.compile(r"^(?:the|a|an|this|that|these|those|its|their)\s+", re.I)
+_DATE_TAIL_RE = re.compile(
+    r"\s*(?:of \d{1,2} \w+ \d{4}|in (?:19|20)\d{2}|on \d{1,2} \w+ \d{4}|\((?:19|20)\d{2}\))", re.I)
+_PREPS = {"of", "in", "on", "to", "for", "by", "with", "under", "at", "from",
+          "concerning", "regarding"}
+
+
+def normalize_entity(s: str, max_tokens: int = 6) -> str:
+    """Reduce a (possibly heavily modified) entity mention to its core noun
+    phrase for CLUSTERING purposes — poster-style nodes ("deficit", "Council
+    Recommendation") instead of fully decontextualized strings ("general
+    government deficit of the Netherlands in 2004").
+
+    The decontextualized surface stays on the fact and in the node's
+    surface_forms; only the merge key is normalized. This resolves the
+    tension between guideline §2/§3 (minimum-sufficient modifiers, needed
+    for fact self-containedness) and KG mergeability: modifiers make
+    entities unique strings that never cluster, fragmenting the graph.
+    """
+    t = _DATE_TAIL_RE.sub("", (s or "").strip())
+    t = _DET_RE.sub("", t)
+    toks = t.split()
+    if len(toks) > max_tokens:
+        for i in range(2, len(toks)):
+            if toks[i].lower() in _PREPS:
+                toks = toks[:i]
+                break
+        toks = toks[:max_tokens + 2]
+    t = " ".join(toks).strip(" ,;:.")
+    return t or (s or "").strip()
+
+
+def cluster_entities(facts_per_annotator: dict, *, merge_threshold: float = 0.78,
+                     core_entities: bool = False) -> dict:
     surface_forms: list[str] = []
     seen: set[str] = set()
     for facts in facts_per_annotator.values():
@@ -75,7 +108,8 @@ def cluster_entities(facts_per_annotator: dict, *, merge_threshold: float = 0.78
     if not surface_forms:
         return {}
 
-    sham = [{"natural_language": s} for s in surface_forms]
+    keys = [normalize_entity(s) for s in surface_forms] if core_entities else surface_forms
+    sham = [{"natural_language": k} for k in keys]
     [emb] = encode_facts_joint(sham)
     sims = emb @ emb.T
 
@@ -126,10 +160,19 @@ def _stub_layer2(prompt: str, **_kw) -> str:
 
 
 def run(doc_id, *, facts_root, parsed_root, out_root, align_threshold,
-        redundancy_cosine, merge_threshold, layer2_model, skip_layer2, layer2_url):
+        redundancy_cosine, merge_threshold, layer2_model, skip_layer2, layer2_url,
+        out_suffix: str = ""):
     facts_per_annotator = discover_annotators(facts_root, doc_id)
     if not facts_per_annotator:
         raise SystemExit(f"No annotators found under {facts_root} for doc {doc_id!r}")
+    if len(facts_per_annotator) < 2:
+        # A 1-annotator "comparison" has zero aligned pairs and would fabricate
+        # a perfect-convergence result (observed when one extraction cell of a
+        # pipeline run failed). Refuse instead of writing a misleading file.
+        raise SystemExit(
+            f"Only {len(facts_per_annotator)} annotator(s) for doc {doc_id!r} under "
+            f"{facts_root} — need >= 2 for a meaningful conflict analysis. "
+            f"(Did an extraction cell fail?)")
 
     print(f"[phase2] annotators: {list(facts_per_annotator.keys())}")
     print(f"[phase2] fact counts: { {a: len(f) for a,f in facts_per_annotator.items()} }")
@@ -152,12 +195,15 @@ def run(doc_id, *, facts_root, parsed_root, out_root, align_threshold,
         final = arbitrate_all(pairs, model_name=layer2_model, doc_title=title, base_url=layer2_url)
         print(f"[phase2] Layer-2 ({layer2_model}) counts: { {k:v for k,v in final.items() if not k.startswith('_')} }")
 
-    surface_to_cluster = cluster_entities(facts_per_annotator, merge_threshold=merge_threshold)
+    surface_to_cluster = cluster_entities(facts_per_annotator,
+                                          merge_threshold=merge_threshold,
+                                          core_entities=True)
     n_clusters = len(set(surface_to_cluster.values()))
     print(f"[phase2] entity clusters: {n_clusters} (from {len(surface_to_cluster)} surface forms)")
 
     out_root.mkdir(parents=True, exist_ok=True)
-    out_path = out_root / f"{doc_id}.json"
+    out_path = out_root / (f"{doc_id}__{out_suffix}.json"
+                           if out_suffix else f"{doc_id}.json")
     payload = {
         "doc_id": doc_id,
         "params": {
@@ -165,6 +211,9 @@ def run(doc_id, *, facts_root, parsed_root, out_root, align_threshold,
             "redundancy_cosine": redundancy_cosine,
             "merge_threshold": merge_threshold,
             "layer2_model": layer2_model if not skip_layer2 else "stub",
+            "core_entities": True,
+            "facts_root": str(facts_root),
+            "variant": out_suffix or None,
         },
         "annotators": list(facts_per_annotator.keys()),
         "facts_per_annotator": facts_per_annotator,

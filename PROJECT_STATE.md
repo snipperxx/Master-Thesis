@@ -1,6 +1,6 @@
 # Project State — Master's Thesis (Zilong Yan)
 
-**Last updated:** 2026-05-25
+**Last updated:** 2026-06-10 (pm)
 **Purpose of this file:** single-source handoff document so that any future
 conversation (with this AI or a different one) can pick up the project
 state without re-deriving context. Update it after every substantive
@@ -379,6 +379,99 @@ qwen3.5:4b (32) + gemma3-4b-sim (30) + phi4-mini-sim (27) → 107 aligned
 pairs → Layer-1 collapsed 35 trivial REDUNDANCYs → Layer-2 (stub)
 labelled 31 GRANULARITY + 5 CONTRADICTION → KG has 57 nodes / 59 edges
 at merge_threshold=0.78.
+
+### Poster-alignment + closed-loop build-out (2026-06-10)
+
+Gap-closing session against Manuel's poster/paper (doc/毕设题目.pdf) and the
+proposal. All additions are **append-only**: new modules + new JS files;
+existing code got only parameter-level edits (verified via git diff).
+
+**The critical fix — versioned experiment artifacts.** Until now a v2 re-run
+*overwrote* the v1 facts (`data/facts/<model>/<doc>.json`) and conflicts
+(`data/conflicts/<doc>.json`), and `distribution_shift` looked for
+`<doc>__v2_*.json` files that nothing ever wrote → "Compare v1↔v2" was dead.
+Now:
+
+- non-v1 Phase-1 output goes to `data/facts__<version>/<model>/<doc>.json`
+  (`reextract_worker.facts_root_for_version`); v1 baseline is never clobbered.
+- `run_phase2.run(..., out_suffix=<version>)` writes
+  `data/conflicts/<doc>__<version>.json`.
+- new Job kind **`pipeline`** (`enqueue_pipeline`) chains Phase-1 → Phase-2
+  in one job; `POST /api/run_pipeline` (UI: **Experiment** drawer tab).
+- `?variant=<version>` on `/api/{facts,graph,pairs,coverage,similarity_matrix,iaa}`
+  + top-bar version dropdown (via `ui/static/variant_shim.js` fetch wrapper —
+  app.js untouched) lets the three panes show any experiment version.
+- `GET /api/distribution_shift_agg?v2=<v>` aggregates the shift corpus-wide
+  (the thesis metric); per-doc endpoint unchanged.
+
+**Poster views (center pane is now tabbed: Graph | Multiples | Heatmap | Stats**,
+`ui/static/analysis.js`):
+
+- *Heatmap* — fact×fact cosine matrix per annotator pair, Hungarian matches
+  outlined in conflict colour, cell click → pair inspector → "review →"
+  cross-link. Backend `src/annotator_compare.similarity_matrix` +
+  `GET /api/similarity_matrix/<doc>?a=&b=`. Shows a ⚠ chip when the TF-IDF
+  fallback (no torch) produced the numbers.
+- *Stats* — fact-count histogram per annotator (poster Fig. 2 right),
+  per-section count table with spread highlighting, and an IAA table
+  (Jaccard |matched|/|union|, poster metric) from `GET /api/iaa/<doc>`.
+- *Multiples* — small-multiple per-annotator KGs with a SHARED layout
+  (headless concentric on the union graph → preset positions per panel,
+  non-owned entities ghosted) — poster Fig. 1. Node tap syncs selection
+  across panels and the main graph.
+
+**Conflict review queue (drawer tab "Review"**, `ui/static/workflow.js`,
+`src/review_store.py`): per-pair side-by-side inspection with rule-attribution
+checkboxes (rules parsed from the `### N.` headings inside the guideline's
+`<guideline>` block), note, agree/relabel/dismiss, auto-advance, pre-populated
+web-search verify link (proposal §Phase-3). Persists to
+`data/reviews/<doc>.json`; `GET /api/review_summary` tallies conflicts per
+rule across docs → rendered as the **evidence panel** in the Experiment tab
+("§6 implicated 12× — 9 granularity"), which is the empirical input for
+authoring v2.
+
+**Experiment tab** = the closed loop in one click: pick guideline → models →
+docs → Run; job chains P1→P2; on completion the v1↔vX comparison
+(corpus aggregate + current doc) opens automatically and the version
+dropdown gains the new variant. "Skip extraction" re-uses on-disk facts for
+fast Phase-2-only iterations (threshold tuning etc.).
+
+Tests: 39/39 passing (`tests/test_annotator_compare.py`,
+`tests/test_review_store.py` added). Full pipeline-job integration verified
+in-sandbox with skip_extract + stub Layer-2.
+
+**Sandbox cleanup caveat (2026-06-10):** the Linux sandbox cannot delete
+files on the Windows mount, so smoke-test artifacts remain — they make the
+new UI demoable but are SYNTHETIC (v2 facts = copy of v1):
+`data/facts__v2/`, `data/conflicts/train-000000__v2.json`,
+`data/graphs/train-000000__v2.json`, `data/reviews/train-000000.json`
+(one fake review aaa|bbb). Delete in PowerShell before real Phase-4 runs,
+and clear `__pycache__` once (run_phase2/reextract_worker/app changed):
+`Get-ChildItem -Recurse -Force -Filter __pycache__ | Remove-Item -Recurse -Force`
+
+### Live walkthrough session (2026-06-10, afternoon)
+
+Agent-driven in-browser test of the running app; 7 further fixes. Full
+issue→fix→rationale record in **`doc/ui_iteration_log.md`** (written for the
+thesis design chapter — keep updating it every session).
+
+Highlights: fixed `doc_subset`→`doc_ids` param mismatch (Extract-here would
+have launched Phase-1 on all 51 docs); per-fact edge labels now always
+resolved (top-bar counts were permanently zero); Ollama transient-500 retry
+in `extractor._post`; `run_phase2` refuses <2 annotators (a failed cell
+previously fabricated a zero-conflict v2 file); per-section progress
+(`job.progress.detail`); compare modal warns when v1/v2 annotator sets
+differ; Compare button survives reload.
+
+**First real closed-loop run** (v2 × qwen+gemma × train-000000, stub L2):
+qwen 25 facts / gemma 14 → 30 pairs vs v1's 106. ⚠ NOT a valid guideline
+effect — v1 baseline still contains 2 synthetic annotators (3-annotator set
+vs 2). **Before Phase-4: rebuild the v1 baseline with the same real model
+set.** Extraction nondeterminism ≈ ±1 pair across two identical v2 runs.
+
+Known operational quirks: Flask --debug reloader unreliable for src/ edits
+on this volume (restart manually after backend changes; JS/CSS always
+fresh); restarting drops the in-memory job queue (don't restart mid-run).
 
 ### Phase 3 — KG & VA Interface (16 Aug – 15 Oct)
 

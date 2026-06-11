@@ -1,0 +1,1084 @@
+{
+  "doc_id": "train-000000",
+  "params": {
+    "align_threshold": 0.78,
+    "redundancy_cosine": 0.95,
+    "merge_threshold": 0.78,
+    "layer2_model": "stub",
+    "facts_root": "C:\\Users\\Administrator\\Desktop\\Coding\\Python\\MasterThesis\\data\\facts__v2",
+    "variant": "v2"
+  },
+  "nodes": [
+    {
+      "data": {
+        "id": "ent_council_decision_2005_13_014",
+        "label": "Council Decision 2005/136/EC",
+        "surface_forms": [
+          "Council Decision 2005/136/EC",
+          "Council Decision 2005/729/EC",
+          "Council Regulation (EC) No 1467/97"
+        ],
+        "annotators": [
+          "gemma3:4b",
+          "qwen3.5:4b"
+        ],
+        "n_surface": 3,
+        "n_annotators": 2,
+        "conflict_label": "granularity"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_council_018",
+        "label": "Council",
+        "surface_forms": [
+          "Council",
+          "the Council"
+        ],
+        "annotators": [
+          "gemma3:4b",
+          "qwen3.5:4b"
+        ],
+        "n_surface": 2,
+        "n_annotators": 2,
+        "conflict_label": "granularity"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_recommendation_of_2_june_002",
+        "label": "Recommendation of 2 June 2004",
+        "surface_forms": [
+          "Recommendation of 2 June 2004"
+        ],
+        "annotators": [
+          "gemma3:4b"
+        ],
+        "n_surface": 1,
+        "n_annotators": 1,
+        "conflict_label": "granularity"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_deadline_of_2005_at_the_022",
+        "label": "deadline of 2005 at the latest",
+        "surface_forms": [
+          "a deadline of 2005 at the latest",
+          "deadline of 2005 at the latest"
+        ],
+        "annotators": [
+          "gemma3:4b",
+          "qwen3.5:4b"
+        ],
+        "n_surface": 2,
+        "n_annotators": 2,
+        "conflict_label": "unlabeled"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_european_system_of_integ_005",
+        "label": "European System of Integrated Economic Accounts",
+        "surface_forms": [
+          "European System of Integrated Economic Accounts"
+        ],
+        "annotators": [
+          "gemma3:4b"
+        ],
+        "n_surface": 1,
+        "n_annotators": 1,
+        "conflict_label": "granularity"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_protocol_on_the_excessiv_026",
+        "label": "Protocol on the excessive deficit procedure",
+        "surface_forms": [
+          "Protocol on the excessive deficit procedure",
+          "The data for the excessive deficit procedure",
+          "the Protocol on the excessive deficit procedure"
+        ],
+        "annotators": [
+          "gemma3:4b",
+          "qwen3.5:4b"
+        ],
+        "n_surface": 3,
+        "n_annotators": 2,
+        "conflict_label": "granularity"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_the_commission_027",
+        "label": "the Commission",
+        "surface_forms": [
+          "the Commission",
+          "the Commission services"
+        ],
+        "annotators": [
+          "gemma3:4b",
+          "qwen3.5:4b"
+        ],
+        "n_surface": 2,
+        "n_annotators": 2,
+        "conflict_label": "contradiction"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_a_further_fall_in_the_de_011",
+        "label": "a further fall in the deficit to 0,4 % of GDP in 2006",
+        "surface_forms": [
+          "a further decline in the general government deficit to 2,0 % of GDP in 2005",
+          "a further fall in the deficit to 0,4 % of GDP in 2006",
+          "the cyclically adjusted deficit to fall to 0,0 % of GDP in 2006",
+          "the cyclically adjusted deficit to further decrease in 2005 by another 0,8 % of GDP, to 0,4 % of GDP"
+        ],
+        "annotators": [
+          "gemma3:4b"
+        ],
+        "n_surface": 4,
+        "n_annotators": 1,
+        "conflict_label": "contradiction"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_the_government_debt_rati_012",
+        "label": "the government debt ratio",
+        "surface_forms": [
+          "the government debt ratio"
+        ],
+        "annotators": [
+          "gemma3:4b",
+          "qwen3.5:4b"
+        ],
+        "n_surface": 1,
+        "n_annotators": 2,
+        "conflict_label": "redundancy"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_0_4_of_gdp_045",
+        "label": "0,4 % of GDP",
+        "surface_forms": [
+          "0,0 % of GDP in 2006",
+          "0,4 % of GDP",
+          "1,2 % of GDP",
+          "1,6 % of GDP",
+          "2,0 % of GDP",
+          "2,0 % of GDP in 2003",
+          "2,3 % of GDP in 2004",
+          "3,2 % in 2003",
+          "the 60 % of GDP reference value in 2004",
+          "the reference value of 3 % of GDP by 2005 at the latest"
+        ],
+        "annotators": [
+          "gemma3:4b",
+          "qwen3.5:4b"
+        ],
+        "n_surface": 10,
+        "n_annotators": 2,
+        "conflict_label": "contradiction"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_article_104_7_of_the_tre_050",
+        "label": "Article 104(7) of the Treaty",
+        "surface_forms": [
+          "Article 104(7) of the Treaty",
+          "the Council Recommendation of 2 June 2004 under Article 104(7)",
+          "the Council recommendation issued under Article 104(7) of the Treaty",
+          "under the terms of Article 104(7) of the Treaty"
+        ],
+        "annotators": [
+          "gemma3:4b",
+          "qwen3.5:4b"
+        ],
+        "n_surface": 4,
+        "n_annotators": 2,
+        "conflict_label": "unlabeled"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_kingdom_of_the_netherlan_051",
+        "label": "Kingdom of the Netherlands",
+        "surface_forms": [
+          "Kingdom of the Netherlands",
+          "the Kingdom of the Netherlands"
+        ],
+        "annotators": [
+          "gemma3:4b",
+          "qwen3.5:4b"
+        ],
+        "n_surface": 2,
+        "n_annotators": 2,
+        "conflict_label": "redundancy"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_that_an_excessive_defici_047",
+        "label": "that an excessive deficit existed in the Netherlands",
+        "surface_forms": [
+          "that an excessive deficit existed in the Netherlands",
+          "the correction of the excessive deficit situation in the Netherlands"
+        ],
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "n_surface": 2,
+        "n_annotators": 1,
+        "conflict_label": "unlabeled"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_a_recommendation_020",
+        "label": "a Recommendation",
+        "surface_forms": [
+          "a Recommendation"
+        ],
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "n_surface": 1,
+        "n_annotators": 1,
+        "conflict_label": "granularity"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_this_recommendation_021",
+        "label": "This Recommendation",
+        "surface_forms": [
+          "This Recommendation"
+        ],
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "n_surface": 1,
+        "n_annotators": 1,
+        "conflict_label": "unlabeled"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_a_council_decision_on_th_023",
+        "label": "a Council Decision on the existence of an excessive deficit",
+        "surface_forms": [
+          "a Council Decision on the existence of an excessive deficit"
+        ],
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "n_surface": 1,
+        "n_annotators": 1,
+        "conflict_label": "unlabeled"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_the_definitions_of_gover_024",
+        "label": "The definitions of 'government' and 'deficit'",
+        "surface_forms": [
+          "The definitions of 'government' and 'deficit'"
+        ],
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "n_surface": 1,
+        "n_annotators": 1,
+        "conflict_label": "granularity"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_the_government_deficit_033",
+        "label": "the government deficit",
+        "surface_forms": [
+          "the general government deficit",
+          "the government deficit"
+        ],
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "n_surface": 2,
+        "n_annotators": 1,
+        "conflict_label": "contradiction"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_the_outcome_for_2004_031",
+        "label": "the outcome for 2004",
+        "surface_forms": [
+          "the outcome for 2004"
+        ],
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "n_surface": 1,
+        "n_annotators": 1,
+        "conflict_label": "unlabeled"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_fiscal_adjustment_035",
+        "label": "Fiscal adjustment",
+        "surface_forms": [
+          "Fiscal adjustment"
+        ],
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "n_surface": 1,
+        "n_annotators": 1,
+        "conflict_label": "unlabeled"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_in_the_form_of_substanti_036",
+        "label": "in the form of substantial savings measures",
+        "surface_forms": [
+          "in the form of substantial savings measures"
+        ],
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "n_surface": 1,
+        "n_annotators": 1,
+        "conflict_label": "unlabeled"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_the_additional_consolida_037",
+        "label": "the additional consolidation package",
+        "surface_forms": [
+          "the additional consolidation package"
+        ],
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "n_surface": 1,
+        "n_annotators": 1,
+        "conflict_label": "unlabeled"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_on_14_april_2004_038",
+        "label": "on 14 April 2004",
+        "surface_forms": [
+          "on 14 April 2004"
+        ],
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "n_surface": 1,
+        "n_annotators": 1,
+        "conflict_label": "unlabeled"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_the_cyclically_adjusted_041",
+        "label": "the cyclically adjusted deficit",
+        "surface_forms": [
+          "the cyclically adjusted deficit"
+        ],
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "n_surface": 1,
+        "n_annotators": 1,
+        "conflict_label": "contradiction"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_this_threshold_in_2005_a_046",
+        "label": "this threshold in 2005 and 2006",
+        "surface_forms": [
+          "this threshold in 2005 and 2006"
+        ],
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "n_surface": 1,
+        "n_annotators": 1,
+        "conflict_label": "unlabeled"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_in_2004_048",
+        "label": "in 2004",
+        "surface_forms": [
+          "in 2004"
+        ],
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "n_surface": 1,
+        "n_annotators": 1,
+        "conflict_label": "unlabeled"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_the_recommendation_addre_049",
+        "label": "the recommendation addressed to the Netherlands on 2 June 2004",
+        "surface_forms": [
+          "the recommendation addressed to the Netherlands on 2 June 2004"
+        ],
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "n_surface": 1,
+        "n_annotators": 1,
+        "conflict_label": "unlabeled"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "data": {
+        "id": "e_ent_council_decision_2005_13_014__abrogates__ent_council_decision_2005_13_014",
+        "source": "ent_council_decision_2005_13_014",
+        "target": "ent_council_decision_2005_13_014",
+        "label": "abrogates",
+        "annotators": [
+          "gemma3:4b",
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "7b186637c6131d09",
+          "9533a46350b53dc8",
+          "d187c7b56ae48c0f"
+        ],
+        "section_paths": [
+          "enacting.article_2",
+          "preamble.recitals[0]",
+          "preamble.recitals[5]"
+        ],
+        "conflict_label": "granularity",
+        "n_annotators": 2
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_council_018__made__ent_recommendation_of_2_june_002",
+        "source": "ent_council_018",
+        "target": "ent_recommendation_of_2_june_002",
+        "label": "made",
+        "annotators": [
+          "gemma3:4b"
+        ],
+        "fact_ids": [
+          "197eb2ceebb53468"
+        ],
+        "section_paths": [
+          "preamble.recitals[1]"
+        ],
+        "conflict_label": "granularity",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_council_decision_2005_13_014__established__ent_deadline_of_2005_at_the_022",
+        "source": "ent_council_decision_2005_13_014",
+        "target": "ent_deadline_of_2005_at_the_022",
+        "label": "established",
+        "annotators": [
+          "gemma3:4b"
+        ],
+        "fact_ids": [
+          "0cf160bc43234161"
+        ],
+        "section_paths": [
+          "preamble.recitals[1]"
+        ],
+        "conflict_label": "unlabeled",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_council_018__is_to_be_abrogated__ent_council_decision_2005_13_014",
+        "source": "ent_council_018",
+        "target": "ent_council_decision_2005_13_014",
+        "label": "is to be abrogated",
+        "annotators": [
+          "gemma3:4b"
+        ],
+        "fact_ids": [
+          "4f04e8b34736b064"
+        ],
+        "section_paths": [
+          "preamble.recitals[2]"
+        ],
+        "conflict_label": "unlabeled",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_european_system_of_integ_005__are_laid_down_in__ent_protocol_on_the_excessiv_026",
+        "source": "ent_european_system_of_integ_005",
+        "target": "ent_protocol_on_the_excessiv_026",
+        "label": "are laid down in",
+        "annotators": [
+          "gemma3:4b"
+        ],
+        "fact_ids": [
+          "e0c7fa70821e6e00"
+        ],
+        "section_paths": [
+          "preamble.recitals[3]"
+        ],
+        "conflict_label": "granularity",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_the_commission_027__project__ent_a_further_fall_in_the_de_011",
+        "source": "ent_the_commission_027",
+        "target": "ent_a_further_fall_in_the_de_011",
+        "label": "project",
+        "annotators": [
+          "gemma3:4b"
+        ],
+        "fact_ids": [
+          "1877c97a170f2439",
+          "1dac511feec422ef",
+          "476f9550ac48415c",
+          "53599d7b0cfcfc23"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "conflict_label": "contradiction",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_the_government_debt_rati_012__was_kept_below__ent_0_4_of_gdp_045",
+        "source": "ent_the_government_debt_rati_012",
+        "target": "ent_0_4_of_gdp_045",
+        "label": "was kept below",
+        "annotators": [
+          "gemma3:4b",
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "86e69ffef926c07d",
+          "b082f29f35dcf0ae"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "conflict_label": "redundancy",
+        "n_annotators": 2
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_council_decision_2005_13_014__is_abrogated__ent_council_decision_2005_13_014",
+        "source": "ent_council_decision_2005_13_014",
+        "target": "ent_council_decision_2005_13_014",
+        "label": "is abrogated",
+        "annotators": [
+          "gemma3:4b"
+        ],
+        "fact_ids": [
+          "8dd614638d48a5c1"
+        ],
+        "section_paths": [
+          "preamble.recitals[5]"
+        ],
+        "conflict_label": "granularity",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_article_104_7_of_the_tre_050__in_accordance_with__ent_article_104_7_of_the_tre_050",
+        "source": "ent_article_104_7_of_the_tre_050",
+        "target": "ent_article_104_7_of_the_tre_050",
+        "label": "in accordance with",
+        "annotators": [
+          "gemma3:4b"
+        ],
+        "fact_ids": [
+          "bb11d2c49249b8a1"
+        ],
+        "section_paths": [
+          "enacting.article_1"
+        ],
+        "conflict_label": "unlabeled",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_council_decision_2005_13_014__is_hereby_abrogated__ent_council_decision_2005_13_014",
+        "source": "ent_council_decision_2005_13_014",
+        "target": "ent_council_decision_2005_13_014",
+        "label": "is hereby abrogated",
+        "annotators": [
+          "gemma3:4b"
+        ],
+        "fact_ids": [
+          "b47972cccf17e944"
+        ],
+        "section_paths": [
+          "enacting.article_2"
+        ],
+        "conflict_label": "granularity",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_council_decision_2005_13_014__is_addressed_to__ent_kingdom_of_the_netherlan_051",
+        "source": "ent_council_decision_2005_13_014",
+        "target": "ent_kingdom_of_the_netherlan_051",
+        "label": "is addressed to",
+        "annotators": [
+          "gemma3:4b",
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "546ffdd0d6b1274d",
+          "85208ffc1a80a000"
+        ],
+        "section_paths": [
+          "enacting.article_3"
+        ],
+        "conflict_label": "redundancy",
+        "n_annotators": 2
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_council_018__decided__ent_that_an_excessive_defici_047",
+        "source": "ent_council_018",
+        "target": "ent_that_an_excessive_defici_047",
+        "label": "decided",
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "03b95596391985a0"
+        ],
+        "section_paths": [
+          "preamble.recitals[0]"
+        ],
+        "conflict_label": "unlabeled",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_council_018__made__ent_a_recommendation_020",
+        "source": "ent_council_018",
+        "target": "ent_a_recommendation_020",
+        "label": "made",
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "4c8843a6d9575d76"
+        ],
+        "section_paths": [
+          "preamble.recitals[1]"
+        ],
+        "conflict_label": "granularity",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_this_recommendation_021__established__ent_deadline_of_2005_at_the_022",
+        "source": "ent_this_recommendation_021",
+        "target": "ent_deadline_of_2005_at_the_022",
+        "label": "established",
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "093c4c93ea83fa6c"
+        ],
+        "section_paths": [
+          "preamble.recitals[1]"
+        ],
+        "conflict_label": "unlabeled",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_council_018__is_to_abrogate__ent_a_council_decision_on_th_023",
+        "source": "ent_council_018",
+        "target": "ent_a_council_decision_on_th_023",
+        "label": "is to abrogate",
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "13b11cfe9ddc3f2a"
+        ],
+        "section_paths": [
+          "preamble.recitals[2]"
+        ],
+        "conflict_label": "unlabeled",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_the_definitions_of_gover_024__are_laid_down__ent_protocol_on_the_excessiv_026",
+        "source": "ent_the_definitions_of_gover_024",
+        "target": "ent_protocol_on_the_excessiv_026",
+        "label": "are laid down",
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "af8035444f88e6bf"
+        ],
+        "section_paths": [
+          "preamble.recitals[3]"
+        ],
+        "conflict_label": "granularity",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_protocol_on_the_excessiv_026__are_provided__ent_the_commission_027",
+        "source": "ent_protocol_on_the_excessiv_026",
+        "target": "ent_the_commission_027",
+        "label": "are provided",
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "4a8545998f27ba8e"
+        ],
+        "section_paths": [
+          "preamble.recitals[3]"
+        ],
+        "conflict_label": "unlabeled",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_the_government_deficit_033__is_estimated_at__ent_0_4_of_gdp_045",
+        "source": "ent_the_government_deficit_033",
+        "target": "ent_0_4_of_gdp_045",
+        "label": "is estimated at",
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "5856143e153b7cd4"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "conflict_label": "unlabeled",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_the_government_deficit_033__was__ent_0_4_of_gdp_045",
+        "source": "ent_the_government_deficit_033",
+        "target": "ent_0_4_of_gdp_045",
+        "label": "was",
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "27eece1936dc3638"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "conflict_label": "unlabeled",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_the_outcome_for_2004_031__is_in_compliance_with__ent_article_104_7_of_the_tre_050",
+        "source": "ent_the_outcome_for_2004_031",
+        "target": "ent_article_104_7_of_the_tre_050",
+        "label": "is in compliance with",
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "703a7760628ee117"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "conflict_label": "unlabeled",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_the_government_deficit_033__was_to_be_reduced_below__ent_0_4_of_gdp_045",
+        "source": "ent_the_government_deficit_033",
+        "target": "ent_0_4_of_gdp_045",
+        "label": "was to be reduced below",
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "79a3b5ae8949b2dd"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "conflict_label": "unlabeled",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_fiscal_adjustment_035__was_pursued_in_2004__ent_in_the_form_of_substanti_036",
+        "source": "ent_fiscal_adjustment_035",
+        "target": "ent_in_the_form_of_substanti_036",
+        "label": "was pursued in 2004",
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "63437a1f3668bb3b"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "conflict_label": "unlabeled",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_the_additional_consolida_037__was_decided__ent_on_14_april_2004_038",
+        "source": "ent_the_additional_consolida_037",
+        "target": "ent_on_14_april_2004_038",
+        "label": "was decided",
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "ad69577cbac9e51b"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "conflict_label": "unlabeled",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_the_government_deficit_033__is_projected_to_decline___ent_0_4_of_gdp_045",
+        "source": "ent_the_government_deficit_033",
+        "target": "ent_0_4_of_gdp_045",
+        "label": "is projected to decline to",
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "6f10ed88df9eb5ba"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "conflict_label": "contradiction",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_the_government_deficit_033__is_projected_to_fall_to__ent_0_4_of_gdp_045",
+        "source": "ent_the_government_deficit_033",
+        "target": "ent_0_4_of_gdp_045",
+        "label": "is projected to fall to",
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "8ac4c3ee75643435"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "conflict_label": "unlabeled",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_the_cyclically_adjusted_041__fell_to__ent_0_4_of_gdp_045",
+        "source": "ent_the_cyclically_adjusted_041",
+        "target": "ent_0_4_of_gdp_045",
+        "label": "fell to",
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "4353ef6266c7d4e8"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "conflict_label": "unlabeled",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_the_cyclically_adjusted_041__was__ent_0_4_of_gdp_045",
+        "source": "ent_the_cyclically_adjusted_041",
+        "target": "ent_0_4_of_gdp_045",
+        "label": "was",
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "cf31204d8676cb99"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "conflict_label": "unlabeled",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_the_cyclically_adjusted_041__is_projected_to_decrease__ent_0_4_of_gdp_045",
+        "source": "ent_the_cyclically_adjusted_041",
+        "target": "ent_0_4_of_gdp_045",
+        "label": "is projected to decrease to",
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "50eeb3afa16883db"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "conflict_label": "contradiction",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_the_cyclically_adjusted_041__is_projected_to_fall_to__ent_0_4_of_gdp_045",
+        "source": "ent_the_cyclically_adjusted_041",
+        "target": "ent_0_4_of_gdp_045",
+        "label": "is projected to fall to",
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "a8508a238ca8bab7"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "conflict_label": "contradiction",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_the_government_debt_rati_012__is_projected_to_remain_b__ent_this_threshold_in_2005_a_046",
+        "source": "ent_the_government_debt_rati_012",
+        "target": "ent_this_threshold_in_2005_a_046",
+        "label": "is projected to remain below",
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "72f9c5e54940c1b0"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "conflict_label": "unlabeled",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_that_an_excessive_defici_047__was_completed__ent_in_2004_048",
+        "source": "ent_that_an_excessive_defici_047",
+        "target": "ent_in_2004_048",
+        "label": "was completed",
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "9de6e927727999ac"
+        ],
+        "section_paths": [
+          "enacting.article_1"
+        ],
+        "conflict_label": "unlabeled",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_the_recommendation_addre_049__was_followed__ent_article_104_7_of_the_tre_050",
+        "source": "ent_the_recommendation_addre_049",
+        "target": "ent_article_104_7_of_the_tre_050",
+        "label": "was followed",
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "f79af17ab271765e"
+        ],
+        "section_paths": [
+          "enacting.article_1"
+        ],
+        "conflict_label": "unlabeled",
+        "n_annotators": 1
+      }
+    }
+  ],
+  "summary": {
+    "n_nodes": 27,
+    "n_edges": 32,
+    "edge_label_counts": {
+      "granularity": 7,
+      "unlabeled": 19,
+      "contradiction": 4,
+      "redundancy": 2
+    }
+  }
+}

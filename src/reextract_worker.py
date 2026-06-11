@@ -216,6 +216,8 @@ def _worker_loop() -> None:
         try:
             if job.kind == "phase2":
                 _run_phase2(job)
+            elif job.kind == "pipeline":
+                _run_pipeline(job)
             else:
                 _run_reextract(job)
         except Exception as exc:                          # pragma: no cover
@@ -359,3 +361,145 @@ def to_dict(job: Job) -> dict:
         "started_at": job.started_at,
         "finished_at": job.finished_at,
     }
+
+
+# ---------------------------------------------------------------------------
+# Pipeline job execution (Phase-1 -> Phase-2 chained, version-aware)
+# ---------------------------------------------------------------------------
+
+
+def facts_root_for_version(guideline_version: str) -> Path:
+    """v1 stays at data/facts (baseline); any other version gets its own
+    sibling root so a v2 run never clobbers the v1 fact files."""
+    if guideline_version in ("", "v1"):
+        return FACTS_ROOT
+    return FACTS_ROOT.parent / f"facts__{guideline_version}"
+
+
+def _run_pipeline(job: Job, *, run_doc_fn: Callable | None = None,
+                  phase2_fn: Callable | None = None,
+                  base_url: str = "http://localhost:11434") -> None:
+    """Extract every (model x doc) cell under job.guideline_version, then run
+    Phase-2 per doc against the version-specific facts root. Conflicts land at
+    data/conflicts/<doc>__<version>.json (plain <doc>.json for v1), which is
+    exactly where /api/distribution_shift?v2=<version> looks."""
+    job.status = "running"
+    job.started_at = datetime.now(timezone.utc).isoformat()
+
+    if run_doc_fn is None:
+        from src.extractor import run_doc as run_doc_fn  # type: ignore
+    if phase2_fn is None:
+        from scripts.run_phase2 import run as phase2_fn  # type: ignore
+
+    version = job.guideline_version or "v1"
+    facts_root = facts_root_for_version(version)
+    doc_ids = [Path(p).stem for p in job.doc_paths]
+    job.progress["total"] = len(job.models) * len(job.doc_paths) + len(doc_ids)
+
+    # ---- Step 1: extraction matrix ----
+    skip_extract = bool(job.phase2_params.get("skip_extract"))
+    for model in job.models:
+        for parsed_path in job.doc_paths:
+            cell = {"step": "extract", "model": model,
+                    "doc_path": parsed_path, "status": "pending"}
+            if skip_extract:
+                cell.update({"status": "skipped"})
+                job.results.append(cell)
+                job.progress["done"] = len(job.results)
+                continue
+            try:
+                t0 = time.perf_counter()
+                doc_stem = Path(parsed_path).stem
+                def _cb(i, n, sec, _m=model, _d=doc_stem):
+                    job.progress["detail"] = f"{_m} × {_d} · section {i + 1}/{n} ({sec})"
+                out_path = run_doc_fn(
+                    model_name=model, parsed_path=parsed_path,
+                    guideline_version=version, out_root=facts_root,
+                    base_url=base_url, ensure_solo=True, unload_after=False,
+                    on_progress=_cb)
+                fc = 0
+                try:
+                    fc = int(json.loads(Path(out_path).read_text("utf-8")).get("fact_count", 0))
+                except Exception:
+                    pass
+                cell.update({"status": "ok", "fact_count": fc,
+                             "elapsed_s": round(time.perf_counter() - t0, 2),
+                             "out_path": str(out_path)})
+            except Exception as exc:
+                cell.update({"status": "error", "error": f"{type(exc).__name__}: {exc}"})
+                log.warning("Pipeline extract cell failed (%s x %s): %s",
+                            model, parsed_path, exc)
+            job.results.append(cell)
+            job.progress["done"] = len(job.results)
+
+    # ---- Step 2: Phase-2 per doc ----
+    job.progress["detail"] = "phase-2 (alignment + conflict detection)"
+    params = dict(job.phase2_params)
+    out_suffix = "" if version in ("", "v1") else version
+    for doc_id in doc_ids:
+        cell = {"step": "phase2", "doc_id": doc_id, "status": "pending"}
+        try:
+            t0 = time.perf_counter()
+            out_path = phase2_fn(
+                doc_id,
+                facts_root=facts_root,
+                parsed_root=PARSED_ROOT,
+                out_root=CONFLICTS_ROOT,
+                align_threshold=float(params.get("align_threshold", 0.78)),
+                redundancy_cosine=float(params.get("redundancy_cosine", 0.95)),
+                merge_threshold=float(params.get("merge_threshold", 0.78)),
+                layer2_model=params.get("layer2_model", "qwen3.5:4b"),
+                skip_layer2=bool(params.get("skip_layer2", True)),
+                layer2_url=params.get("layer2_url", "http://localhost:11434"),
+                out_suffix=out_suffix,
+            )
+            confl = json.loads(Path(out_path).read_text(encoding="utf-8"))
+            cell.update({"status": "ok",
+                         "elapsed_s": round(time.perf_counter() - t0, 2),
+                         "label_counts": confl.get("label_counts", {}),
+                         "out_path": str(out_path)})
+        except Exception as exc:
+            cell.update({"status": "error", "error": f"{type(exc).__name__}: {exc}"})
+            log.warning("Pipeline phase2 failed (%s): %s", doc_id, exc)
+        job.results.append(cell)
+        job.progress["done"] = len(job.results)
+
+    n_err = sum(1 for r in job.results if r["status"] == "error")
+    job.status = "done" if n_err == 0 else "failed"
+    if job.status == "failed" and job.error is None:
+        job.error = f"{n_err}/{len(job.results)} steps failed"
+    job.finished_at = datetime.now(timezone.utc).isoformat()
+
+
+def enqueue_pipeline(
+    guideline_version: str,
+    *,
+    models: Iterable[str],
+    doc_paths: Iterable[str],
+    phase2_params: dict | None = None,
+    label: str = "",
+) -> Job:
+    """Submit a chained Phase-1 -> Phase-2 experiment for one guideline version."""
+    guideline_path = PROMPTS_DIR / f"extract_{guideline_version}.md"
+    if not guideline_path.exists():
+        raise FileNotFoundError(
+            f"guideline {guideline_version!r} not found at {guideline_path}")
+    models = list(models)
+    doc_paths = list(doc_paths)
+    job_id = uuid.uuid4().hex[:12]
+    job = Job(
+        job_id=job_id,
+        kind="pipeline",
+        guideline_text=guideline_path.read_text(encoding="utf-8"),
+        guideline_version=guideline_version,
+        models=models,
+        doc_paths=doc_paths,
+        doc_ids=[Path(p).stem for p in doc_paths],
+        phase2_params=dict(phase2_params or {}),
+        label=label or (f"experiment {guideline_version} "
+                        f"({len(models)}m x {len(doc_paths)}d + phase2)"),
+    )
+    _JOBS[job_id] = job
+    _ensure_worker_started()
+    _QUEUE.put(job)
+    return job

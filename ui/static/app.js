@@ -29,7 +29,7 @@ const state = {
   conflict: "",
   search: "",
   merge: 0.78,
-  layout: "concentric",
+  layout: "fcose",
   selectedFactId: null,
   cy: null,
   textCache: { preamble: "", enacting: "" },
@@ -40,7 +40,7 @@ const state = {
   graph: null,
   jobs: new Map(),
   // Phase-6: visual encoding + KG layout knobs
-  colorMode: "fact",         // "fact" | "annotator" | "conflict" | "none"
+  colorMode: "annotator",    // "fact" | "annotator" | "conflict" | "none"
   edgeLength: 160,            // px — drives ideal-edge-length for fcose/cose
 };
 
@@ -71,21 +71,69 @@ function _findCI(hay, needle, pos = 0) {
   const i = lh.indexOf(ln, pos);
   return i >= 0 ? i : -1;
 }
+// Tokenize for fuzzy matching: words/numbers incl. "2,0" "0,5" "%" forms.
+function _spoTokens(s) {
+  return [...String(s || "").toLowerCase().matchAll(/\d+(?:[.,]\d+)?|%|[\p{L}]+/gu)];
+}
+// Fuzzy locate `needle` inside `hay`: best token window sharing >= 55% of the
+// needle's tokens. Decontextualized facts paraphrase the source ("the
+// Commission services" vs "Commission services'"), so exact substring search
+// alone misses most objects; token overlap recovers them.
+function _fuzzyFind(hay, needle) {
+  const nT = _spoTokens(needle).map(m => m[0]);
+  if (!nT.length) return null;
+  const hT = _spoTokens(hay);
+  if (!hT.length) return null;
+  const need = new Map();
+  for (const t of nT) need.set(t, (need.get(t) || 0) + 1);
+  let best = null;
+  const win = Math.min(nT.length + 2, hT.length);
+  for (let a = 0; a < hT.length; a++) {
+    if (!need.has(hT[a][0])) continue;          // window must start on a hit
+    const avail = new Map(need);
+    let hits = 0;
+    for (let b = a; b < Math.min(a + win, hT.length); b++) {
+      const t = hT[b][0];
+      if ((avail.get(t) || 0) > 0) { avail.set(t, avail.get(t) - 1); hits++; }
+      const overlap = hits / nT.length;
+      if (overlap >= 0.55 && (!best || overlap > best.overlap ||
+          (overlap === best.overlap && (b - a) < (best.span || 1e9)))) {
+        best = { overlap, span: b - a,
+                 start: hT[a].index, end: hT[b].index + t.length };
+      }
+    }
+  }
+  return best;
+}
 // Build [{start,end,role}] spans for S/P/O substrings inside a quote string.
-// Uses greedy left-to-right matching so S→P→O don't overlap. Roles that
-// can't be located fall back to a "fill" segment so the rest still paints.
+// Pass 1: exact case-insensitive, left-to-right (keeps natural S→P→O order).
+// Pass 2: fuzzy token-window for roles exact search missed.
+// Finally sort + clip overlaps so the DOM slicing stays consistent.
 function spoBands(quote, subject, predicate, object) {
   const out = [];
+  const missed = [];
   let pos = 0;
   for (const [role, text] of [["subject", subject], ["predicate", predicate], ["object", object]]) {
     const i = _findCI(quote, text || "", pos);
-    if (i < 0) continue;
+    if (i < 0) { missed.push([role, text]); continue; }
     out.push({ start: i, end: i + (text || "").length, role });
     pos = i + (text || "").length;
   }
-  // Sort by start to keep DOM order deterministic.
-  out.sort((a, b) => a.start - b.start);
-  return out;
+  for (const [role, text] of missed) {
+    const f = _fuzzyFind(quote, text || "");
+    if (f) out.push({ start: f.start, end: f.end, role, fuzzy: true });
+  }
+  out.sort((a, b) => a.start - b.start || a.end - b.end);
+  // Clip overlaps (fuzzy windows may intersect exact bands).
+  const clipped = [];
+  let cursor = 0;
+  for (const b of out) {
+    const start = Math.max(b.start, cursor);
+    if (start >= b.end) continue;
+    clipped.push({ ...b, start });
+    cursor = b.end;
+  }
+  return clipped;
 }
 
 const $ = (sel) => document.querySelector(sel);
@@ -160,6 +208,8 @@ async function boot() {
   });
 
   $("#compare-btn").addEventListener("click", openCompareModal);
+  $("#cy-hide-islands")?.addEventListener("change", refreshGraphHighlights);
+  $("#cy-core-entities")?.addEventListener("change", refreshGraph);
   $("#modal-close").addEventListener("click", closeAllModals);
   $("#compare-close").addEventListener("click", closeAllModals);
   $("#modal-overlay").addEventListener("click", (e) => { if (e.target.id === "modal-overlay") closeAllModals(); });
@@ -179,7 +229,7 @@ async function switchDoc(docId) {
   const [doc, factsResp, graph, coverage, pairs] = await Promise.all([
     fetch(`/api/doc/${docId}`).then(r => r.json()),
     fetch(`/api/facts/${docId}`).then(r => r.json()),
-    fetch(`/api/graph/${docId}?merge_threshold=${state.merge}`).then(r => r.json()),
+    fetch(`/api/graph/${docId}?merge_threshold=${state.merge}&core=${($("#cy-core-entities")?.checked ?? true) ? 1 : 0}`).then(r => r.json()),
     fetch(`/api/coverage/${docId}`).then(r => r.json()).catch(() => ({})),
     fetch(`/api/pairs/${docId}`).then(r => r.json()).catch(() => []),
   ]);
@@ -484,6 +534,10 @@ function renderGraph(graph) {
 
   const nodeCount = graph.nodes.length;
   const layoutOpts = _buildLayoutOpts(state.layout, nodeCount);
+  // On crowded graphs, clause-like leaf nodes (degree 1, usually a whole
+  // object phrase) keep their label OFF — hubs carry the structure; leaves
+  // are read via hover/selection. Small graphs label everything.
+  const labelLeaves = nodeCount <= 25;
 
   state.cy = cytoscape({
     container: document.getElementById("cy"),
@@ -495,7 +549,10 @@ function renderGraph(graph) {
     style: [
       { selector: "node", style: {
           "background-color": "#e2e8f0",
-          "label": "data(label)",
+          "label": (ele) => (labelLeaves || ele.degree(false) >= 2 ||
+                             ele.hasClass("selected") || ele.hasClass("spo-subj") ||
+                             ele.hasClass("spo-obj") || ele.hasClass("mm-sel"))
+                            ? truncate(ele.data("label") || "", 24) : "",
           "font-size": 13,
           "font-weight": 500,
           "text-wrap": "wrap",
@@ -534,6 +591,7 @@ function renderGraph(graph) {
       { selector: "edge[conflict_label = 'redundancy']",    style: { "line-color": "#1976d2", "target-arrow-color": "#1976d2", "width": 3 }},
       { selector: "edge.selected", style: { "line-color": "#eab308", "target-arrow-color": "#eab308", "width": 5 }},
       { selector: "edge.dimmed", style: { "opacity": 0.2 }},
+      { selector: ".cy-hidden", style: { "display": "none" }},
       // Phase-6 tri-color S/P/O: subject node = blue, object node = red,
       // predicate edge = green. Stronger borders so they read over conflict colors.
       { selector: "node.spo-subj", style: { "background-color": "#dbeafe", "border-color": "#2563eb", "border-width": 6 }},
@@ -544,6 +602,38 @@ function renderGraph(graph) {
 
   state.cy.on("tap", "edge", (evt) => openPairModal(evt.target));
   state.cy.on("tap", "node", (evt) => filterByEntity(evt.target.id()));
+  // Hover readout: node labels are truncated to 24 chars, so surface the
+  // full entity label + membership in the legend strip under the canvas.
+  state.cy.on("mouseover", "node", (evt) => {
+    const d = evt.target.data();
+    const el = document.getElementById("cy-hover-info");
+    if (el) el.textContent =
+      `${d.label} · ${(d.surface_forms || []).length} surface · ${(d.annotators || []).length} annot`;
+  });
+  state.cy.on("mouseover", "edge", (evt) => {
+    const d = evt.target.data();
+    const el = document.getElementById("cy-hover-info");
+    if (el) el.textContent =
+      `[${d.conflict_label || "unlabeled"}] ${d.label} · ${(d.annotators || []).join(" + ")}`;
+  });
+  state.cy.on("mouseout", "node, edge", () => {
+    const el = document.getElementById("cy-hover-info");
+    if (el) el.textContent = "";
+  });
+  // Focus mode: double-tap a node → only its 1-hop neighborhood stays; the
+  // analyst inspects one entity's disagreements without the rest of the hairball.
+  // Double-tap empty background → restore the filtered view.
+  state.cy.on("dbltap", "node", (evt) => {
+    const hood = evt.target.closedNeighborhood();
+    state.cy.batch(() => {
+      state.cy.elements().addClass("cy-hidden");
+      hood.removeClass("cy-hidden");
+    });
+    state.cy.fit(hood, 60);
+  });
+  state.cy.on("dbltap", (evt) => {
+    if (evt.target === state.cy) { refreshGraphHighlights(); state.cy.fit(undefined, 50); }
+  });
   // Expose for the splitter resize observer (Phase-5c).
   window.__cyInstance = state.cy;
   // Fit the graph nicely into the viewport on first render.
@@ -553,21 +643,41 @@ function renderGraph(graph) {
 
 async function refreshGraph() {
   if (!state.doc) return;
-  const url = `/api/graph/${state.doc}?merge_threshold=${state.merge}`;
+  const url = `/api/graph/${state.doc}?merge_threshold=${state.merge}` +
+    `&core=${($("#cy-core-entities")?.checked ?? true) ? 1 : 0}`;
   const graph = await fetch(url).then(r => r.json());
   state.graph = graph;
   renderGraph(graph);
 }
 
 function refreshGraphHighlights() {
+  // Annotator chips and the conflict filter now drive the KG too: edges that
+  // don't match are HIDDEN (not dimmed) and nodes with no visible edge follow.
+  // Dimming kept the clutter; hiding is what makes a 60-node KG readable.
   if (!state.cy) return;
-  // Dim edges whose conflict label doesn't match the current filter.
-  state.cy.elements().removeClass("dimmed");
-  if (state.conflict) {
+  const annotSel = state.annotators;
+  const allOn = annotSel.size >= state.allAnnotators.length;
+  state.cy.batch(() => {
+    state.cy.elements().removeClass("dimmed cy-hidden");
     state.cy.edges().forEach(e => {
-      if (e.data("conflict_label") !== state.conflict) e.addClass("dimmed");
+      const eAnn = e.data("annotators") || [];
+      const annotHit = allOn || eAnn.some(a => annotSel.has(a));
+      const conflictHit = !state.conflict || e.data("conflict_label") === state.conflict;
+      if (!annotHit || !conflictHit) e.addClass("cy-hidden");
     });
-  }
+    state.cy.nodes().forEach(n => {
+      if (!n.connectedEdges().some(e => !e.hasClass("cy-hidden"))) n.addClass("cy-hidden");
+    });
+    // "Hide leaf islands": drop connected components with <=2 visible nodes
+    // (single-fact fragments). They dominate clause-object KGs and bury the
+    // hub structure the analyst actually reads.
+    if ($("#cy-hide-islands")?.checked) {
+      const visible = state.cy.elements().not(".cy-hidden");
+      for (const comp of visible.components()) {
+        if (comp.nodes().length <= 2) comp.addClass("cy-hidden");
+      }
+    }
+  });
 }
 
 function filterByEntity(clusterId) {
@@ -796,7 +906,11 @@ function _paintSpoInMark(m, fact) {
     if (b.start < cursor) continue; // overlap — skip to keep sequence sane.
     if (b.start > cursor) m.appendChild(document.createTextNode(full.slice(cursor, b.start)));
     const span = document.createElement("span");
-    span.className = `spo-${b.role}`;
+    // Fuzzy-located bands get a dashed underline: the S/P/O text is NOT a
+    // verbatim substring here (decontextualized or mis-copied by the model),
+    // so the band marks the closest supporting region, not an exact quote.
+    span.className = `spo-${b.role}` + (b.fuzzy ? " spo-fuzzy" : "");
+    span.title = b.fuzzy ? `approximate match for ${b.role}` : "";
     span.textContent = full.slice(b.start, b.end);
     m.appendChild(span);
     cursor = b.end;
@@ -1608,10 +1722,18 @@ async function runPhase2() {
     const cyEl = document.getElementById("cy");
     if (cyEl && window.ResizeObserver) {
       let fitTimer = null;
-      const ro = new ResizeObserver(() => {
+      let lastW = 0, lastH = 0;
+      const ro = new ResizeObserver((entries) => {
         const cy = window.__cyInstance;
         if (!cy) return;
+        const r = entries[entries.length - 1].contentRect;
+        const dW = Math.abs(r.width - lastW), dH = Math.abs(r.height - lastH);
+        lastW = r.width; lastH = r.height;
         cy.resize();
+        // Only re-fit on substantial changes (splitter drags / pane toggles).
+        // Small reflows (a sibling label wrapping) used to yank the camera
+        // back to the global view on every hover — see iteration log 2.18.
+        if (dW < 30 && dH < 30) return;
         clearTimeout(fitTimer);
         fitTimer = setTimeout(() => cy && cy.fit(undefined, 50), 120);
       });
@@ -2038,12 +2160,42 @@ async function runPhase2() {
       docTitle?.parentNode?.insertBefore(leg, docTitle.nextSibling);
     }
     leg.innerHTML = "";
+    leg.title = "click: show/hide this annotator everywhere · double-click: solo";
     for (const a of cache.annotators) {
       const c = colorFor(a);
       const span = document.createElement("span");
       span.className = "leg";
+      span.dataset.annot = a;
       span.innerHTML = `<span class="sw" style="background:${c}"></span>${a}`;
+      // Proxy to the top-bar chips (owned by the main IIFE) via DOM clicks so
+      // text pane, facts table AND the KG all follow one filter state.
+      span.addEventListener("click", () => { _toggleTopbarChip(a); setTimeout(_syncLegendStates, 0); });
+      span.addEventListener("dblclick", (e) => {
+        e.preventDefault(); _soloAnnotator(a); setTimeout(_syncLegendStates, 0);
+      });
       leg.appendChild(span);
+    }
+    if (!window.__legSyncWired) {
+      window.__legSyncWired = true;
+      $("#annotator-chips")?.addEventListener("click", () => setTimeout(_syncLegendStates, 0));
+    }
+    _syncLegendStates();
+  }
+
+  function _topbarChips() { return [...$$("#annotator-chips .chip")]; }
+  function _toggleTopbarChip(annot) {
+    _topbarChips().find(x => x.textContent === annot)?.click();
+  }
+  function _soloAnnotator(annot) {
+    for (const c of _topbarChips()) {
+      const want = c.textContent === annot;
+      if (c.classList.contains("on") !== want) c.click();
+    }
+  }
+  function _syncLegendStates() {
+    const on = new Set(_topbarChips().filter(c => c.classList.contains("on")).map(c => c.textContent));
+    for (const sp of $$("#annotator-legend .leg")) {
+      sp.classList.toggle("off", !on.has(sp.dataset.annot));
     }
   }
 
@@ -2163,7 +2315,7 @@ async function runPhase2() {
     try {
       const r = await fetch("/api/run_phase2", {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ doc_subset: [docId], skip_layer2: true }),
+        body: JSON.stringify({ doc_ids: [docId], skip_layer2: true }),
       });
       if (!r.ok) { alert("Build KG failed: HTTP " + r.status); return; }
     } catch (e) {
@@ -2183,7 +2335,7 @@ async function runPhase2() {
     try {
       const r = await fetch("/api/run_phase1", {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ models: ["qwen3.5:4b"], doc_subset: [docId] }),
+        body: JSON.stringify({ models: ["qwen3.5:4b"], doc_ids: [docId] }),
       });
       if (!r.ok) { alert("Extract failed: HTTP " + r.status); return; }
     } catch (e) {

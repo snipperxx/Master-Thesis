@@ -21,6 +21,9 @@
         <select id="doc-select"></select>
         <button id="upload-btn" title="Upload arbitrary text">+ Text</button>
         <button id="delete-doc-btn" title="Delete this doc and every per-doc artifact" class="danger">Delete</button>
+        <select id="variant-select" title="Which Phase-2 result to view: baseline v1 or an experiment guideline version">
+          <option value="">v1 (baseline)</option>
+        </select>
       </label>
       <label>Annotators <span id="annotator-chips"></span></label>
       <label>Conflict
@@ -38,9 +41,9 @@
       </label>
       <label>Layout
         <select id="layout-select">
-          <option value="concentric" selected>concentric</option>
+          <option value="concentric">concentric</option>
           <option value="cose">cose</option>
-          <option value="fcose">fcose (FMMM)</option>
+          <option value="fcose" selected>fcose (FMMM)</option>
           <option value="dagre">dagre (Sugiyama)</option>
           <option value="breadthfirst">breadthfirst</option>
           <option value="grid">grid</option>
@@ -48,8 +51,8 @@
       </label>
       <label class="color-mode-label">Color by
         <select id="color-mode-select">
-          <option value="fact" selected>fact</option>
-          <option value="annotator">annotator</option>
+          <option value="fact">fact</option>
+          <option value="annotator" selected>annotator</option>
           <option value="conflict">conflict</option>
           <option value="none">none</option>
         </select>
@@ -71,6 +74,8 @@
         <span class="pane-tools">
           <button class="tool-btn" id="text-font-dec" title="Decrease font size">A−</button>
           <button class="tool-btn" id="text-font-inc" title="Increase font size">A+</button>
+          <button class="tool-btn pane-max" data-pane="text" title="Maximize / restore this pane">⛶</button>
+          <button class="tool-btn pane-hide" data-pane="text" title="Collapse this pane">—</button>
         </span>
       </h2>
       <div id="doc-title"></div>
@@ -92,11 +97,18 @@
 
     <section id="pane-graph" class="pane" data-pane-key="graph">
       <h2>
-        Knowledge graph
+        <span id="center-tabs">
+          <button class="ctab active" data-view="graph">Graph</button>
+          <button class="ctab" data-view="multiples" title="Small-multiple KGs, one per annotator (shared layout)">Multiples</button>
+          <button class="ctab" data-view="heatmap" title="Fact-by-fact semantic similarity heatmap for an annotator pair">Heatmap</button>
+          <button class="ctab" data-view="stats" title="Fact-count histogram + inter-annotator agreement">Stats</button>
+        </span>
         <span class="pane-tools">
           <button class="tool-btn" id="cy-rebuild-btn" title="Rebuild the KG for this doc (Phase-2)">Build KG</button>
           <button class="tool-btn" id="cy-fit-btn" title="Fit graph to view">Fit</button>
           <button class="tool-btn" id="cy-settings-btn" title="Adjust node / label size">⚙ Settings</button>
+          <button class="tool-btn pane-max" data-pane="graph" title="Maximize / restore this pane">⛶</button>
+          <button class="tool-btn pane-hide" data-pane="graph" title="Collapse this pane">—</button>
         </span>
       </h2>
       <div id="graph-settings" class="hidden">
@@ -110,17 +122,25 @@
           <span id="cy-edge-width-v">3</span></label>
         <label>Edge length <input type="range" id="cy-edge-length" min="40" max="400" step="10" value="160">
           <span id="cy-edge-length-v">160</span></label>
+        <label><input type="checkbox" id="cy-core-entities" checked
+          title="Cluster and merge entities by their core noun phrase (strip dates/determiners/long modifier tails). Full decontextualized forms stay in the node's surface list."> Core entities</label>
+        <label><input type="checkbox" id="cy-hide-islands" checked
+          title="Hide connected components with ≤2 nodes (single-fact fragments)"> Hide leaf islands</label>
         <label><input type="checkbox" id="cy-show-edge-labels" checked> Show edge labels</label>
         <label><input type="checkbox" id="cy-show-node-labels" checked> Show node labels</label>
         <button id="cy-settings-reset" class="tool-btn">Reset</button>
       </div>
       <div id="cy"></div>
+      <div id="cy-multiples" class="hidden"></div>
+      <div id="heatmap-wrap" class="hidden"></div>
+      <div id="stats-wrap" class="hidden"></div>
       <div id="cy-legend">
+        <span id="cy-hover-info"></span>
         <span class="dot redundancy"></span> redundancy
         <span class="dot granularity"></span> granularity
         <span class="dot contradiction"></span> contradiction
         <span class="dot unlabeled"></span> unlabeled
-        <span class="hint">↑↓ navigate · J/K cycle facts · Esc close modal</span>
+        <span class="hint">J/K cycle facts · double-click node = focus · double-click background = reset</span>
       </div>
     </section>
 
@@ -139,6 +159,8 @@
             </select>
           </label>
           <button class="tool-btn" id="facts-extract-btn" title="Run Phase-1 extraction for this doc">Extract here</button>
+          <button class="tool-btn pane-max" data-pane="facts" title="Maximize / restore this pane">⛶</button>
+          <button class="tool-btn pane-hide" data-pane="facts" title="Collapse this pane">—</button>
         </span>
       </h2>
       <div id="facts-controls">
@@ -223,6 +245,8 @@
   <footer id="bottombar">
     <nav id="drawer-tabs">
       <button class="tab active" data-tab="background-runs">Background runs</button>
+      <button class="tab" data-tab="experiment">Experiment</button>
+      <button class="tab" data-tab="review">Review</button>
       <button class="tab" data-tab="guideline-edit">Guideline editor</button>
       <button class="tab" data-tab="guideline-manager">Guidelines</button>
       <button class="tab" data-tab="run-matrix">Run matrix</button>
@@ -256,6 +280,60 @@
           </div>
           <p class="ollama-hint">Runs over every doc with &ge; 2 annotators on disk.</p>
         </fieldset>
+      </div>
+    </div>
+
+    <div class="tab-pane" data-tab="experiment">
+      <div class="exp-grid">
+        <fieldset id="exp-form">
+          <legend>Closed-loop experiment — Phase-1 → Phase-2 → compare, one click</legend>
+          <label>Guideline <select id="exp-guideline"></select>
+            <button id="exp-edit-guideline" class="tool-btn" title="Open this version in the guideline editor">edit…</button>
+          </label>
+          <label>Models <input type="text" id="exp-models" value="qwen3.5:4b,gemma3:4b,phi4-mini" size="34"></label>
+          <label>Docs <input type="text" id="exp-docs" placeholder="blank = every doc that has a baseline Phase-2 result" size="42"></label>
+          <label><input type="checkbox" id="exp-skip-extract"> Skip extraction (re-use facts already on disk for this version)</label>
+          <label><input type="checkbox" id="exp-skip-layer2" checked> Stub Layer-2 (uncheck for real Qwen arbitration)</label>
+          <label>Align thr <input type="number" id="exp-align" value="0.78" step="0.01" min="0" max="1" style="width:62px"></label>
+          <div class="row">
+            <button id="exp-run">Run experiment</button>
+            <button id="exp-compare" disabled>Compare vs v1</button>
+            <span id="exp-status"></span>
+          </div>
+          <p class="hint">Non-v1 runs write to <code>data/facts__&lt;version&gt;/</code> and
+            <code>data/conflicts/&lt;doc&gt;__&lt;version&gt;.json</code> — the v1 baseline is never
+            overwritten. When the job finishes, the v1↔vX comparison opens automatically;
+            use the version dropdown in the top bar to inspect the vX graph and facts.</p>
+        </fieldset>
+        <fieldset id="exp-evidence">
+          <legend>Guideline evidence — which rules cause conflicts (from your reviews)</legend>
+          <div id="evidence-body"><p class="hint">No reviews yet. Use the <b>Review</b> tab to attribute
+            conflicts to guideline rules; the tally appears here to guide the v2 revision.</p></div>
+          <div class="row"><button id="evidence-refresh" class="tool-btn">Refresh</button></div>
+        </fieldset>
+      </div>
+    </div>
+
+    <div class="tab-pane" data-tab="review">
+      <div id="review-root">
+        <div id="review-list-col">
+          <div id="review-controls">
+            <select id="review-label-filter" title="Filter by conflict label">
+              <option value="">all labels</option>
+              <option value="contradiction">contradiction</option>
+              <option value="granularity">granularity</option>
+              <option value="redundancy">redundancy</option>
+              <option value="orphan">orphans (unmatched)</option>
+            </select>
+            <label><input type="checkbox" id="review-unreviewed-only" checked> unreviewed only</label>
+            <span id="review-progress"></span>
+          </div>
+          <div id="review-list"></div>
+        </div>
+        <div id="review-detail">
+          <p class="hint">Pick a pair on the left. Attribute the disagreement to the guideline rule(s)
+          that under-specify it — the tally feeds the Experiment tab's evidence panel for writing v2.</p>
+        </div>
       </div>
     </div>
 
@@ -296,6 +374,9 @@
     </div>
   </footer>
 
+  <script src="/static/variant_shim.js"></script>
   <script src="/static/app.js"></script>
+  <script src="/static/analysis.js"></script>
+  <script src="/static/workflow.js"></script>
 </body>
 </html>

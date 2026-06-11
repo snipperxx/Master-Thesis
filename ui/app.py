@@ -52,6 +52,13 @@ log = logging.getLogger("ui")
 app = Flask(__name__,
             template_folder=str(REPO_ROOT / "ui" / "templates"),
             static_folder=str(REPO_ROOT / "ui" / "static"))
+# Dev ergonomics on this machine: the Jinja template cache missed on-disk
+# changes (mount mtime semantics + non-debug runs), serving stale HTML while
+# static JS was already fresh. Force per-request template mtime checks and
+# disable static-file caching regardless of --debug.
+app.config["TEMPLATES_AUTO_RELOAD"] = True
+app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 0
+app.jinja_env.auto_reload = True
 
 
 @app.errorhandler(Exception)
@@ -92,6 +99,35 @@ def _docs_with_conflicts() -> set[str]:
     return {p.stem for p in CONFLICTS.glob("*.json") if "__" not in p.stem}
 
 
+def _variant_arg() -> str:
+    """?variant=<guideline_version> selects data/conflicts/<doc>__<v>.json.
+
+    Empty / "v1" / "base" mean the baseline file. Validation mirrors
+    _GUIDELINE_VERSION_RE (defined below; resolved at request time)."""
+    v = (request.args.get("variant") or "").strip()
+    if v in ("", "v1", "base"):
+        return ""
+    if not _GUIDELINE_VERSION_RE.match(v):
+        abort(400, "invalid variant")
+    return v
+
+
+def _conflicts_path(doc_id: str) -> Path:
+    v = _variant_arg()
+    return CONFLICTS / (f"{doc_id}__{v}.json" if v else f"{doc_id}.json")
+
+
+def _graph_cache_path(doc_id: str) -> Path:
+    v = _variant_arg()
+    return GRAPHS / (f"{doc_id}__{v}.json" if v else f"{doc_id}.json")
+
+
+def _doc_variants(doc_id: str) -> list[str]:
+    if not CONFLICTS.exists():
+        return []
+    return sorted(p.stem.split("__", 1)[1] for p in CONFLICTS.glob(f"{doc_id}__*.json"))
+
+
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -112,6 +148,7 @@ def api_docs():
             "has_conflicts": doc_id in with_confl,
             "is_user_doc": doc_id.startswith("user-"),
         }
+        entry["variants"] = _doc_variants(doc_id)
         if entry["has_conflicts"]:
             try:
                 confl = _load_json(CONFLICTS / f"{doc_id}.json")
@@ -145,11 +182,17 @@ def api_doc(doc_id: str):
             for fp in [CONFLICTS / f"{doc_id}.json", *CONFLICTS.glob(f"{doc_id}__*.json")]:
                 if fp.exists():
                     fp.unlink(); removed.append(str(fp.relative_to(REPO_ROOT)))
-        # graphs + verifications
-        for root in (GRAPHS, VERIFICATIONS):
-            fp = root / f"{doc_id}.json"
-            if fp.exists():
-                fp.unlink(); removed.append(str(fp.relative_to(REPO_ROOT)))
+        # graphs (incl. variants) + verifications + reviews + versioned facts roots
+        for root in (GRAPHS, VERIFICATIONS, DATA / "reviews"):
+            for fp in [root / f"{doc_id}.json", *root.glob(f"{doc_id}__*.json")] if root.exists() else []:
+                if fp.exists():
+                    fp.unlink(); removed.append(str(fp.relative_to(REPO_ROOT)))
+        for froot in DATA.glob("facts__*"):
+            for sub in froot.iterdir():
+                if sub.is_dir():
+                    fp = sub / f"{doc_id}.json"
+                    if fp.exists():
+                        fp.unlink(); removed.append(str(fp.relative_to(REPO_ROOT)))
         if not removed:
             abort(404, f"doc {doc_id!r} has no files on disk")
         return jsonify({"ok": True, "doc_id": doc_id,
@@ -171,16 +214,18 @@ def api_doc(doc_id: str):
 
 @app.route("/api/facts/<doc_id>")
 def api_facts(doc_id: str):
-    path = CONFLICTS / f"{doc_id}.json"
+    path = _conflicts_path(doc_id)
     if not path.exists():
         return _facts_from_disk_only(doc_id)
     confl = _load_json(path)
     annotators = request.args.getlist("annotator")
     conflict = request.args.get("conflict")
 
+    # Always resolve per-fact edge labels (not only when filtering) so the
+    # top-bar label counts and the facts-table Conflict column are truthful.
     edge_label_by_fact: dict[str, str] = {}
-    if conflict:
-        gp = GRAPHS / f"{doc_id}.json"
+    if True:
+        gp = _graph_cache_path(doc_id)
         if gp.exists():
             for edge in _load_json(gp).get("edges", []):
                 label = edge["data"]["conflict_label"]
@@ -232,36 +277,44 @@ def _facts_from_disk_only(doc_id: str):
 
 @app.route("/api/pairs/<doc_id>")
 def api_pairs(doc_id: str):
-    path = CONFLICTS / f"{doc_id}.json"
+    path = _conflicts_path(doc_id)
     return jsonify(_load_json(path)["aligned_pairs"]) if path.exists() else jsonify([])
 
 
 @app.route("/api/graph/<doc_id>")
 def api_graph(doc_id: str):
-    cpath = CONFLICTS / f"{doc_id}.json"
+    cpath = _conflicts_path(doc_id)
     if not cpath.exists():
         return jsonify({"doc_id": doc_id, "nodes": [], "edges": [],
                         "summary": {"n_nodes": 0, "n_edges": 0, "edge_label_counts": {}}})
     confl = _load_json(cpath)
-    cached_threshold = confl.get("params", {}).get("merge_threshold")
-    threshold_param = request.args.get("merge_threshold")
-    gpath = GRAPHS / f"{doc_id}.json"
+    params = confl.get("params", {})
+    want_thr = float(request.args.get("merge_threshold",
+                                      params.get("merge_threshold", 0.78)))
+    core_flag = request.args.get("core", "1") != "0"
+    gpath = _graph_cache_path(doc_id)
 
-    if threshold_param is not None and float(threshold_param) != float(cached_threshold or -1):
-        from scripts.run_phase2 import cluster_entities
-        from src.kg_build import build_graph
-        new_threshold = float(threshold_param)
-        new_clusters = cluster_entities(confl["facts_per_annotator"], merge_threshold=new_threshold)
-        cfb = dict(confl)
-        cfb["entity_clusters"] = new_clusters
-        cfb["params"] = dict(confl.get("params", {}))
-        cfb["params"]["merge_threshold"] = new_threshold
-        return jsonify(build_graph(cfb))
-
+    # Serve the cache only when BOTH knobs match what it was built with.
     if gpath.exists():
-        return jsonify(_load_json(gpath))
+        g = _load_json(gpath)
+        gp = g.get("params", {})
+        try:
+            if (abs(float(gp.get("merge_threshold", -1)) - want_thr) < 1e-9
+                    and bool(gp.get("core_entities", False)) == core_flag):
+                return jsonify(g)
+        except (TypeError, ValueError):
+            pass
+
+    from scripts.run_phase2 import cluster_entities
     from src.kg_build import build_graph
-    graph = build_graph(confl)
+    cfb = dict(confl)
+    cfb["entity_clusters"] = cluster_entities(
+        confl["facts_per_annotator"], merge_threshold=want_thr,
+        core_entities=core_flag)
+    cfb["params"] = dict(params)
+    cfb["params"]["merge_threshold"] = want_thr
+    cfb["params"]["core_entities"] = core_flag
+    graph = build_graph(cfb)
     gpath.parent.mkdir(parents=True, exist_ok=True)
     gpath.write_text(json.dumps(graph, ensure_ascii=False, indent=2), encoding="utf-8")
     return jsonify(graph)
@@ -286,7 +339,7 @@ def api_verify(doc_id: str, fact_id: str):
 
 @app.route("/api/coverage/<doc_id>")
 def api_coverage(doc_id: str):
-    cpath, ppath = CONFLICTS / f"{doc_id}.json", PARSED / f"{doc_id}.json"
+    cpath, ppath = _conflicts_path(doc_id), PARSED / f"{doc_id}.json"
     if not cpath.exists() or not ppath.exists():
         return jsonify({})
     from src.coverage import compute_coverage
@@ -312,7 +365,7 @@ def api_distribution_shift(doc_id: str):
             f"No Phase-2 output for '{v1_label}' on this doc yet — "
             f"run Phase-2 first (Background runs tab)."))
     if v2_label is None:
-        cands = sorted(CONFLICTS.glob(f"{doc_id}__v2_*.json"))
+        cands = sorted(CONFLICTS.glob(f"{doc_id}__*.json"), key=lambda p: p.stat().st_mtime)
         if not cands:
             return jsonify(_empty(
                 "No v2 conflicts file found yet — "
@@ -324,7 +377,17 @@ def api_distribution_shift(doc_id: str):
         if not p2.exists():
             return jsonify(_empty(f"conflicts for '{v2_label}' not found on disk"))
     try:
-        return jsonify(compare_conflict_files(p1, p2, v1_label=v1_label, v2_label=v2_label))
+        out = compare_conflict_files(p1, p2, v1_label=v1_label, v2_label=v2_label)
+        # Annotator sets of both sides: when they differ, pair counts are not
+        # comparable (fewer annotator pairs => mechanically fewer aligned
+        # pairs) and the UI must say so before anyone reads the deltas.
+        try:
+            out["v1_annotators"] = sorted(_load_json(p1).get("annotators", []))
+            out["v2_annotators"] = sorted(_load_json(p2).get("annotators", []))
+            out["annotators_match"] = out["v1_annotators"] == out["v2_annotators"]
+        except Exception:
+            pass
+        return jsonify(out)
     except Exception as exc:
         log.exception("distribution_shift failed for %s", doc_id)
         return jsonify(_empty(f"comparison failed: {type(exc).__name__}: {exc}"))
@@ -631,6 +694,216 @@ def api_job_cancel(job_id: str):
     if not rw.cancel(job_id):
         abort(400, "job not cancellable (already running or not found)")
     return jsonify({"ok": True, "job_id": job_id})
+
+
+# ===================== analysis & review & experiment ============================
+
+
+def _facts_per_annotator_from_disk(doc_id: str) -> dict[str, list[dict]]:
+    out: dict[str, list[dict]] = {}
+    if not FACTS.exists():
+        return out
+    for sub in sorted(FACTS.iterdir()):
+        if not sub.is_dir():
+            continue
+        fp = sub / f"{doc_id}.json"
+        if not fp.exists():
+            continue
+        try:
+            doc = _load_json(fp)
+        except Exception:
+            continue
+        out[doc.get("annotator") or sub.name] = doc.get("facts", [])
+    return out
+
+
+@app.route("/api/similarity_matrix/<doc_id>")
+def api_similarity_matrix(doc_id: str):
+    """Poster Fig. 2 (left): full cosine matrix between two annotators.
+
+    Prefers the persisted Phase-2 conflicts file (so matched cells agree
+    with the pipeline); falls back to raw fact files + on-the-fly Hungarian.
+    """
+    from src.annotator_compare import similarity_matrix
+    cpath = _conflicts_path(doc_id)
+    aligned_pairs = None
+    if cpath.exists():
+        confl = _load_json(cpath)
+        fpa = confl.get("facts_per_annotator", {})
+        aligned_pairs = confl.get("aligned_pairs", [])
+    else:
+        fpa = _facts_per_annotator_from_disk(doc_id)
+    annotators = sorted(fpa.keys())
+    if len(annotators) < 2:
+        return jsonify({"doc_id": doc_id, "annotators": annotators,
+                        "note": "need at least 2 annotators with facts on disk"})
+    a = request.args.get("a") or annotators[0]
+    b = request.args.get("b") or next(x for x in annotators if x != a)
+    if a not in fpa or b not in fpa:
+        abort(404, f"annotator not found; available: {annotators}")
+    threshold = float(request.args.get("threshold", 0.78))
+    out = similarity_matrix(fpa[a], fpa[b], annotator_a=a, annotator_b=b,
+                            threshold=threshold, aligned_pairs=aligned_pairs)
+    out["doc_id"] = doc_id
+    out["annotators"] = annotators
+    return jsonify(out)
+
+
+@app.route("/api/iaa/<doc_id>")
+def api_iaa(doc_id: str):
+    """Poster-style IAA summary per annotator pair (from the conflicts file)."""
+    from src.annotator_compare import iaa_summary
+    cpath = _conflicts_path(doc_id)
+    if not cpath.exists():
+        return jsonify({"doc_id": doc_id, "annotators": [], "pairs": [],
+                        "note": "no Phase-2 output for this doc yet"})
+    out = iaa_summary(_load_json(cpath))
+    out["doc_id"] = doc_id
+    return jsonify(out)
+
+
+# ---------------------- conflict review queue ----------------------
+
+REVIEWS = DATA / "reviews"
+
+
+@app.route("/api/guideline_rules")
+def api_guideline_rules():
+    from src.review_store import parse_guideline_rules
+    version = request.args.get("version", "v1")
+    if not _GUIDELINE_VERSION_RE.match(version):
+        abort(400, "invalid version")
+    return jsonify({"version": version,
+                    "rules": parse_guideline_rules(version, PROMPTS)})
+
+
+@app.route("/api/review/<doc_id>", methods=["GET", "POST"])
+def api_review(doc_id: str):
+    from src.review_store import load_reviews, save_review
+    if request.method == "GET":
+        return jsonify({"doc_id": doc_id, "reviews": load_reviews(REVIEWS, doc_id)})
+    payload = request.get_json(silent=True) or {}
+    pair_key = (payload.get("pair_key") or "").strip()
+    if not pair_key:
+        abort(400, "pair_key is required")
+    try:
+        out = save_review(REVIEWS, doc_id, pair_key, payload)
+    except ValueError as exc:
+        abort(400, str(exc))
+    return jsonify({"ok": True, "doc_id": doc_id, **out})
+
+
+@app.route("/api/review_summary")
+def api_review_summary():
+    from src.review_store import summarize_reviews
+    version = request.args.get("version", "v1")
+    if not _GUIDELINE_VERSION_RE.match(version):
+        abort(400, "invalid version")
+    return jsonify(summarize_reviews(REVIEWS, prompts_dir=PROMPTS,
+                                     guideline_version=version))
+
+
+# ---------------------- one-click experiment pipeline ----------------------
+
+
+@app.route("/api/run_pipeline", methods=["POST"])
+def api_run_pipeline():
+    """Closed loop in one job: Phase-1 (versioned facts root) -> Phase-2
+    (versioned conflicts file). Defaults to the docs that already have a
+    baseline Phase-2 result so v1 vs v2 stays apples-to-apples."""
+    from scripts.run_phase2 import discover_all_doc_ids
+    payload = request.get_json(silent=True) or {}
+    version = payload.get("guideline_version") or "v1"
+    if not _GUIDELINE_VERSION_RE.match(version):
+        abort(400, "invalid guideline_version")
+    models = payload.get("models") or ["qwen3.5:4b"]
+    doc_ids = payload.get("doc_ids")
+    if not doc_ids:
+        doc_ids = sorted(_docs_with_conflicts()) or discover_all_doc_ids(FACTS)
+    doc_paths = [str(PARSED / f"{d}.json")
+                 for d in doc_ids if (PARSED / f"{d}.json").exists()]
+    if not doc_paths:
+        abort(400, "no parsed docs for the requested doc_ids")
+    phase2_params = {
+        "skip_layer2": bool(payload.get("skip_layer2", True)),
+        "align_threshold": float(payload.get("align_threshold", 0.78)),
+        "redundancy_cosine": float(payload.get("redundancy_cosine", 0.95)),
+        "merge_threshold": float(payload.get("merge_threshold", 0.78)),
+        "layer2_model": payload.get("layer2_model", "qwen3.5:4b"),
+        "layer2_url": payload.get("layer2_url", "http://localhost:11434"),
+        "skip_extract": bool(payload.get("skip_extract", False)),
+    }
+    from src import reextract_worker as rw
+    try:
+        job = rw.enqueue_pipeline(
+            version, models=models, doc_paths=doc_paths,
+            phase2_params=phase2_params,
+            label=f"experiment {version} ({len(models)}m × {len(doc_paths)}d → phase2)")
+    except FileNotFoundError as exc:
+        abort(400, str(exc))
+    return jsonify(rw.to_dict(job)), 202
+
+
+@app.route("/api/distribution_shift_agg")
+def api_distribution_shift_agg():
+    """Corpus-level v1 vs v2 distribution shift: sums label counts and
+    Layer-1 rates over every doc that has BOTH conflicts files."""
+    from src.distribution_shift import CONFLICT_LABELS
+    v2 = request.args.get("v2")
+    if not v2 or not _GUIDELINE_VERSION_RE.match(v2):
+        abort(400, "?v2=<version> is required")
+    totals = {"v1": {l: 0 for l in CONFLICT_LABELS},
+              "v2": {l: 0 for l in CONFLICT_LABELS}}
+    layer = {"v1": {"matched": 0, "layer2_calls": 0},
+             "v2": {"matched": 0, "layer2_calls": 0}}
+    ann_sets = {"v1": set(), "v2": set()}
+    docs = []
+    for p1 in sorted(CONFLICTS.glob("*.json")):
+        if "__" in p1.stem:
+            continue
+        p2 = CONFLICTS / f"{p1.stem}__{v2}.json"
+        if not p2.exists():
+            continue
+        try:
+            d1, d2 = _load_json(p1), _load_json(p2)
+        except Exception:
+            continue
+        docs.append(p1.stem)
+        ann_sets["v1"].update(d1.get("annotators", []))
+        ann_sets["v2"].update(d2.get("annotators", []))
+        for key, d in (("v1", d1), ("v2", d2)):
+            for l in CONFLICT_LABELS:
+                totals[key][l] += int(d.get("label_counts", {}).get(l, 0))
+            layer[key]["matched"] += sum(
+                1 for pr in d.get("aligned_pairs", []) if pr.get("status") == "matched")
+            layer[key]["layer2_calls"] += int(d.get("layer2_calls", 0))
+    labels = list(CONFLICT_LABELS)
+    v1_counts = [totals["v1"][l] for l in labels]
+    v2_counts = [totals["v2"][l] for l in labels]
+    def _rate(side):
+        m = layer[side]["matched"]
+        return round(1 - layer[side]["layer2_calls"] / m, 3) if m else None
+    out = {
+        "v1_label": "v1", "v2_label": v2, "docs": docs, "n_docs": len(docs),
+        "labels": labels, "v1": v1_counts, "v2": v2_counts,
+        "delta": [b - a for a, b in zip(v1_counts, v2_counts)],
+        "delta_pct": [round((b - a) / a * 100, 1) if a else None
+                      for a, b in zip(v1_counts, v2_counts)],
+        "totals": {
+            "v1": sum(v1_counts), "v2": sum(v2_counts),
+            "delta": sum(v2_counts) - sum(v1_counts),
+            "delta_pct": round((sum(v2_counts) - sum(v1_counts)) / sum(v1_counts) * 100, 1)
+                         if sum(v1_counts) else None,
+        },
+        "layer1_rate": {"v1": _rate("v1"), "v2": _rate("v2")},
+        "v1_annotators": sorted(ann_sets["v1"]),
+        "v2_annotators": sorted(ann_sets["v2"]),
+        "annotators_match": ann_sets["v1"] == ann_sets["v2"],
+    }
+    if not docs:
+        out["note"] = (f"no doc has both a baseline and a '{v2}' conflicts file yet — "
+                       f"run the experiment pipeline first")
+    return jsonify(out)
 
 
 def main() -> None:
