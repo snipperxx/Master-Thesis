@@ -1,14 +1,14 @@
 {
   "doc_id": "train-000004",
   "annotator": "qwen3.5:4b",
-  "guideline_version": "v1",
-  "fact_count": 14,
+  "guideline_version": "v2",
+  "fact_count": 17,
   "facts": [
     {
       "fact_id": "9984543d4f245620",
       "doc_id": "train-000004",
       "annotator": "qwen3.5:4b",
-      "guideline_version": "v1",
+      "guideline_version": "v2",
       "subject": "Article 18 of Regulation (EC) No 2038/1999",
       "predicate": "provides that",
       "object": "the difference between quotations or prices on the world market for the products listed in Article 1(1)(a) of that Regulation and prices for those products within the Community may be covered by an export refund",
@@ -30,11 +30,11 @@
       "fact_id": "21d4a965f1021941",
       "doc_id": "train-000004",
       "annotator": "qwen3.5:4b",
-      "guideline_version": "v1",
+      "guideline_version": "v2",
       "subject": "Regulation (EC) No 2038/1999",
       "predicate": "provides that",
       "object": "when refunds on white and raw sugar, undenatured and exported in its unaltered state, are being fixed account must be taken of the situation on the Community and world markets in sugar and in particular of the price and cost factors set out in Article 19 of that Regulation",
-      "natural_language": "Regulation (EC) No 2038/1999 requires that when fixing refunds for undenatured white and raw sugar exported in its unaltered state, account must be taken of the situation on Community and world sugar markets, particularly price and cost factors from Article 19.",
+      "natural_language": "Regulation (EC) No 2038/1999 stipulates that when fixing refunds for undenatured white and raw sugar exported in its unaltered state, account must be taken of the situation on Community and world sugar markets, specifically price and cost factors from Article 19.",
       "source_locator": {
         "source_type": "prose",
         "section_path": "preamble.recitals[1]",
@@ -49,10 +49,32 @@
       }
     },
     {
+      "fact_id": "46ab7c20210e76ba",
+      "doc_id": "train-000004",
+      "annotator": "qwen3.5:4b",
+      "guideline_version": "v2",
+      "subject": "Article 19 of Regulation (EC) No 2038/1999",
+      "predicate": "provides that",
+      "object": "the economic aspect of the proposed exports should also be taken into account",
+      "natural_language": "Article 19 of Regulation (EC) No 2038/1999 stipulates that the economic aspect of proposed exports should also be taken into account.",
+      "source_locator": {
+        "source_type": "prose",
+        "section_path": "preamble.recitals[1]",
+        "char_start": 1137,
+        "char_end": 1253,
+        "quote": "whereas the same Article provides that the economic aspect of the proposed exports should also be taken into account"
+      },
+      "conflict_label": "unlabeled",
+      "extra": {
+        "anchor_score": 100.0,
+        "model_quote": "whereas the same Article provides that the economic aspect of the proposed exports should also be taken into account"
+      }
+    },
+    {
       "fact_id": "7475fb7b95f5a03b",
       "doc_id": "train-000004",
       "annotator": "qwen3.5:4b",
-      "guideline_version": "v1",
+      "guideline_version": "v2",
       "subject": "the refund on raw sugar",
       "predicate": "must be fixed in respect of",
       "object": "the standard quality",
@@ -74,7 +96,7 @@
       "fact_id": "135b255f8efaee43",
       "doc_id": "train-000004",
       "annotator": "qwen3.5:4b",
-      "guideline_version": "v1",
+      "guideline_version": "v2",
       "subject": "the standard quality",
       "predicate": "is defined in",
       "object": "Article 1 of Council Regulation (EC) No 431/68 of 9 April 1968",
@@ -82,25 +104,25 @@
       "source_locator": {
         "source_type": "prose",
         "section_path": "preamble.recitals[2]",
-        "char_start": 1358,
+        "char_start": 1311,
         "char_end": 1420,
-        "quote": "Article 1 of Council Regulation (EC) No 431/68 of 9 April 1968"
+        "quote": "the standard quality; the latter is defined in Article 1 of Council Regulation (EC) No 431/68 of 9 April 1968"
       },
       "conflict_label": "unlabeled",
       "extra": {
         "anchor_score": 100.0,
-        "model_quote": "Article 1 of Council Regulation (EC) No 431/68 of 9 April 1968"
+        "model_quote": "the standard quality; the latter is defined in Article 1 of Council Regulation (EC) No 431/68 of 9 April 1968"
       }
     },
     {
       "fact_id": "963c4e5778b87d1d",
       "doc_id": "train-000004",
       "annotator": "qwen3.5:4b",
-      "guideline_version": "v1",
+      "guideline_version": "v2",
       "subject": "Council Regulation (EC) No 431/68 of 9 April 1968",
       "predicate": "determines",
-      "object": "the standard quality for raw sugar and fixing the Community frontier crossing point for calculating cif prices for sugar",
-      "natural_language": "Council Regulation (EC) No 431/68 of 9 April 1968 determines the standard quality for raw sugar and fixing the Community frontier crossing point for calculating cif prices for sugar.",
+      "object": "the standard quality for raw sugar and fixes the Community frontier crossing point for calculating cif prices for sugar",
+      "natural_language": "Council Regulation (EC) No 431/68 of 9 April 1968 determines the standard quality for raw sugar and fixes the Community frontier crossing point for calculating cif prices for sugar.",
       "source_locator": {
         "source_type": "prose",
         "section_path": "preamble.recitals[2]",
@@ -118,7 +140,7 @@
       "fact_id": "7c536f100ed6251c",
       "doc_id": "train-000004",
       "annotator": "qwen3.5:4b",
-      "guideline_version": "v1",
+      "guideline_version": "v2",
       "subject": "Council Regulation (EC) No 431/68 of 9 April 1968",
       "predicate": "is amended by",
       "object": "Regulation (EC) No 3290/94",
@@ -140,7 +162,7 @@
       "fact_id": "27b77db89570d258",
       "doc_id": "train-000004",
       "annotator": "qwen3.5:4b",
-      "guideline_version": "v1",
+      "guideline_version": "v2",
       "subject": "the refund",
       "predicate": "should be fixed in accordance with",
       "object": "Article 19(4) of Regulation (EC) No 2038/1999",
@@ -148,21 +170,21 @@
       "source_locator": {
         "source_type": "prose",
         "section_path": "preamble.recitals[2]",
-        "char_start": 1616,
+        "char_start": 1603,
         "char_end": 1708,
-        "quote": "this refund should be fixed in accordance with Article 19(4) of Regulation (EC) No 2038/1999"
+        "quote": "furthermore, this refund should be fixed in accordance with Article 19(4) of Regulation (EC) No 2038/1999"
       },
       "conflict_label": "unlabeled",
       "extra": {
         "anchor_score": 100.0,
-        "model_quote": "this refund should be fixed in accordance with Article 19(4) of Regulation (EC) No 2038/1999"
+        "model_quote": "furthermore, this refund should be fixed in accordance with Article 19(4) of Regulation (EC) No 2038/1999"
       }
     },
     {
       "fact_id": "f46aa0818baa6c69",
       "doc_id": "train-000004",
       "annotator": "qwen3.5:4b",
-      "guideline_version": "v1",
+      "guideline_version": "v2",
       "subject": "candy sugar",
       "predicate": "is defined in",
       "object": "Commission Regulation (EC) No 2135/95 of 7 September 1995",
@@ -170,21 +192,21 @@
       "source_locator": {
         "source_type": "prose",
         "section_path": "preamble.recitals[2]",
-        "char_start": 1736,
+        "char_start": 1710,
         "char_end": 1793,
-        "quote": "Commission Regulation (EC) No 2135/95 of 7 September 1995"
+        "quote": "candy sugar is defined in Commission Regulation (EC) No 2135/95 of 7 September 1995"
       },
       "conflict_label": "unlabeled",
       "extra": {
         "anchor_score": 100.0,
-        "model_quote": "Commission Regulation (EC) No 2135/95 of 7 September 1995"
+        "model_quote": "candy sugar is defined in Commission Regulation (EC) No 2135/95 of 7 September 1995"
       }
     },
     {
       "fact_id": "aae0287b0ed81369",
       "doc_id": "train-000004",
       "annotator": "qwen3.5:4b",
-      "guideline_version": "v1",
+      "guideline_version": "v2",
       "subject": "Commission Regulation (EC) No 2135/95 of 7 September 1995",
       "predicate": "lays down",
       "object": "detailed rules of application for the grant of export refunds in the sugar sector",
@@ -206,7 +228,7 @@
       "fact_id": "c19f5e296392bfef",
       "doc_id": "train-000004",
       "annotator": "qwen3.5:4b",
-      "guideline_version": "v1",
+      "guideline_version": "v2",
       "subject": "the refund thus calculated for sugar containing added flavouring or colouring matter",
       "predicate": "must apply to",
       "object": "their sucrose content",
@@ -228,7 +250,7 @@
       "fact_id": "2c88f35535990771",
       "doc_id": "train-000004",
       "annotator": "qwen3.5:4b",
-      "guideline_version": "v1",
+      "guideline_version": "v2",
       "subject": "the refund thus calculated for sugar containing added flavouring or colouring matter",
       "predicate": "must be fixed per",
       "object": "1 % of the said content",
@@ -247,14 +269,58 @@
       }
     },
     {
+      "fact_id": "da6d9445de67279e",
+      "doc_id": "train-000004",
+      "annotator": "qwen3.5:4b",
+      "guideline_version": "v2",
+      "subject": "the export refund",
+      "predicate": "must be fixed",
+      "object": "every two weeks",
+      "natural_language": "The export refund must be fixed every two weeks.",
+      "source_locator": {
+        "source_type": "prose",
+        "section_path": "preamble.recitals[5]",
+        "char_start": 2317,
+        "char_end": 2357,
+        "quote": "The refund must be fixed every two weeks"
+      },
+      "conflict_label": "unlabeled",
+      "extra": {
+        "anchor_score": 100.0,
+        "model_quote": "The refund must be fixed every two weeks"
+      }
+    },
+    {
+      "fact_id": "97c44409fa9c100f",
+      "doc_id": "train-000004",
+      "annotator": "qwen3.5:4b",
+      "guideline_version": "v2",
+      "subject": "the export refund",
+      "predicate": "may be altered",
+      "object": "in the intervening period",
+      "natural_language": "The export refund may be altered in the intervening period.",
+      "source_locator": {
+        "source_type": "prose",
+        "section_path": "preamble.recitals[5]",
+        "char_start": 2367,
+        "char_end": 2410,
+        "quote": "it may be altered in the intervening period"
+      },
+      "conflict_label": "unlabeled",
+      "extra": {
+        "anchor_score": 100.0,
+        "model_quote": "it may be altered in the intervening period"
+      }
+    },
+    {
       "fact_id": "2dc4cd92169af646",
       "doc_id": "train-000004",
       "annotator": "qwen3.5:4b",
-      "guideline_version": "v1",
-      "subject": "export refunds on the products listed in Article 1(1)(a) of Regulation (EC) No 2038/1999, undenatured and exported in the natural state",
-      "predicate": "are hereby fixed to",
-      "object": "the amounts shown in the Annex hereto",
-      "natural_language": "The export refunds on the products listed in Article 1(1)(a) of Regulation (EC) No 2038/1999, undenatured and exported in the natural state, are hereby fixed to the amounts shown in the Annex hereto.",
+      "guideline_version": "v2",
+      "subject": "Commission Regulation (EC) No 1156/2001",
+      "predicate": "fixes",
+      "object": "the export refunds on the products listed in Article 1(1)(a) of Regulation (EC) No 2038/1999, undenatured and exported in the natural state",
+      "natural_language": "The Commission fixes the export refunds for undenatured white and raw sugar exported in their natural state to the amounts listed in the Annex.",
       "source_locator": {
         "source_type": "prose",
         "section_path": "enacting.article_1",
@@ -272,11 +338,11 @@
       "fact_id": "197f888876188273",
       "doc_id": "train-000004",
       "annotator": "qwen3.5:4b",
-      "guideline_version": "v1",
-      "subject": "This Regulation",
-      "predicate": "shall enter into force on",
+      "guideline_version": "v2",
+      "subject": "Commission Regulation (EC) No 1156/2001",
+      "predicate": "enters into force on",
       "object": "14 June 2001",
-      "natural_language": "This Regulation shall enter into force on 14 June 2001.",
+      "natural_language": "Commission Regulation (EC) No 1156/2001 enters into force on 14 June 2001.",
       "source_locator": {
         "source_type": "prose",
         "section_path": "enacting.article_2",
@@ -294,11 +360,11 @@
       "fact_id": "e84546b6f2c48a37",
       "doc_id": "train-000004",
       "annotator": "qwen3.5:4b",
-      "guideline_version": "v1",
-      "subject": "This Regulation",
-      "predicate": "shall be binding in its entirety and directly applicable in",
+      "guideline_version": "v2",
+      "subject": "Commission Regulation (EC) No 1156/2001",
+      "predicate": "is binding in its entirety and directly applicable in",
       "object": "all Member States",
-      "natural_language": "This Regulation shall be binding in its entirety and directly applicable in all Member States.",
+      "natural_language": "Commission Regulation (EC) No 1156/2001 is binding in its entirety and directly applicable in all Member States.",
       "source_locator": {
         "source_type": "prose",
         "section_path": "enacting.article_2",

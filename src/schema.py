@@ -88,6 +88,11 @@ class AtomicFact(BaseModel):
     predicate: str
     object: str
 
+    # Statement-level qualifiers (Property-Graph style), emitted by the annotator.
+    # condition = logical precondition (if/when/under); temporal_context = ordering/deadline.
+    condition: str = ""
+    temporal_context: str = ""
+
     # Free-text restatement (optional but recommended for LLM consumption
     # downstream, e.g. by the Layer-2 arbitrator).
     natural_language: Optional[str] = None

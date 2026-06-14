@@ -20,3 +20,5 @@ data/hf_cache
 # OS
 .DS_Store
 Thumbs.db
+.env
+data/neo4j/

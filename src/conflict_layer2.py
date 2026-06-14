@@ -24,6 +24,7 @@ network call only happens inside `arbitrate()`. Unit tests can stub
 """
 
 from __future__ import annotations
+import os
 
 import json
 import logging
@@ -42,7 +43,7 @@ logger = logging.getLogger(__name__)
 # silently mis-label.
 _VALID_LABELS = {"CONTRADICTION", "GRANULARITY", "REDUNDANCY", "NO_CONFLICT"}
 
-_DEFAULT_OLLAMA_URL = "http://localhost:11434"
+_DEFAULT_OLLAMA_URL = os.environ.get("OLLAMA_URL", "http://localhost:11434")
 _DEFAULT_MODEL = "qwen3.5:4b"
 
 
@@ -115,6 +116,31 @@ def _parse_response(raw: str) -> tuple[str | None, str | None]:
 # ---------------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------------
+
+
+def arbitrate_once(*, doc_title: str = "", source_quote: str = "",
+                   fact_a: str = "", fact_b: str = "",
+                   model_name: str = _DEFAULT_MODEL,
+                   base_url: str = _DEFAULT_OLLAMA_URL,
+                   template: str | None = None, version: str = "v1") -> dict:
+    """One-shot arbitration for the conflict-prompt debug UI.
+
+    Lenient on purpose: returns whatever `label` the model emits (no
+    `_VALID_LABELS` gate), so you can prototype NEW conflict types just by
+    editing the prompt. Returns {label, reason, raw}."""
+    tmpl = template if (template and template.strip()) else load_arbitrate_template(version)
+    prompt = _render_prompt(tmpl, doc_title=doc_title, source_quote=source_quote,
+                            fact_a=fact_a, fact_b=fact_b)
+    raw = _chat_once(prompt, model_name=model_name, base_url=base_url)
+    label, reason = None, None
+    try:
+        obj = json.loads(raw)
+        if isinstance(obj, dict):
+            label = obj.get("label")
+            reason = obj.get("reason")
+    except json.JSONDecodeError:
+        pass
+    return {"label": label, "reason": reason, "raw": raw}
 
 
 def arbitrate(

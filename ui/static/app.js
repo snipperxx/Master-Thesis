@@ -210,6 +210,7 @@ async function boot() {
   $("#compare-btn").addEventListener("click", openCompareModal);
   $("#cy-hide-islands")?.addEventListener("change", refreshGraphHighlights);
   $("#cy-core-entities")?.addEventListener("change", refreshGraph);
+  $("#cy-reify")?.addEventListener("change", refreshGraph);
   $("#modal-close").addEventListener("click", closeAllModals);
   $("#compare-close").addEventListener("click", closeAllModals);
   $("#modal-overlay").addEventListener("click", (e) => { if (e.target.id === "modal-overlay") closeAllModals(); });
@@ -399,32 +400,50 @@ function visibleFacts() {
 }
 
 function renderFacts() {
-  const tbody = $("#facts-table tbody");
-  tbody.innerHTML = "";
+  const container = $("#facts-table");
+  container.innerHTML = "";
   const visible = visibleFacts();
   $("#facts-count").textContent = `${visible.length} visible / ${state.factsById.size} total`;
 
+  // Poster layout: one readable block per annotator (model).
+  const groups = new Map();
   for (const f of visible) {
-    const tr = document.createElement("tr");
-    tr.dataset.factId = f.fact_id;
-    const conflict = f._edge_conflict_label || "unlabeled";
-    tr.innerHTML = `
-      <td class="annot">${escapeHtml(f._annotator)}</td>
-      <td>${escapeHtml(f.subject || "")}</td>
-      <td>${escapeHtml(f.predicate || "")}</td>
-      <td>${escapeHtml(f.object || "")}</td>
-      <td class="annot">${escapeHtml((f.source_locator || {}).section_path || "")}</td>
-      <td class="conf ${conflict}">${conflict}</td>
-      <td><button class="verify-btn ${f._verification?.status || ""}" data-fact-id="${f.fact_id}">
-            ${f._verification?.status === "verified" ? "✓" : f._verification?.status === "rejected" ? "✗" : "?"}
-          </button></td>`;
-    tr.addEventListener("click", (e) => {
-      if (e.target.classList.contains("verify-btn")) return;
-      selectFact(f.fact_id);
-    });
-    tbody.appendChild(tr);
+    if (!groups.has(f._annotator)) groups.set(f._annotator, []);
+    groups.get(f._annotator).push(f);
   }
-  for (const btn of tbody.querySelectorAll(".verify-btn")) {
+  for (const [annot, facts] of groups) {
+    const grp = document.createElement("div");
+    grp.className = "fact-group";
+    grp.dataset.annotator = annot;
+    const head = document.createElement("div");
+    head.className = "fact-group-head";
+    head.textContent = `${annot} — ${facts.length} facts`;
+    grp.appendChild(head);
+    for (const f of facts) {
+      const conflict = f._edge_conflict_label || "unlabeled";
+      const item = document.createElement("div");
+      item.className = `fact-item conf-${conflict}`;
+      item.dataset.factId = f.fact_id;
+      const vstat = f._verification?.status || "";
+      const vmark = vstat === "verified" ? "✓" : vstat === "rejected" ? "✗" : "?";
+      const cond = f.condition ? `<span class="f-cond" title="condition">if ${escapeHtml(f.condition)}</span>` : "";
+      const temp = f.temporal_context ? `<span class="f-temp" title="temporal order">⏱ ${escapeHtml(f.temporal_context)}</span>` : "";
+      const sec = (f.source_locator || {}).section_path || "";
+      item.innerHTML = `
+        <button class="verify-btn ${vstat}" data-fact-id="${f.fact_id}">${vmark}</button>
+        <div class="fact-body">
+          <div class="fact-nl">${escapeHtml(f.natural_language || `${f.subject || ""} ${f.predicate || ""} ${f.object || ""}`)}${cond}${temp}</div>
+          <div class="fact-spo"><span class="f-subj">${escapeHtml(f.subject || "")}</span> <span class="f-pred">${escapeHtml(f.predicate || "")}</span> <span class="f-obj">${escapeHtml(f.object || "")}</span><span class="f-sec">${escapeHtml(sec)}</span></div>
+        </div>`;
+      item.addEventListener("click", (e) => {
+        if (e.target.classList.contains("verify-btn")) return;
+        selectFact(f.fact_id);
+      });
+      grp.appendChild(item);
+    }
+    container.appendChild(grp);
+  }
+  for (const btn of container.querySelectorAll(".verify-btn")) {
     btn.addEventListener("click", (e) => cycleVerify(e.target));
   }
   updateLabelCounts(visible);
@@ -505,14 +524,26 @@ function _buildLayoutOpts(name, nodeCount) {
     opts.nodeOverlap = 30;
     opts.nodeRepulsion = 8000;
   } else if (name === "fcose") {
-    // fcose (FMMM-style multilevel force layout) — handles disconnected
-    // components and big graphs much better than cose.
-    opts.quality = "default";
-    opts.idealEdgeLength = len;
-    opts.nodeRepulsion = 4500;
-    opts.gravity = 0.25;
-    opts.numIter = 2500;
-    opts.randomize = false;
+    // Optimized force-directed profile (fcose = FMMM-style multilevel):
+    //  - quality "proof" + 5k iterations: slower (~100ms on 60 nodes) but
+    //    visibly better minima than the "default" single pass.
+    //  - randomize true: a fresh global arrangement instead of polishing
+    //    whatever the previous layout left behind.
+    //  - degree-scaled edge length / repulsion: hub neighbourhoods get room
+    //    to breathe, leaf pairs stay compact.
+    //  - label-aware spacing (nodeDimensionsIncludeLabels is set globally).
+    opts.quality = "proof";
+    opts.randomize = true;
+    opts.idealEdgeLength = (e) => {
+      const d = Math.max(e.source().degree(false), e.target().degree(false));
+      return len * (d >= 4 ? 1.5 : d >= 2 ? 1.1 : 0.8);
+    };
+    opts.nodeRepulsion = (n) => 6000 + 2500 * Math.min(n.degree(false), 6);
+    opts.edgeElasticity = 0.45;
+    opts.gravity = 0.2;
+    opts.numIter = 5000;
+    opts.tile = true;
+    opts.nodeSeparation = 30;
   } else if (name === "dagre") {
     // dagre = Sugiyama-style hierarchical (top-to-bottom by default).
     opts.rankDir = "TB";
@@ -566,6 +597,24 @@ function renderGraph(graph) {
           "height": "mapData(n_annotators, 1, 3, 44, 78)",
           "border-width": 2,
           "border-color": "#94a3b8" }},
+      // Reified statement nodes: rounded rectangles, distinct from entity
+      // ellipses. Predicate is the label; condition/order ride the edges.
+      { selector: 'node[type = "statement"]', style: {
+          "shape": "round-rectangle",
+          "background-color": "#eef2ff",
+          "border-color": "#6366f1",
+          "border-width": 2,
+          "width": "mapData(n_annotators, 1, 3, 34, 66)",
+          "height": 24,
+          "font-size": 11,
+          "font-weight": 600,
+          "text-max-width": 130,
+          "color": "#312e81" }},
+      // Same S-P-O realized with different condition/ordering scope.
+      { selector: 'node[type = "statement"][?scope_variant]', style: {
+          "border-style": "double", "border-width": 4, "border-color": "#7c3aed" }},
+      { selector: 'node[type = "statement"][?negated]', style: {
+          "background-color": "#fef2f2" }},
       { selector: "node[conflict_label = 'contradiction']", style: { "border-color": "#d32f2f", "border-width": 4 }},
       { selector: "node[conflict_label = 'granularity']",   style: { "border-color": "#f57c00", "border-width": 4 }},
       { selector: "node[conflict_label = 'redundancy']",    style: { "border-color": "#1976d2", "border-width": 3 }},
@@ -586,11 +635,31 @@ function renderGraph(graph) {
           "text-background-opacity": 0.9,
           "text-background-padding": 3,
           "text-background-shape": "roundrectangle" }},
+      { selector: 'edge[role = "subject"]', style: {
+          "line-color": "#cbd5e1", "target-arrow-color": "#cbd5e1",
+          "target-arrow-shape": "triangle", "width": 2, "label": "" }},
+      { selector: 'edge[role = "object"]', style: {
+          "target-arrow-shape": "triangle", "label": "" }},
       { selector: "edge[conflict_label = 'contradiction']", style: { "line-color": "#d32f2f", "target-arrow-color": "#d32f2f", "width": 4 }},
       { selector: "edge[conflict_label = 'granularity']",   style: { "line-color": "#f57c00", "target-arrow-color": "#f57c00", "width": 3.5 }},
       { selector: "edge[conflict_label = 'redundancy']",    style: { "line-color": "#1976d2", "target-arrow-color": "#1976d2", "width": 3 }},
       { selector: "edge.selected", style: { "line-color": "#eab308", "target-arrow-color": "#eab308", "width": 5 }},
       { selector: "edge.dimmed", style: { "opacity": 0.2 }},
+      { selector: "edge[?conditional]", style: { "line-style": "dashed" }},
+      { selector: 'edge[role = "condition"]', style: {
+          "line-style": "dashed", "line-color": "#7c3aed",
+          "target-arrow-color": "#7c3aed", "target-arrow-shape": "triangle",
+          "width": 2.5, "label": "data(label)", "color": "#6d28d9",
+          "font-size": 10, "text-background-color": "#f5f3ff",
+          "text-background-opacity": 1, "text-background-padding": 2 }},
+      { selector: 'edge[role = "temporal"]', style: {
+          "line-style": "dotted", "line-color": "#0d9488",
+          "target-arrow-color": "#0d9488", "target-arrow-shape": "vee",
+          "width": 2.5, "label": "data(label)", "color": "#0f766e",
+          "font-size": 10, "text-background-color": "#f0fdfa",
+          "text-background-opacity": 1, "text-background-padding": 2 }},
+      { selector: "node.stmt-sel", style: {
+          "background-color": "#fde68a", "border-color": "#d97706", "border-width": 5 }},
       { selector: ".cy-hidden", style: { "display": "none" }},
       // Phase-6 tri-color S/P/O: subject node = blue, object node = red,
       // predicate edge = green. Stronger borders so they read over conflict colors.
@@ -600,21 +669,48 @@ function renderGraph(graph) {
     ],
   });
 
-  state.cy.on("tap", "edge", (evt) => openPairModal(evt.target));
-  state.cy.on("tap", "node", (evt) => filterByEntity(evt.target.id()));
+  state.cy.on("tap", "edge", (evt) => {
+    const role = evt.target.data("role");
+    if (role === "subject" || role === "object" || role === "condition" || role === "temporal") {
+      // Reified: a subject/object/condition/temporal edge belongs to a statement
+      // node — open that statement's detail rather than treating it as a pair edge.
+      const stmt = role === "subject" ? evt.target.target() : evt.target.source();
+      openPairModal(stmt.data("type") === "statement" ? stmt : evt.target);
+    } else {
+      openPairModal(evt.target);
+    }
+  });
+  state.cy.on("tap", "node", (evt) => {
+    if (evt.target.data("type") === "statement") openPairModal(evt.target);
+    else filterByEntity(evt.target.id());
+  });
   // Hover readout: node labels are truncated to 24 chars, so surface the
   // full entity label + membership in the legend strip under the canvas.
   state.cy.on("mouseover", "node", (evt) => {
     const d = evt.target.data();
     const el = document.getElementById("cy-hover-info");
-    if (el) el.textContent =
-      `${d.label} · ${(d.surface_forms || []).length} surface · ${(d.annotators || []).length} annot`;
+    if (!el) return;
+    if (d.type === "statement") {
+      const bits = [`[${d.conflict_label || "unlabeled"}] ${d.subject_label || "?"} —[${d.predicate || ""}]→ ${d.object_label || "?"}`];
+      if ((d.conditions || []).length) bits.push(`if: ${d.conditions.join("; ")}`);
+      if ((d.temporal || []).length) bits.push(`⏱ ${d.temporal.join("; ")}`);
+      if (d.negated) bits.push("¬negated");
+      if (d.complex) bits.push("complex-logic");
+      if (d.scope_variant) bits.push("scope-variant");
+      el.textContent = bits.join("  ·  ") + `  ·  ${(d.annotators || []).join(" + ")}`;
+    } else {
+      el.textContent = `${d.label} · ${(d.surface_forms || []).length} surface · ${(d.annotators || []).length} annot`
+        + (d.ref_only ? " · (referenced by a condition/ordering)" : "");
+    }
   });
   state.cy.on("mouseover", "edge", (evt) => {
     const d = evt.target.data();
     const el = document.getElementById("cy-hover-info");
+    const quals = (d.qualifiers || []).length
+      ? ` · ⟨${d.qualifiers.join("; ")}⟩` : "";
+    const cond = d.conditional ? " · ⧟conditional" : "";
     if (el) el.textContent =
-      `[${d.conflict_label || "unlabeled"}] ${d.label} · ${(d.annotators || []).join(" + ")}`;
+      `[${d.conflict_label || "unlabeled"}] ${d.label} · ${(d.annotators || []).join(" + ")}${quals}${cond}`;
   });
   state.cy.on("mouseout", "node, edge", () => {
     const el = document.getElementById("cy-hover-info");
@@ -643,8 +739,9 @@ function renderGraph(graph) {
 
 async function refreshGraph() {
   if (!state.doc) return;
+  const reify = ($("#cy-reify")?.checked ?? true) ? 1 : 0;
   const url = `/api/graph/${state.doc}?merge_threshold=${state.merge}` +
-    `&core=${($("#cy-core-entities")?.checked ?? true) ? 1 : 0}`;
+    `&core=${($("#cy-core-entities")?.checked ?? true) ? 1 : 0}&reify=${reify}`;
   const graph = await fetch(url).then(r => r.json());
   state.graph = graph;
   renderGraph(graph);
@@ -673,8 +770,11 @@ function refreshGraphHighlights() {
     // hub structure the analyst actually reads.
     if ($("#cy-hide-islands")?.checked) {
       const visible = state.cy.elements().not(".cy-hidden");
+      // In the reified graph a minimal unit is entity→statement→entity (3 nodes);
+      // only drop true singletons so conditional/one-ended statements survive.
+      const islandMax = (state.graph && state.graph.reified) ? 1 : 2;
       for (const comp of visible.components()) {
-        if (comp.nodes().length <= 2) comp.addClass("cy-hidden");
+        if (comp.nodes().length <= islandMax) comp.addClass("cy-hidden");
       }
     }
   });
@@ -686,11 +786,15 @@ function filterByEntity(clusterId) {
   const node = state.cy.getElementById(clusterId);
   const surfaceForms = new Set(node.data("surface_forms") || []);
 
-  const tbody = $("#facts-table tbody");
-  for (const tr of tbody.querySelectorAll("tr")) {
-    const f = state.factsById.get(tr.dataset.factId);
+  const container = $("#facts-table");
+  for (const item of container.querySelectorAll(".fact-item")) {
+    const f = state.factsById.get(item.dataset.factId);
     const hit = f && (surfaceForms.has(f.subject) || surfaceForms.has(f.object));
-    tr.style.display = hit ? "" : "none";
+    item.style.display = hit ? "" : "none";
+  }
+  for (const grp of container.querySelectorAll(".fact-group")) {
+    const any = [...grp.querySelectorAll(".fact-item")].some(it => it.style.display !== "none");
+    grp.style.display = any ? "" : "none";
   }
 }
 
@@ -705,8 +809,17 @@ function openPairModal(edge) {
     factIds.has(p.fact_a_id) || factIds.has(p.fact_b_id));
 
   const body = $("#modal-body");
-  $("#modal-title").textContent =
-    `Edge: ${edge.data("source")} —[${edge.data("label")}]→ ${edge.data("target")}  ·  ${relevant.length} pairs`;
+  if (edge.data("type") === "statement") {
+    const cond = (edge.data("conditions") || []).join("; ");
+    const temp = (edge.data("temporal") || []).join("; ");
+    $("#modal-title").textContent =
+      `Statement: ${edge.data("subject_label") || "?"} —[${edge.data("predicate") || ""}]→ ${edge.data("object_label") || "?"}`
+      + (cond ? `  · if ${cond}` : "") + (temp ? `  · ⏱ ${temp}` : "")
+      + `  ·  ${relevant.length} pairs`;
+  } else {
+    $("#modal-title").textContent =
+      `Edge: ${edge.data("source")} —[${edge.data("label")}]→ ${edge.data("target")}  ·  ${relevant.length} pairs`;
+  }
   body.innerHTML = "";
 
   if (relevant.length === 0) {
@@ -949,23 +1062,14 @@ function selectFact(factId) {
   }
 
   // ---- Facts table: scroll to row + tint S/P/O cells.
-  const tbody = $("#facts-table tbody");
-  for (const tr of tbody.querySelectorAll("tr")) {
-    tr.classList.remove("selected");
-    tr.classList.remove("spo-active");
-    for (const td of tr.querySelectorAll("td.spo-subj-cell, td.spo-pred-cell, td.spo-obj-cell")) {
-      td.classList.remove("spo-subj-cell", "spo-pred-cell", "spo-obj-cell");
-    }
+  const container = $("#facts-table");
+  for (const item of container.querySelectorAll(".fact-item")) {
+    item.classList.remove("selected", "spo-active");
   }
-  const row = tbody.querySelector(`tr[data-fact-id="${factId}"]`);
+  const row = container.querySelector(`.fact-item[data-fact-id="${factId}"]`);
   if (row) {
     row.classList.add("selected");
     row.classList.add("spo-active");
-    // tds: 0=annot, 1=subject, 2=predicate, 3=object, 4=section, 5=conflict, 6=verify
-    const tds = row.children;
-    if (tds[1]) tds[1].classList.add("spo-subj-cell");
-    if (tds[2]) tds[2].classList.add("spo-pred-cell");
-    if (tds[3]) tds[3].classList.add("spo-obj-cell");
     row.scrollIntoView({ behavior: "smooth", block: "center" });
     _flash(row);
   }
@@ -973,21 +1077,38 @@ function selectFact(factId) {
   // ---- KG: clear prior SPO, paint subject/object nodes + predicate edge,
   //       and animate-zoom to the connected nodes.
   if (state.cy) {
-    state.cy.elements().removeClass("selected spo-subj spo-obj spo-pred");
-    const matchingEdges = state.cy.edges().filter(e => (e.data("fact_ids") || []).includes(factId));
-    if (matchingEdges.length) {
-      // Pick the first matching edge for S/P/O painting (a fact = one S-P-O triple).
-      const e0 = matchingEdges[0];
-      e0.addClass("spo-pred");
-      e0.source().addClass("spo-subj");
-      e0.target().addClass("spo-obj");
-      // Keep the original yellow-selected highlight on every contributing edge
-      // (a node-merged graph can have multiple edges with the same fact_id).
-      matchingEdges.addClass("selected");
-      state.cy.animate(
-        { fit: { eles: matchingEdges.connectedNodes(), padding: 60 } },
-        { duration: 400 }
-      );
+    state.cy.elements().removeClass("selected spo-subj spo-obj spo-pred stmt-sel");
+    if (state.graph && state.graph.reified) {
+      // Reified KG: light up the STATEMENT node(s) carrying this fact, plus its
+      // subject (blue) and object (red) entities. One fact may merge into one
+      // statement, but several statements can share an entity.
+      const stmts = state.cy.nodes('[type = "statement"]')
+        .filter(n => (n.data("fact_ids") || []).includes(factId));
+      if (stmts.length) {
+        stmts.addClass("stmt-sel selected");
+        const conn = stmts.connectedEdges();
+        conn.addClass("selected");
+        conn.forEach(e => {
+          const role = e.data("role");
+          if (role === "subject") e.source().addClass("spo-subj");
+          else if (role === "object") e.target().addClass("spo-obj");
+        });
+        state.cy.animate(
+          { fit: { eles: stmts.closedNeighborhood(), padding: 60 } },
+          { duration: 400 });
+      }
+    } else {
+      const matchingEdges = state.cy.edges().filter(e => (e.data("fact_ids") || []).includes(factId));
+      if (matchingEdges.length) {
+        const e0 = matchingEdges[0];
+        e0.addClass("spo-pred");
+        e0.source().addClass("spo-subj");
+        e0.target().addClass("spo-obj");
+        matchingEdges.addClass("selected");
+        state.cy.animate(
+          { fit: { eles: matchingEdges.connectedNodes(), padding: 60 } },
+          { duration: 400 });
+      }
     }
   }
 }
@@ -1489,6 +1610,7 @@ function initLiveJobs() {
 
   // Background-runs buttons
   $("#run-phase1-btn")?.addEventListener("click", runPhase1);
+  $("#run-phase1-doc-btn")?.addEventListener("click", runPhase1CurrentDoc);
   $("#run-phase2-btn")?.addEventListener("click", runPhase2);
 
   // Populate guideline dropdown for Phase-1 form
@@ -1502,15 +1624,17 @@ function initLiveJobs() {
 async function populateP1Guidelines() {
   try {
     const data = await fetch("/api/guidelines").then(r => r.json());
-    const sel = $("#p1-guideline");
-    if (!sel) return;
-    sel.innerHTML = "";
-    for (const g of data.guidelines || []) {
-      const opt = document.createElement("option");
-      opt.value = g.version; opt.textContent = g.version;
-      sel.appendChild(opt);
+    for (const id of ["#p1-guideline", "#p2-guideline"]) {
+      const sel = $(id);
+      if (!sel) continue;
+      sel.innerHTML = "";
+      for (const g of data.guidelines || []) {
+        const opt = document.createElement("option");
+        opt.value = g.version; opt.textContent = g.version;
+        sel.appendChild(opt);
+      }
+      sel.value = "v1";
     }
-    sel.value = "v1";
   } catch {}
 }
 
@@ -1624,6 +1748,27 @@ function _setInlineStatus(selector, text, cls) {
   el.className = cls || "";
 }
 
+async function runPhase1CurrentDoc() {
+  const docId = $("#doc-select")?.value;
+  if (!docId) { _setInlineStatus("#p1-status", "no document open", "err"); return; }
+  const models = ($("#p1-models").value || "").split(",").map(s => s.trim()).filter(Boolean);
+  const guideline_version = $("#p1-guideline").value || "v1";
+  if (!models.length) { _setInlineStatus("#p1-status", "enter at least one model", "err"); return; }
+  _setInlineStatus("#p1-status", "enqueueing " + docId + "\u2026", "");
+  try {
+    const r = await fetch("/api/run_phase1", {
+      method: "POST", headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({ models, guideline_version, doc_ids: [docId] }),
+    });
+    if (!r.ok) { const t = await r.text(); _setInlineStatus("#p1-status", "failed: " + r.status + " " + t.slice(0,140), "err"); return; }
+    const job = await r.json();
+    _setInlineStatus("#p1-status", "enqueued " + docId + " \u00b7 " + guideline_version + " \u00b7 " + models.join(",") + " \u2014 watch Live jobs", "ok");
+    _openJobsPanel(); refreshJobsOnce();
+  } catch (e) {
+    _setInlineStatus("#p1-status", "request failed: " + e.message, "err");
+  }
+}
+
 async function runPhase1() {
   const models = ($("#p1-models").value || "").split(",").map(s => s.trim()).filter(Boolean);
   const guideline_version = $("#p1-guideline").value || "v1";
@@ -1673,11 +1818,13 @@ async function runPhase2() {
   const skip_layer2 = $("#p2-skip-layer2").checked;
   const layer2_model = $("#p2-layer2-model").value || "qwen3.5:4b";
   const align_threshold = parseFloat($("#p2-align-threshold").value) || 0.78;
-  const body = { skip_layer2, layer2_model, align_threshold };
+  const version = $("#p2-guideline")?.value || "v1";
+  const body = { skip_layer2, layer2_model, align_threshold, version };
   const ok = confirm("Phase-2 batch:\n" +
                      "  skip_layer2:     " + skip_layer2 + "\n" +
                      "  layer2_model:    " + layer2_model + "\n" +
-                     "  align_threshold: " + align_threshold + "\n\n" +
+                     "  align_threshold: " + align_threshold + "\n" +
+                     "  guideline:       " + version + "\n\n" +
                      (skip_layer2 ? "Uses the deterministic stub — no LLM needed.\n\n" : "") +
                      "Proceed?");
   if (!ok) return;
@@ -2215,20 +2362,19 @@ async function runPhase2() {
   // ---------- Empty-facts CTA -------------------------------------
   function updateEmptyCTA() {
     const cta = $("#facts-empty-cta");
-    const tbody = document.querySelector("#facts-table tbody");
+    const table = document.querySelector("#facts-table");
     if (!cta) return;
     const hasNone = cache.factById.size === 0;
     cta.classList.toggle("hidden", !hasNone);
-    if (tbody) tbody.parentElement?.classList.toggle("hidden", hasNone);
+    if (table) table.classList.toggle("hidden", hasNone);
   }
 
   // ---------- Sort the facts tbody --------------------------------
   function sortTbody() {
-    const tbody = document.querySelector("#facts-table tbody");
-    if (!tbody || cache.sort === "default") return;
-    const rows = [...tbody.querySelectorAll("tr[data-fact-id]")];
-    const keyOf = (tr) => {
-      const f = cache.factById.get(tr.dataset.factId);
+    const container = document.querySelector("#facts-table");
+    if (!container || cache.sort === "default") return;
+    const keyOf = (item) => {
+      const f = cache.factById.get(item.dataset.factId);
       if (!f) return "";
       switch (cache.sort) {
         case "alignment":
@@ -2241,8 +2387,11 @@ async function runPhase2() {
           return "";
       }
     };
-    rows.sort((a, b) => keyOf(a).localeCompare(keyOf(b)));
-    rows.forEach(r => tbody.appendChild(r));
+    for (const grp of container.querySelectorAll(".fact-group")) {
+      const items = [...grp.querySelectorAll(".fact-item[data-fact-id]")];
+      items.sort((a, b) => keyOf(a).localeCompare(keyOf(b)));
+      items.forEach(it => grp.appendChild(it));
+    }
   }
 
   // ---------- KG node click → text + table highlight --------------
@@ -2251,9 +2400,9 @@ async function runPhase2() {
       m.classList.remove("node-highlight");
       m.style.removeProperty("--node-color");
     }
-    for (const tr of $$("#facts-table tbody tr.node-highlight")) {
-      tr.classList.remove("node-highlight");
-      tr.style.removeProperty("--node-color");
+    for (const it of $$("#facts-table .fact-item.node-highlight")) {
+      it.classList.remove("node-highlight");
+      it.style.removeProperty("--node-color");
     }
   }
 
@@ -2278,14 +2427,14 @@ async function runPhase2() {
         m.style.setProperty("--node-color", conflictColor);
       }
     }
-    for (const tr of $$("#facts-table tbody tr[data-fact-id]")) {
-      const f = cache.factById.get(tr.dataset.factId);
+    for (const it of $$("#facts-table .fact-item[data-fact-id]")) {
+      const f = cache.factById.get(it.dataset.factId);
       if (!f) continue;
       const hit = factIds.has(f.fact_id)
         || surfaceForms.has(f.subject) || surfaceForms.has(f.object);
       if (hit) {
-        tr.classList.add("node-highlight");
-        tr.style.setProperty("--node-color", conflictColor);
+        it.classList.add("node-highlight");
+        it.style.setProperty("--node-color", conflictColor);
       }
     }
   }
@@ -2329,13 +2478,15 @@ async function runPhase2() {
   async function extractForCurrentDoc() {
     const docId = $("#doc-select")?.value;
     if (!docId) return;
+    const models = ($("#p1-models")?.value || "qwen3.5:4b").split(",").map(s => s.trim()).filter(Boolean);
+    const guideline_version = $("#p1-guideline")?.value || "v1";
     const btn = $("#facts-extract-btn");
     const orig = btn?.textContent;
     if (btn) { btn.disabled = true; btn.textContent = "Extracting…"; }
     try {
       const r = await fetch("/api/run_phase1", {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ models: ["qwen3.5:4b"], doc_ids: [docId] }),
+        body: JSON.stringify({ models, guideline_version, doc_ids: [docId] }),
       });
       if (!r.ok) { alert("Extract failed: HTTP " + r.status); return; }
     } catch (e) {
@@ -2371,13 +2522,13 @@ async function runPhase2() {
       const ob = new MutationObserver(() => applyMarkColors());
       ob.observe(docBody, { childList: true, subtree: true });
     }
-    const tbody = document.querySelector("#facts-table tbody");
-    if (tbody) {
+    const factsEl = document.querySelector("#facts-table");
+    if (factsEl) {
       const ob = new MutationObserver(() => {
         sortTbody();
         updateEmptyCTA();
       });
-      ob.observe(tbody, { childList: true });
+      ob.observe(factsEl, { childList: true, subtree: true });
     }
     const cyEl = document.getElementById("cy");
     if (cyEl) {

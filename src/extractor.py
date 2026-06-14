@@ -38,6 +38,7 @@ Design constraints (see PROJECT_STATE.md §1):
 """
 
 from __future__ import annotations
+import os
 
 import hashlib
 import json
@@ -72,7 +73,7 @@ logger = logging.getLogger(__name__)
 # Constants
 # ---------------------------------------------------------------------------
 
-DEFAULT_BASE_URL = "http://localhost:11434"
+DEFAULT_BASE_URL = os.environ.get("OLLAMA_URL", "http://localhost:11434")
 DEFAULT_KEEP_ALIVE = "5m"  # while a run is in flight
 UNLOAD_KEEP_ALIVE = 0  # sentinel: unload immediately
 DEFAULT_TIMEOUT_S = 600  # legal recitals are slow on a 4B Q4_K_M
@@ -324,7 +325,11 @@ def _parse_facts_response(raw: str) -> list[dict]:
                 raise ExtractionError(
                     f'facts[{i}]."{field}" must be a non-empty string.'
                 )
-        cleaned.append({k: f[k].strip() for k in REQUIRED_FIELDS})
+        row = {k: f[k].strip() for k in REQUIRED_FIELDS}
+        for opt in ("condition", "temporal_context"):
+            val = f.get(opt, "")
+            row[opt] = val.strip() if isinstance(val, str) else ""
+        cleaned.append(row)
     return cleaned
 
 
@@ -395,6 +400,8 @@ def _build_atomic_fact(raw: dict,
         predicate=raw["predicate"],
         object=raw["object"],
         natural_language=raw["natural_language"],
+        condition=raw.get("condition", ""),
+        temporal_context=raw.get("temporal_context", ""),
         source_locator=locator,
         extra={
             "anchor_score": score,

@@ -29,6 +29,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+import re
 from typing import Iterable
 
 
@@ -56,6 +57,11 @@ def _norm_predicate(pred: str) -> str:
     iteration with proper evaluation.
     """
     return " ".join((pred or "").lower().split())
+
+
+_COND_RE = re.compile(
+    r"\b(if|when|unless|provided that|subject to|in the event|conditional upon)\b",
+    re.IGNORECASE)
 
 
 def _strongest_label(labels: Iterable[str]) -> str:
@@ -127,10 +133,30 @@ def build_graph(conflicts_doc: dict) -> dict:
                     "annotators": set(),
                     "conflict_labels": set(),
                     "section_paths": set(),
+                    "qualifiers": set(),
                 },
             )
             slot["fact_ids"].add(f["fact_id"])
             slot["annotators"].add(annotator)
+            # Wikidata-style: modifiers stripped from S/O (dates, clause tails)
+            # belong to the STATEMENT, i.e. this edge — not to the entity node.
+            from src.entity_norm import split_entity
+            for k in ("subject", "object"):
+                for q in split_entity(f.get(k) or "")[1]:
+                    if q:
+                        slot["qualifiers"].add(q[:60])
+            # Conditional statements (poster's If/Or concept, edge-level):
+            # v1 §6 keeps the antecedent inside source_quote, so detect it
+            # there and mark the edge — rendered dashed in the UI.
+            _txt = f"{(f.get('source_locator') or {}).get('quote', '')} "                    f"{f.get('natural_language', '')}"
+            cond_field = (f.get("condition") or "").strip()
+            if cond_field or _COND_RE.search(_txt):
+                slot["conditional"] = True
+            if cond_field:
+                slot.setdefault("conditions", set()).add(cond_field[:80])
+            _tctx = (f.get("temporal_context") or "").strip()
+            if _tctx:
+                slot.setdefault("temporal", set()).add(_tctx[:60])
             loc = f.get("source_locator") or {}
             sp = loc.get("section_path")
             if sp:
@@ -185,6 +211,10 @@ def build_graph(conflicts_doc: dict) -> dict:
                     "annotators": sorted(info["annotators"]),
                     "fact_ids": sorted(info["fact_ids"]),
                     "section_paths": sorted(info["section_paths"]),
+                    "qualifiers": sorted(info.get("qualifiers", set()))[:6],
+                    "conditional": bool(info.get("conditional", False)),
+                    "conditions": sorted(info.get("conditions", set()))[:4],
+                    "temporal": sorted(info.get("temporal", set()))[:4],
                     "conflict_label": label,
                     "n_annotators": len(info["annotators"]),
                 }
@@ -220,6 +250,292 @@ def _count_by_label(edges: list[dict]) -> dict[str, int]:
         lbl = e["data"]["conflict_label"]
         out[lbl] = out.get(lbl, 0) + 1
     return out
+
+
+# ---------------------------------------------------------------------------
+# Reified (statement-node) graph — mirrors the Neo4j model in neo4j_export.py.
+# Each fact-group becomes a :statement node between its subject/object entity
+# nodes, carrying predicate + condition + temporal + logic flags. Keying the
+# statement on (subject, predicate, object, condition, temporal) keeps facts
+# that share an S-P-O but differ in their CONDITION as *separate* statement
+# nodes — so conditional / ordering structure stays visible instead of being
+# flattened into one edge (the failure mode of the flat build_graph above).
+# ---------------------------------------------------------------------------
+
+import hashlib
+
+_NEG_RE = re.compile(
+    r"\b(not|no longer|never|without|fails? to|shall not|may not|cannot)\b",
+    re.IGNORECASE)
+_MODAL_RE = re.compile(
+    r"\b(alleged(?:ly)?|reportedly|according to|claims? that|is said to)\b",
+    re.IGNORECASE)
+_COMPLEX_RE = re.compile(
+    r"\b(either|or else|whether|all of|each of|none of|any of|"
+    r"if and only if|implies)\b",
+    re.IGNORECASE)
+
+
+def _norm_text(s: str) -> str:
+    return " ".join((s or "").lower().split())
+
+
+def _reified_fact_text(f: dict) -> str:
+    loc = f.get("source_locator") or {}
+    quote = loc.get("quote") or loc.get("linearized_sentence") or ""
+    return f"{quote} {f.get('natural_language', '') or ''}"
+
+
+def _stmt_id(s_c, pred_norm, o_c, cond_key, temp_key) -> str:
+    raw = "|".join([s_c or "", pred_norm or "", o_c or "", cond_key or "", temp_key or ""])
+    return "st_" + hashlib.sha1(raw.encode("utf-8")).hexdigest()[:14]
+
+
+def _resolve_reference(text, surface_to_cluster, exclude):
+    """Find an entity cluster *referenced inside* a condition/temporal phrase.
+
+    Returns the cluster_id of the longest surface form that occurs as a
+    substring of `text`, skipping clusters in `exclude` (the statement's own
+    subject/object, to avoid trivial self-loops). This is what turns a bare
+    `condition` string into a first-class edge so the reader can see WHICH
+    entity a precondition / ordering depends on.
+    """
+    if not text:
+        return None
+    low = text.lower()
+    best, best_len = None, 0
+    for surface, cid in surface_to_cluster.items():
+        if cid in exclude:
+            continue
+        s = (surface or "").strip()
+        if len(s) < 5:
+            continue
+        if s.lower() in low and len(s) > best_len:
+            best, best_len = cid, len(s)
+    return best
+
+
+def build_reified_graph(conflicts_doc: dict) -> dict:
+    """Statement-reified Cytoscape graph. See module note above.
+
+    Node kinds (data.type):
+        entity     — one per resolved cluster (same identity as build_graph);
+                     `ref_only` entities are referenced ONLY by a condition /
+                     temporal clause, never asserted as a subject/object.
+        statement  — one per (s,p,o,condition,temporal) fact-group
+    Edge roles (data.role):
+        subject    entity --> statement
+        object     statement --> entity
+        condition  statement --> referenced entity   (dashed; the precondition)
+        temporal   statement --> referenced entity   (ordering / deadline)
+    The conflict label lives on the STATEMENT node (strongest of its facts'
+    own labels plus any aligned-pair label touching its fact_ids), and is
+    mirrored onto incident edges so the existing annotator/conflict filters
+    keep working unchanged.
+    """
+    surface_to_cluster: dict = conflicts_doc.get("entity_clusters", {})
+    facts_per_ann: dict = conflicts_doc.get("facts_per_annotator", {})
+    aligned_pairs = conflicts_doc.get("aligned_pairs", [])
+
+    # invert clusters so a condition-referenced cluster (one that never appears
+    # as a subject/object) can still be reconstructed into a labelled node.
+    cluster_surfaces: dict = {}
+    for surface, cid in surface_to_cluster.items():
+        cluster_surfaces.setdefault(cid, set()).add(surface)
+
+    def cluster_of(surface):
+        s = (surface or "").strip()
+        if not s or s.lower() == "null":
+            return None
+        return surface_to_cluster.get(s)
+
+    cluster_members: dict = {}
+    fact_by_id: dict = {}
+
+    def _bump(cid, surface, annot):
+        slot = cluster_members.setdefault(cid, {"surface_forms": set(), "annotators": set()})
+        slot["surface_forms"].add(surface)
+        slot["annotators"].add(annot)
+
+    stmts: dict = {}
+    stmt_of_fact: dict = {}
+    spo_variants: dict = {}
+
+    for annot, facts in facts_per_ann.items():
+        for f in facts:
+            fid = f["fact_id"]
+            fact_by_id[fid] = f
+            subj = (f.get("subject") or "").strip()
+            obj = (f.get("object") or "").strip()
+            s_c = cluster_of(subj)
+            o_c = cluster_of(obj)
+            if s_c:
+                _bump(s_c, subj, annot)
+            if o_c:
+                _bump(o_c, obj, annot)
+            pred = f.get("predicate", "") or ""
+            pred_norm = _norm_predicate(pred)
+            text = _reified_fact_text(f)
+            cond = (f.get("condition") or "").strip()
+            temp = (f.get("temporal_context") or "").strip()
+            key = _stmt_id(s_c, pred_norm, o_c, _norm_text(cond), _norm_text(temp))
+            stmt_of_fact[fid] = key
+            st = stmts.get(key)
+            if st is None:
+                st = stmts[key] = {
+                    "id": key, "s_c": s_c, "o_c": o_c,
+                    "predicate": pred, "predicate_norm": pred_norm,
+                    "fact_ids": set(), "annotators": set(),
+                    "conditions": set(), "temporal": set(),
+                    "conflict_labels": set(), "section_paths": set(),
+                    "natural_language": f.get("natural_language") or "",
+                    "subject_surface": subj, "object_surface": obj,
+                    "conditional": False, "negated": False,
+                    "complex": False, "modality": "asserted",
+                }
+            st["fact_ids"].add(fid)
+            st["annotators"].add(annot)
+            if not st["predicate"] and pred:
+                st["predicate"], st["predicate_norm"] = pred, pred_norm
+            if not st["natural_language"]:
+                st["natural_language"] = f.get("natural_language") or ""
+            if cond:
+                st["conditions"].add(cond[:120])
+            if temp:
+                st["temporal"].add(temp[:80])
+            lbl = f.get("conflict_label")
+            if lbl and lbl not in ("unlabeled", "escalate"):
+                st["conflict_labels"].add(lbl)
+            loc = f.get("source_locator") or {}
+            if loc.get("section_path"):
+                st["section_paths"].add(loc["section_path"])
+            if cond or _COND_RE.search(text):
+                st["conditional"] = True
+            if _NEG_RE.search(text):
+                st["negated"] = True
+            if _COMPLEX_RE.search(text):
+                st["complex"] = True
+            if _MODAL_RE.search(text):
+                st["modality"] = "alleged"
+            spo_variants.setdefault((s_c, pred_norm, o_c), set()).add(key)
+
+    # Same (s,p,o) realized with >1 distinct condition/temporal scope: a
+    # "conditional-scope" signal the flat graph cannot show (it would collapse
+    # them to one edge and call it redundancy).
+    for (s_c, _pn, o_c), keys in spo_variants.items():
+        if s_c and o_c and len(keys) > 1:
+            for k in keys:
+                stmts[k]["scope_variant"] = True
+
+    for p in aligned_pairs:
+        label = p.get("conflict_label", "unlabeled")
+        if label in ("unlabeled", "escalate", None):
+            continue
+        for fk in (p.get("fact_a_id"), p.get("fact_b_id")):
+            k = stmt_of_fact.get(fk or "")
+            if k:
+                stmts[k]["conflict_labels"].add(label)
+
+    # ----- statement nodes (also computes conflict severity for entities) -----
+    node_label_sev: dict = {}
+    stmt_nodes = []
+    for key, st in stmts.items():
+        label = _strongest_label(st["conflict_labels"]) if st["conflict_labels"] else "unlabeled"
+        stmt_nodes.append({"data": {
+            "id": key, "type": "statement",
+            "label": st["predicate"] or "—",
+            "predicate": st["predicate"],
+            "fact_ids": sorted(st["fact_ids"]),
+            "annotators": sorted(st["annotators"]),
+            "n_annotators": len(st["annotators"]),
+            "conditions": sorted(st["conditions"])[:4],
+            "temporal": sorted(st["temporal"])[:4],
+            "conditional": bool(st["conditional"]) or bool(st["conditions"]),
+            "negated": st["negated"], "complex": st["complex"],
+            "modality": st["modality"],
+            "scope_variant": bool(st.get("scope_variant", False)),
+            "conflict_label": label,
+            "natural_language": st["natural_language"],
+            "section_paths": sorted(st["section_paths"]),
+            "subject_label": st["subject_surface"],
+            "object_label": st["object_surface"],
+        }})
+        sev = _SEVERITY.get(label, 0)
+        for c in (st["s_c"], st["o_c"]):
+            if c and sev > _SEVERITY.get(node_label_sev.get(c, "unlabeled"), 0):
+                node_label_sev[c] = label
+
+    # ----- edges (condition/temporal may PROMOTE a referenced entity) -----
+    referenced = set()
+    for st in stmts.values():
+        if st["s_c"]:
+            referenced.add(st["s_c"])
+        if st["o_c"]:
+            referenced.add(st["o_c"])
+
+    edges = []
+    cond_referenced = set()
+
+    def _edge(eid, src, tgt, role, st, label=""):
+        edges.append({"data": {
+            "id": eid, "source": src, "target": tgt, "role": role, "label": label,
+            "annotators": sorted(st["annotators"]),
+            "conflict_label": _strongest_label(st["conflict_labels"]) if st["conflict_labels"] else "unlabeled",
+            "fact_ids": sorted(st["fact_ids"]),
+            "conditional": role == "condition",
+        }})
+
+    for key, st in stmts.items():
+        if st["s_c"]:
+            _edge(f"se_{key}", st["s_c"], key, "subject", st)
+        if st["o_c"]:
+            _edge(f"oe_{key}", key, st["o_c"], "object", st)
+        if st["conditions"]:
+            ref = _resolve_reference(" ".join(st["conditions"]), surface_to_cluster,
+                                     exclude={st["s_c"], st["o_c"]})
+            if ref:
+                cond_referenced.add(ref)
+                _edge(f"ce_{key}", key, ref, "condition", st, label="if")
+        if st["temporal"]:
+            ref = _resolve_reference(" ".join(st["temporal"]), surface_to_cluster,
+                                     exclude={st["s_c"], st["o_c"]})
+            if ref:
+                cond_referenced.add(ref)
+                _edge(f"te_{key}", key, ref, "temporal", st, label="then")
+
+    # ----- entity nodes for every referenced cluster (asserted or promoted) ---
+    all_referenced = referenced | cond_referenced
+    entity_nodes = []
+    for cid in all_referenced:
+        info = cluster_members.get(cid)
+        sforms = (info["surface_forms"] if info else cluster_surfaces.get(cid)) or {cid}
+        annots = sorted(info["annotators"]) if info else []
+        entity_nodes.append({"data": {
+            "id": cid, "type": "entity",
+            "label": min(sforms, key=lambda s: (len(s), s)),
+            "surface_forms": sorted(sforms),
+            "annotators": annots,
+            "n_surface": len(sforms),
+            "n_annotators": max(1, len(annots)),
+            "ref_only": cid not in referenced,
+            "conflict_label": node_label_sev.get(cid, "unlabeled"),
+        }})
+
+    nodes = entity_nodes + stmt_nodes
+    return {
+        "doc_id": conflicts_doc["doc_id"],
+        "params": conflicts_doc.get("params", {}),
+        "reified": True,
+        "nodes": nodes,
+        "edges": edges,
+        "summary": {
+            "n_nodes": len(nodes),
+            "n_entities": len(entity_nodes),
+            "n_statements": len(stmt_nodes),
+            "n_edges": len(edges),
+            "edge_label_counts": _count_by_label(stmt_nodes),
+        },
+    }
 
 
 # ---------------------------------------------------------------------------

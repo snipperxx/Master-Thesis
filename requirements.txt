@@ -25,3 +25,6 @@ scikit-learn>=1.4            # cosine_similarity utility, AgglomerativeClusterin
 
 # Phase-3: UI backend
 flask>=3.0
+
+# Phase-3: KG backend
+neo4j>=5.0                   # Bolt driver for the conflict-aware knowledge graph

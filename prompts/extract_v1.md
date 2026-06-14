@@ -17,6 +17,8 @@ purely procedural closing formulas), return `{"facts": []}`.
       "subject":          "string — the entity the fact is about",
       "predicate":        "string — the relation or property",
       "object":           "string — the value, target, or counterparty",
+      "condition":        "string — logical precondition (if/when/under clause), or empty string if unconditional",
+      "temporal_context": "string — ordering/deadline (after/before/within N days, subsequently), or empty string if none",
       "natural_language": "string — single sentence restating the fact, self-contained",
       "source_quote":     "string — verbatim contiguous substring of the section text"
     }
@@ -24,7 +26,7 @@ purely procedural closing formulas), return `{"facts": []}`.
 }
 ```
 
-All five fields are REQUIRED for every fact. Empty strings are not allowed.
+subject, predicate, object, natural_language and source_quote are REQUIRED (non-empty). `condition` and `temporal_context` are optional — use an empty string when not applicable.
 
 ## Guideline (v1)
 
@@ -66,12 +68,15 @@ instrument). Do NOT extract from closing formulas ("Done at Brussels, …",
 "For the Council, …", "This Decision is addressed to …" when it merely
 restates the addressee already named in the title).
 
-### 6. Conditional and procedural clauses (granularity rule, v1)
-When a sentence has the form "**if** X **then** Y", "**in accordance with** X,
-Y", or "**under** X, Y": emit **one** fact whose subject/predicate/object
-describe the consequent Y, and include the antecedent X **inside**
-`source_quote` so the condition is preserved for audit. (v1 deliberately
-keeps these as a single fact; the v1→v2 experiment may revisit this.)
+### 6. Conditions and ordering go in their own fields
+If a fact holds only under a precondition ("**if** X", "**when** X", "**provided
+that** X", "**under** X", "**in accordance with** X"): emit **one** fact whose
+subject/predicate/object describe the consequent Y, and put the precondition
+text X in the `condition` field. If the fact carries an order or deadline
+("**after** X", "**before** X", "**within** 30 days", "**subsequently**"): put
+that phrase in the `temporal_context` field. Keep the whole sentence in
+`source_quote` for audit, and do NOT split the antecedent or ordering into a
+separate fact. Leave a field as "" when it does not apply.
 
 ### 7. Numeric facts always carry unit and temporal reference
 Include the unit and the year/period in the subject or object.

@@ -18,6 +18,7 @@ Outputs:  data/conflicts/<doc_id>.json           (everything the UI needs)
 """
 
 from __future__ import annotations
+import os
 
 import argparse
 import json
@@ -60,36 +61,8 @@ def discover_all_doc_ids(facts_root: Path) -> list:
     return sorted(d for d, a in by_doc.items() if len(a) >= 2)
 
 
-_DET_RE = re.compile(r"^(?:the|a|an|this|that|these|those|its|their)\s+", re.I)
-_DATE_TAIL_RE = re.compile(
-    r"\s*(?:of \d{1,2} \w+ \d{4}|in (?:19|20)\d{2}|on \d{1,2} \w+ \d{4}|\((?:19|20)\d{2}\))", re.I)
-_PREPS = {"of", "in", "on", "to", "for", "by", "with", "under", "at", "from",
-          "concerning", "regarding"}
-
-
-def normalize_entity(s: str, max_tokens: int = 6) -> str:
-    """Reduce a (possibly heavily modified) entity mention to its core noun
-    phrase for CLUSTERING purposes — poster-style nodes ("deficit", "Council
-    Recommendation") instead of fully decontextualized strings ("general
-    government deficit of the Netherlands in 2004").
-
-    The decontextualized surface stays on the fact and in the node's
-    surface_forms; only the merge key is normalized. This resolves the
-    tension between guideline §2/§3 (minimum-sufficient modifiers, needed
-    for fact self-containedness) and KG mergeability: modifiers make
-    entities unique strings that never cluster, fragmenting the graph.
-    """
-    t = _DATE_TAIL_RE.sub("", (s or "").strip())
-    t = _DET_RE.sub("", t)
-    toks = t.split()
-    if len(toks) > max_tokens:
-        for i in range(2, len(toks)):
-            if toks[i].lower() in _PREPS:
-                toks = toks[:i]
-                break
-        toks = toks[:max_tokens + 2]
-    t = " ".join(toks).strip(" ,;:.")
-    return t or (s or "").strip()
+from src.entity_norm import normalize_entity, split_entity  # noqa: F401
+# (re-exported: tests and ui import normalize_entity from this module)
 
 
 def cluster_entities(facts_per_annotator: dict, *, merge_threshold: float = 0.78,
@@ -224,6 +197,11 @@ def run(doc_id, *, facts_root, parsed_root, out_root, align_threshold,
     }
     out_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"[phase2] wrote {out_path}")
+    try:
+        from src.neo4j_export import autosync as _autosync
+        _autosync(payload)
+    except Exception as exc:  # never let neo4j break phase-2
+        print(f"[phase2] neo4j autosync skipped: {exc}")
     return out_path
 
 
@@ -241,7 +219,7 @@ def main():
     p.add_argument("--redundancy-cosine", type=float, default=0.90)
     p.add_argument("--merge-threshold", type=float, default=0.78)
     p.add_argument("--layer2-model", default="qwen3.5:4b")
-    p.add_argument("--layer2-url", default="http://localhost:11434")
+    p.add_argument("--layer2-url", default=os.environ.get("OLLAMA_URL", "http://localhost:11434"))
     p.add_argument("--skip-layer2", action="store_true",
                    help="Use deterministic stub instead of calling Ollama.")
     p.add_argument("--fail-fast", action="store_true",

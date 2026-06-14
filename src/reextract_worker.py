@@ -22,6 +22,7 @@ Job lifecycle: queued → running → done (or failed).
 """
 
 from __future__ import annotations
+import os
 
 import json
 import logging
@@ -88,7 +89,7 @@ def _safe_model_dir(name: str) -> str:
 
 
 def _run_reextract(job: Job, *, run_doc_fn: Callable | None = None,
-                   base_url: str = "http://localhost:11434") -> None:
+                   base_url: str = os.environ.get("OLLAMA_URL", "http://localhost:11434")) -> None:
     job.status = "running"
     job.started_at = datetime.now(timezone.utc).isoformat()
 
@@ -120,6 +121,7 @@ def _run_reextract(job: Job, *, run_doc_fn: Callable | None = None,
                     model_name=model,
                     parsed_path=parsed_path,
                     guideline_version=job.guideline_version,
+                    out_root=facts_root_for_version(job.guideline_version),
                     base_url=base_url,
                     ensure_solo=True,
                     unload_after=False,
@@ -166,6 +168,7 @@ def _run_phase2(job: Job, *, run_fn: Callable | None = None) -> None:
     facts_root = Path(params.pop("facts_root", FACTS_ROOT))
     parsed_root = Path(params.pop("parsed_root", PARSED_ROOT))
     out_root = Path(params.pop("out_root", CONFLICTS_ROOT))
+    out_suffix = params.pop("out_suffix", "")
 
     job.progress["total"] = len(job.doc_ids)
 
@@ -183,7 +186,8 @@ def _run_phase2(job: Job, *, run_fn: Callable | None = None) -> None:
                 merge_threshold=float(params.get("merge_threshold", 0.78)),
                 layer2_model=params.get("layer2_model", "qwen3.5:4b"),
                 skip_layer2=skip_layer2,
-                layer2_url=params.get("layer2_url", "http://localhost:11434"),
+                layer2_url=params.get("layer2_url", os.environ.get("OLLAMA_URL", "http://localhost:11434")),
+                out_suffix=out_suffix,
             )
             confl = json.loads(Path(out_path).read_text(encoding="utf-8"))
             cell.update({
@@ -378,7 +382,7 @@ def facts_root_for_version(guideline_version: str) -> Path:
 
 def _run_pipeline(job: Job, *, run_doc_fn: Callable | None = None,
                   phase2_fn: Callable | None = None,
-                  base_url: str = "http://localhost:11434") -> None:
+                  base_url: str = os.environ.get("OLLAMA_URL", "http://localhost:11434")) -> None:
     """Extract every (model x doc) cell under job.guideline_version, then run
     Phase-2 per doc against the version-specific facts root. Conflicts land at
     data/conflicts/<doc>__<version>.json (plain <doc>.json for v1), which is
@@ -450,7 +454,7 @@ def _run_pipeline(job: Job, *, run_doc_fn: Callable | None = None,
                 merge_threshold=float(params.get("merge_threshold", 0.78)),
                 layer2_model=params.get("layer2_model", "qwen3.5:4b"),
                 skip_layer2=bool(params.get("skip_layer2", True)),
-                layer2_url=params.get("layer2_url", "http://localhost:11434"),
+                layer2_url=params.get("layer2_url", os.environ.get("OLLAMA_URL", "http://localhost:11434")),
                 out_suffix=out_suffix,
             )
             confl = json.loads(Path(out_path).read_text(encoding="utf-8"))

@@ -17,6 +17,8 @@ purely procedural closing formulas), return `{"facts": []}`.
       "subject":          "string — the entity the fact is about",
       "predicate":        "string — the relation or property",
       "object":           "string — the value, target, or counterparty",
+      "condition":        "string — logical precondition (if/when/under clause), or empty string if unconditional",
+      "temporal_context": "string — ordering/deadline (after/before/within N days, subsequently), or empty string if none",
       "natural_language": "string — single sentence restating the fact, self-contained",
       "source_quote":     "string — verbatim contiguous substring of the section text"
     }
@@ -24,7 +26,7 @@ purely procedural closing formulas), return `{"facts": []}`.
 }
 ```
 
-All five fields are REQUIRED for every fact. Empty strings are not allowed.
+subject, predicate, object, natural_language and source_quote are REQUIRED (non-empty). `condition` and `temporal_context` are optional — use an empty string when not applicable.
 If a fact has no natural object (e.g. an intransitive predicate), set
 `object` to the most informative complement (date, mode, instrument).
 Never write the literal string `"null"` in any field.
@@ -82,14 +84,16 @@ Regulation, the Council, this Directive) **goes in the SUBJECT**.
 The implicit subject is whatever instrument the **enclosing document**
 enacts. Read it from the document title when in doubt.
 
-### 4. Conditional clauses stay together **[fixes v1 violation: conditional splits]**
-When a sentence has the form "**if** X **then** Y", "**in accordance with** X,
-Y", "**under the terms of** X, Y", "**based on** X, Y": emit **exactly one
-fact** whose subject/predicate/object describe Y, and include the entire
-antecedent X **inside `source_quote`** so the condition is preserved for
-audit. Do not split the antecedent into a separate companion fact — it is
-not an independent claim and will be marked as GRANULARITY-violation in
-Phase-2 review.
+### 4. Conditions and ordering go in their own fields **[fixes v1 violation: conditional splits]**
+When a sentence has the form "**if** X **then** Y", "**in accordance with** X, Y",
+"**under the terms of** X, Y", "**based on** X, Y": emit **exactly one fact** whose
+subject/predicate/object describe Y, and put the precondition X in the
+`condition` field — not a separate companion fact. When the sentence dictates
+order or a deadline ("**after** X", "**before** X", "**within** 30 days",
+"**subsequently**", "**prior to** X"): put that phrase in the `temporal_context`
+field. Keep the whole sentence (X + Y) in `source_quote` for audit, and leave a
+field as "" when it does not apply. Splitting the antecedent or ordering into a
+separate fact is a GRANULARITY violation.
 
 ### 5. Use canonical entity surface forms throughout the document **[fixes v1 violation: entity surface variants]**
 Once a real-world entity has been introduced with a qualified form, use

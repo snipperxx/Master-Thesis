@@ -1339,3 +1339,55 @@ body.row-resizing * { cursor: row-resize !important; user-select: none !importan
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   max-width: 68%; min-width: 0;
 }
+
+/* ===== Facts-View: per-annotator prose (poster layout) ===== */
+#facts-table.facts-prose { display: block; padding: 4px 2px; }
+.fact-group { margin-bottom: 10px; }
+.fact-group-head {
+  position: sticky; top: 0; z-index: 1;
+  font-weight: 600; font-size: 12px; letter-spacing: .02em;
+  color: #374151; background: #f3f4f6;
+  padding: 4px 8px; border-radius: 4px; margin-bottom: 4px;
+}
+.fact-item {
+  display: flex; gap: 6px; align-items: flex-start;
+  padding: 5px 8px; margin: 2px 0; cursor: pointer;
+  border-left: 3px solid var(--unlabeled); border-radius: 0 4px 4px 0;
+}
+.fact-item:hover { background: #fafbfc; }
+.fact-item.conf-contradiction { border-left-color: var(--contradiction); }
+.fact-item.conf-granularity   { border-left-color: var(--granularity); }
+.fact-item.conf-redundancy    { border-left-color: var(--redundancy); }
+.fact-item.selected { background: #fff7d1; }
+.fact-item.node-highlight { background: color-mix(in srgb, var(--node-color, #2563eb) 14%, #fff); }
+.fact-body { flex: 1; min-width: 0; }
+.fact-nl { font-size: 13px; line-height: 1.4; color: #111827; }
+.fact-spo { font-size: 11px; color: #6b7280; margin-top: 2px; display: flex; flex-wrap: wrap; gap: 6px; align-items: baseline; }
+.fact-spo .f-subj { color: var(--spo-subject); }
+.fact-spo .f-pred { color: var(--spo-predicate); }
+.fact-spo .f-obj  { color: var(--spo-object); }
+.fact-spo .f-cond { color: #7c3aed; font-style: italic; }
+.fact-spo .f-temp { color: #0891b2; }
+.fact-spo .f-sec  { color: #9ca3af; margin-left: auto; }
+.fact-item.spo-active .f-subj { background: color-mix(in srgb, var(--spo-subject) 20%, #fff); border-radius: 2px; padding: 0 2px; font-weight: 600; }
+.fact-item.spo-active .f-pred { background: color-mix(in srgb, var(--spo-predicate) 20%, #fff); border-radius: 2px; padding: 0 2px; font-weight: 600; }
+.fact-item.spo-active .f-obj  { background: color-mix(in srgb, var(--spo-object) 20%, #fff); border-radius: 2px; padding: 0 2px; font-weight: 600; }
+.fact-item .verify-btn { flex: 0 0 auto; }
+
+/* Readability: lead with the natural-language fact; reveal raw S-P-O only on hover/select. */
+.fact-nl { font-size: 13.5px; }
+.fact-nl .f-cond, .fact-nl .f-temp { font-size: 11px; margin-left: 6px; white-space: nowrap; }
+.fact-spo { display: none; }
+.fact-item:hover .fact-spo,
+.fact-item.spo-active .fact-spo { display: flex; }
+
+/* ── Neo4j constraint tab ─────────────────────────────────────────────── */
+.hint.ok   { color: #15803d; }
+.hint.warn { color: #b45309; }
+#neo4j-cypher { width: 100%; box-sizing: border-box; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; margin: 6px 0; }
+#neo4j-desc { display:block; margin: 2px 0 6px; }
+#neo4j-results { overflow:auto; max-height: 260px; }
+.neo4j-table { border-collapse: collapse; font-size: 12px; width: 100%; }
+.neo4j-table th, .neo4j-table td { border: 1px solid #e2e8f0; padding: 3px 7px; text-align: left; vertical-align: top; }
+.neo4j-table thead th { background: #f1f5f9; position: sticky; top: 0; }
+.reified-legend { margin-right: 8px; }

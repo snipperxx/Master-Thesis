@@ -122,6 +122,8 @@
           <span id="cy-edge-width-v">3</span></label>
         <label>Edge length <input type="range" id="cy-edge-length" min="40" max="400" step="10" value="160">
           <span id="cy-edge-length-v">160</span></label>
+        <label><input type="checkbox" id="cy-reify" checked
+          title="Reify each fact into a statement node (entity → statement → entity) so condition / ordering / logic become visible graph structure"> Reify (statement nodes)</label>
         <label><input type="checkbox" id="cy-core-entities" checked
           title="Cluster and merge entities by their core noun phrase (strip dates/determiners/long modifier tails). Full decontextualized forms stay in the node's surface list."> Core entities</label>
         <label><input type="checkbox" id="cy-hide-islands" checked
@@ -140,6 +142,7 @@
         <span class="dot granularity"></span> granularity
         <span class="dot contradiction"></span> contradiction
         <span class="dot unlabeled"></span> unlabeled
+        <span class="hint reified-legend">▭ statement · <span style="color:#7c3aed">⇢ if</span> · <span style="color:#0d9488">⇢ then</span></span>
         <span class="hint">J/K cycle facts · double-click node = focus · double-click background = reset</span>
       </div>
     </section>
@@ -175,13 +178,7 @@
         <p class="hint">Click <b>Extract here</b> above to run Phase-1 (needs Ollama). The table will fill live as facts get extracted.</p>
       </div>
       <div id="facts-table-wrap">
-        <table id="facts-table">
-          <thead><tr>
-            <th>Annotator</th><th>Subject</th><th>Predicate</th>
-            <th>Object</th><th>Section</th><th>Conflict</th><th>Verify</th>
-          </tr></thead>
-          <tbody></tbody>
-        </table>
+        <div id="facts-table" class="facts-prose"></div>
       </div>
     </section>
   </main>
@@ -250,6 +247,7 @@
       <button class="tab" data-tab="guideline-edit">Guideline editor</button>
       <button class="tab" data-tab="guideline-manager">Guidelines</button>
       <button class="tab" data-tab="run-matrix">Run matrix</button>
+      <button class="tab" data-tab="neo4j">Neo4j</button>
     </nav>
 
     <div class="tab-pane active" data-tab="background-runs">
@@ -264,6 +262,7 @@
           <label>Doc subset <input type="text" id="p1-doc-subset" placeholder="leave blank = all parsed docs" size="40"></label>
           <div class="row">
             <button id="run-phase1-btn">Run Phase-1</button>
+            <button id="run-phase1-doc-btn" title="Run Phase-1 on ONLY the document open above, using the model(s) + guideline selected here">Run on current doc</button>
             <span id="p1-status"></span>
           </div>
           <p class="ollama-hint">Needs Ollama running at <code>localhost:11434</code> with the model pulled
@@ -274,6 +273,7 @@
           <label><input type="checkbox" id="p2-skip-layer2" checked> Skip Layer-2 (use deterministic stub; uncheck for real Qwen arbitration)</label>
           <label>Layer-2 model <input type="text" id="p2-layer2-model" value="qwen3.5:4b" size="18"></label>
           <label>Align threshold <input type="number" id="p2-align-threshold" value="0.78" step="0.01" min="0" max="1" style="width:60px"></label>
+          <label>Guideline <select id="p2-guideline" title="Which guideline version to align: reads data/facts__<version>/, writes conflicts/<doc>__<version>.json"></select></label>
           <div class="row">
             <button id="run-phase2-btn">Run Phase-2</button>
             <span id="p2-status"></span>
@@ -372,11 +372,40 @@
       </div>
       <div id="rm-matrix-wrap"></div>
     </div>
+    <div class="tab-pane" data-tab="neo4j">
+      <p class="hint">Custom conflict detection over the reified KG in Neo4j (the proposal's
+        "interactive graph constraints" — a guideline rule expressed as a graph pattern).
+        Export the current doc, pick or write a constraint, then Run. <b>report</b> is
+        read-only; <b>materialize</b> MERGEs <code>:CONFLICTS_WITH</code> edges into the graph.</p>
+      <div class="row">
+        <span id="neo4j-status" class="hint">checking Neo4j…</span>
+        <button id="neo4j-refresh" class="tool-btn">Refresh</button>
+        <button id="neo4j-export" title="Wipe + reload the current doc's reified KG into Neo4j">Export current doc → Neo4j</button>
+        <span id="neo4j-export-status" class="hint"></span>
+      </div>
+      <div class="row">
+        <label>Constraint <select id="neo4j-constraint-select"></select></label>
+        <label>Params <input type="text" id="neo4j-params" size="20" value="{}"></label>
+        <label>Mode
+          <select id="neo4j-mode">
+            <option value="report" selected>report (read-only)</option>
+            <option value="materialize">materialize (write)</option>
+          </select>
+        </label>
+        <button id="neo4j-run">Run constraint</button>
+        <span id="neo4j-run-status" class="hint"></span>
+      </div>
+      <small id="neo4j-desc" class="hint"></small>
+      <textarea id="neo4j-cypher" rows="7" spellcheck="false" placeholder="MATCH ... RETURN ..."></textarea>
+      <div id="neo4j-results"></div>
+    </div>
+
   </footer>
 
   <script src="/static/variant_shim.js"></script>
   <script src="/static/app.js"></script>
   <script src="/static/analysis.js"></script>
   <script src="/static/workflow.js"></script>
+  <script src="/static/neo4j.js"></script>
 </body>
 </html>

@@ -28,6 +28,7 @@ All endpoints:
 """
 
 from __future__ import annotations
+import os
 
 import json
 import logging
@@ -283,30 +284,56 @@ def api_pairs(doc_id: str):
 
 @app.route("/api/graph/<doc_id>")
 def api_graph(doc_id: str):
+    """Cytoscape graph. Built from the conflicts doc when conflict detection has
+    run (edges carry conflict colours); otherwise built from facts alone — entity
+    clustering + S-P-O edges, all `unlabeled` — so the KG is viewable before (or
+    without) Phase-2. Conflict labels are an overlay added once Phase-2 runs."""
+    from scripts.run_phase2 import cluster_entities, discover_annotators
+    from src.kg_build import build_graph, build_reified_graph
+    from src import reextract_worker as rw
+
     cpath = _conflicts_path(doc_id)
-    if not cpath.exists():
-        return jsonify({"doc_id": doc_id, "nodes": [], "edges": [],
-                        "summary": {"n_nodes": 0, "n_edges": 0, "edge_label_counts": {}}})
-    confl = _load_json(cpath)
+    labeled = cpath.exists()
+    if labeled:
+        confl = _load_json(cpath)
+    else:
+        # No conflict detection yet — assemble a facts-only doc from disk.
+        version = _variant_arg()
+        facts_root = rw.facts_root_for_version(version or "v1")
+        fpa = discover_annotators(facts_root, doc_id)
+        if not fpa:
+            return jsonify({"doc_id": doc_id, "nodes": [], "edges": [],
+                            "summary": {"n_nodes": 0, "n_edges": 0, "edge_label_counts": {}}})
+        confl = {"doc_id": doc_id, "params": {}, "annotators": list(fpa),
+                 "facts_per_annotator": fpa, "aligned_pairs": [],
+                 "entity_clusters": {}, "label_counts": {}}
+
     params = confl.get("params", {})
     want_thr = float(request.args.get("merge_threshold",
                                       params.get("merge_threshold", 0.78)))
     core_flag = request.args.get("core", "1") != "0"
+    # reify=1 -> statement-node graph (mirrors the Neo4j reification); cached in
+    # a SEPARATE file so the flat graph (still used by the Multiples tab) and the
+    # reified graph for the same doc never overwrite each other.
+    reify = request.args.get("reify", "0") != "0"
     gpath = _graph_cache_path(doc_id)
+    if reify:
+        gpath = gpath.with_name(gpath.stem + "__reified.json")
 
-    # Serve the cache only when BOTH knobs match what it was built with.
+    # Serve cache only when knobs match AND the labeled/unlabeled mode matches
+    # (so a Phase-2 run's labelled graph supersedes an earlier facts-only one).
     if gpath.exists():
         g = _load_json(gpath)
         gp = g.get("params", {})
         try:
             if (abs(float(gp.get("merge_threshold", -1)) - want_thr) < 1e-9
-                    and bool(gp.get("core_entities", False)) == core_flag):
+                    and bool(gp.get("core_entities", False)) == core_flag
+                    and bool(gp.get("labeled", True)) == labeled
+                    and bool(g.get("reified", False)) == reify):
                 return jsonify(g)
         except (TypeError, ValueError):
             pass
 
-    from scripts.run_phase2 import cluster_entities
-    from src.kg_build import build_graph
     cfb = dict(confl)
     cfb["entity_clusters"] = cluster_entities(
         confl["facts_per_annotator"], merge_threshold=want_thr,
@@ -314,7 +341,8 @@ def api_graph(doc_id: str):
     cfb["params"] = dict(params)
     cfb["params"]["merge_threshold"] = want_thr
     cfb["params"]["core_entities"] = core_flag
-    graph = build_graph(cfb)
+    graph = build_reified_graph(cfb) if reify else build_graph(cfb)
+    graph.setdefault("params", {})["labeled"] = labeled
     gpath.parent.mkdir(parents=True, exist_ok=True)
     gpath.write_text(json.dumps(graph, ensure_ascii=False, indent=2), encoding="utf-8")
     return jsonify(graph)
@@ -435,6 +463,48 @@ def _guideline_path(version: str) -> Path:
     if not _GUIDELINE_VERSION_RE.match(version or ""):
         abort(400, "version must be alphanumeric/underscore/dot/dash")
     return PROMPTS / f"extract_{version}.md"
+
+
+@app.route("/api/arbitrate_prompt", methods=["GET", "PUT"])
+def api_arbitrate_prompt():
+    """Read/write prompts/arbitrate_<version>.md (the conflict-detection prompt)."""
+    version = (request.args.get("version") or "v1").strip()
+    if not _GUIDELINE_VERSION_RE.match(version):
+        abort(400, "version must be alphanumeric/underscore/dot/dash")
+    path = PROMPTS / f"arbitrate_{version}.md"
+    if request.method == "GET":
+        if not path.exists():
+            abort(404, f"arbitrate prompt {version!r} not found")
+        return jsonify({"version": version, "text": path.read_text(encoding="utf-8"),
+                        "filename": path.name})
+    payload = request.get_json(silent=True) or {}
+    text = payload.get("text")
+    if not isinstance(text, str) or not text.strip():
+        abort(400, "text required")
+    path.write_text(text, encoding="utf-8")
+    return jsonify({"version": version, "saved": True, "size": path.stat().st_size})
+
+
+@app.route("/api/arbitrate_test", methods=["POST"])
+def api_arbitrate_test():
+    """Run one conflict-detection (Layer-2) arbitration on a pair and return the
+    raw label/reason. Lenient — accepts any label the prompt defines."""
+    payload = request.get_json(silent=True) or {}
+    from src.conflict_layer2 import arbitrate_once
+    try:
+        res = arbitrate_once(
+            doc_title=payload.get("doc_title", ""),
+            source_quote=payload.get("source_quote", ""),
+            fact_a=payload.get("fact_a", ""),
+            fact_b=payload.get("fact_b", ""),
+            model_name=payload.get("model") or "qwen3.5:4b",
+            base_url=os.environ.get("OLLAMA_URL", "http://localhost:11434"),
+            template=payload.get("prompt"),
+            version=payload.get("version", "v1"),
+        )
+    except Exception as exc:
+        return jsonify({"error": f"{type(exc).__name__}: {exc}"}), 200
+    return jsonify(res)
 
 
 @app.route("/api/guidelines")
@@ -608,23 +678,28 @@ def api_run_phase2():
     """Phase-2 batch from UI: alignment + Layer-1 + Layer-2 over N docs."""
     from scripts.run_phase2 import discover_all_doc_ids
     payload = request.get_json(silent=True) or {}
+    from src import reextract_worker as rw
+    version = (payload.get("version") or "v1").strip()
+    facts_root = rw.facts_root_for_version(version)
+    out_suffix = "" if version in ("", "v1") else version
     doc_ids = payload.get("doc_ids")
     if not doc_ids:
-        doc_ids = discover_all_doc_ids(FACTS)
+        doc_ids = discover_all_doc_ids(facts_root)
     if not doc_ids:
-        abort(400, "no docs with >=2 annotators found under data/facts/")
+        abort(400, f"no docs with >=2 annotators found under {facts_root}")
     params = {
         "skip_layer2": bool(payload.get("skip_layer2", True)),
         "align_threshold": float(payload.get("align_threshold", 0.78)),
         "redundancy_cosine": float(payload.get("redundancy_cosine", 0.95)),
         "merge_threshold": float(payload.get("merge_threshold", 0.78)),
         "layer2_model": payload.get("layer2_model", "qwen3.5:4b"),
-        "layer2_url": payload.get("layer2_url", "http://localhost:11434"),
+        "layer2_url": payload.get("layer2_url", os.environ.get("OLLAMA_URL", "http://localhost:11434")),
+        "facts_root": str(facts_root),
+        "out_suffix": out_suffix,
     }
-    from src import reextract_worker as rw
     job = rw.enqueue_phase2(
         doc_ids=doc_ids, params=params,
-        label=f"phase-2 ({len(doc_ids)} docs, {'stub' if params['skip_layer2'] else params['layer2_model']})")
+        label=f"phase-2 ({version}, {len(doc_ids)} docs, {'stub' if params['skip_layer2'] else params['layer2_model']})")
     return jsonify(rw.to_dict(job)), 202
 
 
@@ -830,7 +905,7 @@ def api_run_pipeline():
         "redundancy_cosine": float(payload.get("redundancy_cosine", 0.95)),
         "merge_threshold": float(payload.get("merge_threshold", 0.78)),
         "layer2_model": payload.get("layer2_model", "qwen3.5:4b"),
-        "layer2_url": payload.get("layer2_url", "http://localhost:11434"),
+        "layer2_url": payload.get("layer2_url", os.environ.get("OLLAMA_URL", "http://localhost:11434")),
         "skip_extract": bool(payload.get("skip_extract", False)),
     }
     from src import reextract_worker as rw
@@ -904,6 +979,65 @@ def api_distribution_shift_agg():
         out["note"] = (f"no doc has both a baseline and a '{v2}' conflicts file yet — "
                        f"run the experiment pipeline first")
     return jsonify(out)
+
+
+# --- Neo4j custom conflict detection ("graph patching") --------------------
+
+
+@app.route("/api/neo4j/status")
+def api_neo4j_status():
+    from src import neo4j_constraints as nc
+    return jsonify(nc.status())
+
+
+@app.route("/api/neo4j/constraints")
+def api_neo4j_constraints():
+    from src import neo4j_constraints as nc
+    return jsonify({"constraints": nc.BUILTIN_CONSTRAINTS})
+
+
+@app.route("/api/neo4j/export/<doc_id>", methods=["POST"])
+def api_neo4j_export(doc_id: str):
+    """Push the current doc's reified KG into Neo4j (wipe+reload for this doc)."""
+    from src import neo4j_constraints as nc
+    from src.neo4j_export import build_batches, export
+    cpath = _conflicts_path(doc_id)
+    if not cpath.exists():
+        abort(404, f"no conflicts doc for {doc_id!r} (run Phase-2 first)")
+    if not nc.driver_available():
+        abort(400, "neo4j driver not installed (pip install neo4j)")
+    doc = _load_json(cpath)
+    batches = build_batches(doc, _variant_arg() or None)
+    uri, user, pw = nc._conn()
+    try:
+        summary = export(batches, uri, user, pw, wipe=True)
+    except Exception as exc:
+        abort(502, f"neo4j export failed: {type(exc).__name__}: {exc}")
+    return jsonify({"ok": True, "doc_id": doc_id, "summary": summary})
+
+
+@app.route("/api/neo4j/constraint", methods=["POST"])
+def api_neo4j_constraint():
+    """Run a custom Cypher constraint; return violation rows (or materialize)."""
+    from src import neo4j_constraints as nc
+    payload = request.get_json(silent=True) or {}
+    cypher = (payload.get("cypher") or "").strip()
+    params = payload.get("params") or {}
+    mode = payload.get("mode") or "report"
+    if not cypher:
+        abort(400, "cypher required")
+    ok, reason = nc.validate_cypher(cypher, mode)
+    if not ok:
+        abort(400, reason)
+    if not nc.driver_available():
+        abort(400, "neo4j driver not installed (pip install neo4j)")
+    try:
+        result = nc.run_constraint(cypher, params, mode=mode)
+    except ValueError as exc:
+        abort(400, str(exc))
+    except Exception as exc:
+        abort(502, f"neo4j query failed: {type(exc).__name__}: {exc}")
+    return jsonify(result)
 
 
 def main() -> None:

@@ -5,9 +5,9 @@
     "redundancy_cosine": 0.95,
     "merge_threshold": 0.78,
     "layer2_model": "stub",
+    "core_entities": true,
     "facts_root": "C:\\Users\\Administrator\\Desktop\\Coding\\Python\\MasterThesis\\data\\facts",
-    "variant": null,
-    "core_entities": true
+    "variant": null
   },
   "nodes": [
     {

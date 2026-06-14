@@ -4,7 +4,9 @@
     "align_threshold": 0.78,
     "redundancy_cosine": 0.95,
     "merge_threshold": 0.78,
-    "layer2_model": "stub"
+    "layer2_model": "stub",
+    "core_entities": true,
+    "labeled": true
   },
   "nodes": [
     {
@@ -26,17 +28,19 @@
     },
     {
       "data": {
-        "id": "ent_export_refunds_022",
+        "id": "ent_export_refunds_043",
         "label": "export refunds",
         "surface_forms": [
           "an export refund",
-          "export refunds"
+          "export refunds",
+          "export refunds on the products listed in Article 1(1)(a) of Regulation (EC) No 2038/1999, undenatured and exported in the natural state"
         ],
         "annotators": [
-          "gemma3:4b"
+          "gemma3:4b",
+          "qwen3.5:4b"
         ],
-        "n_surface": 2,
-        "n_annotators": 1,
+        "n_surface": 3,
+        "n_annotators": 2,
         "conflict_label": "granularity"
       }
     },
@@ -57,101 +61,13 @@
     },
     {
       "data": {
-        "id": "ent_refunds_on_white_and_raw_029",
-        "label": "refunds on white and raw sugar, undenatured and exported in its unaltered state",
-        "surface_forms": [
-          "refunds on white and raw sugar, undenatured and exported in its unaltered state",
-          "when refunds on white and raw sugar, undenatured and exported in its unaltered state, are being fixed account must be taken of the situation on the Community and world markets in sugar and in particular of the price and cost factors set out in Article 19 of that Regulation"
-        ],
-        "annotators": [
-          "gemma3:4b",
-          "qwen3.5:4b"
-        ],
-        "n_surface": 2,
-        "n_annotators": 2,
-        "conflict_label": "granularity"
-      }
-    },
-    {
-      "data": {
-        "id": "ent_refund_for_sugar_030",
+        "id": "ent_refund_for_sugar_014",
         "label": "refund for sugar",
         "surface_forms": [
           "refund for sugar",
           "refund on raw sugar",
+          "refunds on white and raw sugar, undenatured and exported in its unaltered state",
           "the refund on raw sugar"
-        ],
-        "annotators": [
-          "gemma3:4b",
-          "qwen3.5:4b"
-        ],
-        "n_surface": 3,
-        "n_annotators": 2,
-        "conflict_label": "granularity"
-      }
-    },
-    {
-      "data": {
-        "id": "ent_standard_quality_031",
-        "label": "standard quality",
-        "surface_forms": [
-          "in respect of the standard quality",
-          "standard quality",
-          "the standard quality"
-        ],
-        "annotators": [
-          "gemma3:4b",
-          "qwen3.5:4b"
-        ],
-        "n_surface": 3,
-        "n_annotators": 2,
-        "conflict_label": "granularity"
-      }
-    },
-    {
-      "data": {
-        "id": "ent_the_standard_quality_for_034",
-        "label": "the standard quality for raw sugar and fixing the Community frontier crossing point for calculating cif prices for sugar",
-        "surface_forms": [
-          "Article 1 of Council Regulation (EC) No 431/68 of 9 April 1968 determining the standard quality for raw sugar and fixing the Community frontier crossing point for calculating cif prices for sugar",
-          "the standard quality for raw sugar and fixing the Community frontier crossing point for calculating cif prices for sugar"
-        ],
-        "annotators": [
-          "gemma3:4b",
-          "qwen3.5:4b"
-        ],
-        "n_surface": 2,
-        "n_annotators": 2,
-        "conflict_label": "granularity"
-      }
-    },
-    {
-      "data": {
-        "id": "ent_refund_036",
-        "label": "refund",
-        "surface_forms": [
-          "amount of the refund",
-          "refund",
-          "the refund"
-        ],
-        "annotators": [
-          "gemma3:4b",
-          "qwen3.5:4b"
-        ],
-        "n_surface": 3,
-        "n_annotators": 2,
-        "conflict_label": "granularity"
-      }
-    },
-    {
-      "data": {
-        "id": "ent_regulation_ec_no_2038_19_028",
-        "label": "Regulation (EC) No 2038/1999",
-        "surface_forms": [
-          "Article 18 of Regulation (EC) No 2038/1999",
-          "Article 19(4) of Regulation (EC) No 2038/1999",
-          "Regulation (EC) No 2038/1999",
-          "in accordance with Article 19(4) of Regulation (EC) No 2038/1999"
         ],
         "annotators": [
           "gemma3:4b",
@@ -159,6 +75,77 @@
         ],
         "n_surface": 4,
         "n_annotators": 2,
+        "conflict_label": "granularity"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_standard_quality_034",
+        "label": "standard quality",
+        "surface_forms": [
+          "in respect of the standard quality",
+          "standard quality",
+          "the standard quality",
+          "the standard quality for raw sugar and fixing the Community frontier crossing point for calculating cif prices for sugar"
+        ],
+        "annotators": [
+          "gemma3:4b",
+          "qwen3.5:4b"
+        ],
+        "n_surface": 4,
+        "n_annotators": 2,
+        "conflict_label": "granularity"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_article_1_of_council_reg_032",
+        "label": "Article 1 of Council Regulation (EC) No 431/68 of 9 April 1968",
+        "surface_forms": [
+          "Article 1 of Council Regulation (EC) No 431/68 of 9 April 1968",
+          "Article 1 of Council Regulation (EC) No 431/68 of 9 April 1968 determining the standard quality for raw sugar and fixing the Community frontier crossing point for calculating cif prices for sugar"
+        ],
+        "annotators": [
+          "gemma3:4b",
+          "qwen3.5:4b"
+        ],
+        "n_surface": 2,
+        "n_annotators": 2,
+        "conflict_label": "granularity"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_refund_040",
+        "label": "refund",
+        "surface_forms": [
+          "amount of the refund",
+          "refund",
+          "refund calculated for sugar containing added flavouring or colouring matter",
+          "the refund",
+          "the refund thus calculated for sugar containing added flavouring or colouring matter"
+        ],
+        "annotators": [
+          "gemma3:4b",
+          "qwen3.5:4b"
+        ],
+        "n_surface": 5,
+        "n_annotators": 2,
+        "conflict_label": "granularity"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_in_accordance_with_artic_009",
+        "label": "in accordance with Article 19(4) of Regulation (EC) No 2038/1999",
+        "surface_forms": [
+          "in accordance with Article 19(4) of Regulation (EC) No 2038/1999"
+        ],
+        "annotators": [
+          "gemma3:4b"
+        ],
+        "n_surface": 1,
+        "n_annotators": 1,
         "conflict_label": "granularity"
       }
     },
@@ -180,28 +167,11 @@
     },
     {
       "data": {
-        "id": "ent_detailed_rules_of_applic_039",
-        "label": "detailed rules of application for the grant of export refunds in the sugar sector",
+        "id": "ent_commission_regulation_ec_038",
+        "label": "Commission Regulation (EC) No 2135/95 of 7 September 1995",
         "surface_forms": [
-          "Commission Regulation (EC) No 2135/95 of 7 September 1995 laying down detailed rules of application for the grant of export refunds in the sugar sector",
-          "detailed rules of application for the grant of export refunds in the sugar sector"
-        ],
-        "annotators": [
-          "gemma3:4b",
-          "qwen3.5:4b"
-        ],
-        "n_surface": 2,
-        "n_annotators": 2,
-        "conflict_label": "granularity"
-      }
-    },
-    {
-      "data": {
-        "id": "ent_refund_calculated_for_su_040",
-        "label": "refund calculated for sugar containing added flavouring or colouring matter",
-        "surface_forms": [
-          "refund calculated for sugar containing added flavouring or colouring matter",
-          "the refund thus calculated for sugar containing added flavouring or colouring matter"
+          "Commission Regulation (EC) No 2135/95 of 7 September 1995",
+          "Commission Regulation (EC) No 2135/95 of 7 September 1995 laying down detailed rules of application for the grant of export refunds in the sugar sector"
         ],
         "annotators": [
           "gemma3:4b",
@@ -319,18 +289,16 @@
     },
     {
       "data": {
-        "id": "ent_the_amounts_shown_in_the_044",
-        "label": "the amounts shown in the Annex hereto",
+        "id": "ent_to_the_amounts_shown_in_023",
+        "label": "to the amounts shown in the Annex hereto",
         "surface_forms": [
-          "the amounts shown in the Annex hereto",
           "to the amounts shown in the Annex hereto"
         ],
         "annotators": [
-          "gemma3:4b",
-          "qwen3.5:4b"
+          "gemma3:4b"
         ],
-        "n_surface": 2,
-        "n_annotators": 2,
+        "n_surface": 1,
+        "n_annotators": 1,
         "conflict_label": "granularity"
       }
     },
@@ -368,18 +336,62 @@
     },
     {
       "data": {
+        "id": "ent_article_18_of_regulation_026",
+        "label": "Article 18 of Regulation (EC) No 2038/1999",
+        "surface_forms": [
+          "Article 18 of Regulation (EC) No 2038/1999"
+        ],
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "n_surface": 1,
+        "n_annotators": 1,
+        "conflict_label": "unlabeled"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_regulation_ec_no_2038_19_028",
+        "label": "Regulation (EC) No 2038/1999",
+        "surface_forms": [
+          "Regulation (EC) No 2038/1999"
+        ],
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "n_surface": 1,
+        "n_annotators": 1,
+        "conflict_label": "granularity"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_when_refunds_on_white_an_029",
+        "label": "when refunds on white and raw sugar, undenatured and exported in its unaltered state, are being fixed account must be taken of the situation on the Community and world markets in sugar and in particular of the price and cost factors set out in Article 19 of that Regulation",
+        "surface_forms": [
+          "when refunds on white and raw sugar, undenatured and exported in its unaltered state, are being fixed account must be taken of the situation on the Community and world markets in sugar and in particular of the price and cost factors set out in Article 19 of that Regulation"
+        ],
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "n_surface": 1,
+        "n_annotators": 1,
+        "conflict_label": "granularity"
+      }
+    },
+    {
+      "data": {
         "id": "ent_council_regulation_ec_no_033",
         "label": "Council Regulation (EC) No 431/68 of 9 April 1968",
         "surface_forms": [
-          "Article 1 of Council Regulation (EC) No 431/68 of 9 April 1968",
           "Council Regulation (EC) No 431/68 of 9 April 1968"
         ],
         "annotators": [
           "qwen3.5:4b"
         ],
-        "n_surface": 2,
+        "n_surface": 1,
         "n_annotators": 1,
-        "conflict_label": "granularity"
+        "conflict_label": "unlabeled"
       }
     },
     {
@@ -399,10 +411,10 @@
     },
     {
       "data": {
-        "id": "ent_commission_regulation_ec_038",
-        "label": "Commission Regulation (EC) No 2135/95 of 7 September 1995",
+        "id": "ent_article_19_4_of_regulati_037",
+        "label": "Article 19(4) of Regulation (EC) No 2038/1999",
         "surface_forms": [
-          "Commission Regulation (EC) No 2135/95 of 7 September 1995"
+          "Article 19(4) of Regulation (EC) No 2038/1999"
         ],
         "annotators": [
           "qwen3.5:4b"
@@ -410,6 +422,21 @@
         "n_surface": 1,
         "n_annotators": 1,
         "conflict_label": "granularity"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_detailed_rules_of_applic_039",
+        "label": "detailed rules of application for the grant of export refunds in the sugar sector",
+        "surface_forms": [
+          "detailed rules of application for the grant of export refunds in the sugar sector"
+        ],
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "n_surface": 1,
+        "n_annotators": 1,
+        "conflict_label": "unlabeled"
       }
     },
     {
@@ -444,10 +471,10 @@
     },
     {
       "data": {
-        "id": "ent_export_refunds_on_the_pr_043",
-        "label": "export refunds on the products listed in Article 1(1)(a) of Regulation (EC) No 2038/1999, undenatured and exported in the natural state",
+        "id": "ent_the_amounts_shown_in_the_044",
+        "label": "the amounts shown in the Annex hereto",
         "surface_forms": [
-          "export refunds on the products listed in Article 1(1)(a) of Regulation (EC) No 2038/1999, undenatured and exported in the natural state"
+          "the amounts shown in the Annex hereto"
         ],
         "annotators": [
           "qwen3.5:4b"
@@ -476,9 +503,9 @@
   "edges": [
     {
       "data": {
-        "id": "e_ent_difference_between_quota_027__may_be_covered_by__ent_export_refunds_022",
+        "id": "e_ent_difference_between_quota_027__may_be_covered_by__ent_export_refunds_043",
         "source": "ent_difference_between_quota_027",
-        "target": "ent_export_refunds_022",
+        "target": "ent_export_refunds_043",
         "label": "may be covered by",
         "annotators": [
           "gemma3:4b"
@@ -489,15 +516,21 @@
         "section_paths": [
           "preamble.recitals[0]"
         ],
+        "qualifiers": [
+          "on the world market for the products listed in Article 1(1)("
+        ],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
         "conflict_label": "unlabeled",
         "n_annotators": 1
       }
     },
     {
       "data": {
-        "id": "e_ent_situation_on_the_communi_002__are_being_taken_into_acc__ent_refunds_on_white_and_raw_029",
+        "id": "e_ent_situation_on_the_communi_002__are_being_taken_into_acc__ent_refund_for_sugar_014",
         "source": "ent_situation_on_the_communi_002",
-        "target": "ent_refunds_on_white_and_raw_029",
+        "target": "ent_refund_for_sugar_014",
         "label": "are being taken into account",
         "annotators": [
           "gemma3:4b"
@@ -508,15 +541,22 @@
         "section_paths": [
           "preamble.recitals[1]"
         ],
+        "qualifiers": [
+          "in its unaltered state",
+          "in sugar"
+        ],
+        "conditional": true,
+        "conditions": [],
+        "temporal": [],
         "conflict_label": "granularity",
         "n_annotators": 1
       }
     },
     {
       "data": {
-        "id": "e_ent_refund_for_sugar_030__must_be_fixed__ent_standard_quality_031",
-        "source": "ent_refund_for_sugar_030",
-        "target": "ent_standard_quality_031",
+        "id": "e_ent_refund_for_sugar_014__must_be_fixed__ent_standard_quality_034",
+        "source": "ent_refund_for_sugar_014",
+        "target": "ent_standard_quality_034",
         "label": "must be fixed",
         "annotators": [
           "gemma3:4b"
@@ -527,15 +567,19 @@
         "section_paths": [
           "preamble.recitals[2]"
         ],
+        "qualifiers": [],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
         "conflict_label": "granularity",
         "n_annotators": 1
       }
     },
     {
       "data": {
-        "id": "e_ent_standard_quality_031__defined_in__ent_the_standard_quality_for_034",
-        "source": "ent_standard_quality_031",
-        "target": "ent_the_standard_quality_for_034",
+        "id": "e_ent_standard_quality_034__defined_in__ent_article_1_of_council_reg_032",
+        "source": "ent_standard_quality_034",
+        "target": "ent_article_1_of_council_reg_032",
         "label": "defined in",
         "annotators": [
           "gemma3:4b"
@@ -546,15 +590,22 @@
         "section_paths": [
           "preamble.recitals[2]"
         ],
+        "qualifiers": [
+          "of 9 April 1968",
+          "of Council Regulation (EC) No 431/68 determining the standar"
+        ],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
         "conflict_label": "granularity",
         "n_annotators": 1
       }
     },
     {
       "data": {
-        "id": "e_ent_refund_036__should_be_fixed__ent_regulation_ec_no_2038_19_028",
-        "source": "ent_refund_036",
-        "target": "ent_regulation_ec_no_2038_19_028",
+        "id": "e_ent_refund_040__should_be_fixed__ent_in_accordance_with_artic_009",
+        "source": "ent_refund_040",
+        "target": "ent_in_accordance_with_artic_009",
         "label": "should be fixed",
         "annotators": [
           "gemma3:4b"
@@ -565,33 +616,48 @@
         "section_paths": [
           "preamble.recitals[2]"
         ],
+        "qualifiers": [
+          "with Article 19(4) of Regulation (EC) No 2038/1999"
+        ],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
         "conflict_label": "granularity",
         "n_annotators": 1
       }
     },
     {
       "data": {
-        "id": "e_ent_candy_sugar_010__is_defined_in__ent_detailed_rules_of_applic_039",
+        "id": "e_ent_candy_sugar_010__is_defined_in__ent_commission_regulation_ec_038",
         "source": "ent_candy_sugar_010",
-        "target": "ent_detailed_rules_of_applic_039",
+        "target": "ent_commission_regulation_ec_038",
         "label": "is defined in",
         "annotators": [
-          "gemma3:4b"
+          "gemma3:4b",
+          "qwen3.5:4b"
         ],
         "fact_ids": [
+          "f46aa0818baa6c69",
           "fbfa83022fa6ad4e"
         ],
         "section_paths": [
           "preamble.recitals[2]"
         ],
+        "qualifiers": [
+          "of 7 September 1995",
+          "of application for the grant of export refunds in the sugar "
+        ],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
         "conflict_label": "granularity",
-        "n_annotators": 1
+        "n_annotators": 2
       }
     },
     {
       "data": {
-        "id": "e_ent_refund_calculated_for_su_040__must_apply_to_their_sucr__ent_and_accordingly_be_fixed_013",
-        "source": "ent_refund_calculated_for_su_040",
+        "id": "e_ent_refund_040__must_apply_to_their_sucr__ent_and_accordingly_be_fixed_013",
+        "source": "ent_refund_040",
         "target": "ent_and_accordingly_be_fixed_013",
         "label": "must apply to their sucrose content",
         "annotators": [
@@ -603,14 +669,21 @@
         "section_paths": [
           "preamble.recitals[2]"
         ],
+        "qualifiers": [
+          "for sugar containing added flavouring or colouring matter",
+          "of the said content"
+        ],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
         "conflict_label": "granularity",
         "n_annotators": 1
       }
     },
     {
       "data": {
-        "id": "e_ent_refund_for_sugar_030__may_make_it_necessary_to__ent_according_to_destination_015",
-        "source": "ent_refund_for_sugar_030",
+        "id": "e_ent_refund_for_sugar_014__may_make_it_necessary_to__ent_according_to_destination_015",
+        "source": "ent_refund_for_sugar_014",
         "target": "ent_according_to_destination_015",
         "label": "may make it necessary to vary",
         "annotators": [
@@ -622,14 +695,18 @@
         "section_paths": [
           "preamble.recitals[3]"
         ],
+        "qualifiers": [],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
         "conflict_label": "unlabeled",
         "n_annotators": 1
       }
     },
     {
       "data": {
-        "id": "e_ent_refund_036__may_be_fixed__ent_by_other_legal_instrumen_017",
-        "source": "ent_refund_036",
+        "id": "e_ent_refund_040__may_be_fixed__ent_by_other_legal_instrumen_017",
+        "source": "ent_refund_040",
         "target": "ent_by_other_legal_instrumen_017",
         "label": "may be fixed",
         "annotators": [
@@ -641,14 +718,18 @@
         "section_paths": [
           "preamble.recitals[4]"
         ],
+        "qualifiers": [],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
         "conflict_label": "unlabeled",
         "n_annotators": 1
       }
     },
     {
       "data": {
-        "id": "e_ent_refund_036__fixed__ent_every_two_weeks_018",
-        "source": "ent_refund_036",
+        "id": "e_ent_refund_040__fixed__ent_every_two_weeks_018",
+        "source": "ent_refund_040",
         "target": "ent_every_two_weeks_018",
         "label": "fixed",
         "annotators": [
@@ -660,14 +741,18 @@
         "section_paths": [
           "preamble.recitals[5]"
         ],
+        "qualifiers": [],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
         "conflict_label": "unlabeled",
         "n_annotators": 1
       }
     },
     {
       "data": {
-        "id": "e_ent_refund_036__should_be__ent_as_set_out_in_the_annex_019",
-        "source": "ent_refund_036",
+        "id": "e_ent_refund_040__should_be__ent_as_set_out_in_the_annex_019",
+        "source": "ent_refund_040",
         "target": "ent_as_set_out_in_the_annex_019",
         "label": "should be",
         "annotators": [
@@ -679,6 +764,12 @@
         "section_paths": [
           "preamble.recitals[6]"
         ],
+        "qualifiers": [
+          "in the Annex hereto"
+        ],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
         "conflict_label": "unlabeled",
         "n_annotators": 1
       }
@@ -698,15 +789,21 @@
         "section_paths": [
           "preamble.recitals[7]"
         ],
+        "qualifiers": [
+          "for Sugar"
+        ],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
         "conflict_label": "unlabeled",
         "n_annotators": 1
       }
     },
     {
       "data": {
-        "id": "e_ent_export_refunds_022__are_hereby_fixed__ent_the_amounts_shown_in_the_044",
-        "source": "ent_export_refunds_022",
-        "target": "ent_the_amounts_shown_in_the_044",
+        "id": "e_ent_export_refunds_043__are_hereby_fixed__ent_to_the_amounts_shown_in_023",
+        "source": "ent_export_refunds_043",
+        "target": "ent_to_the_amounts_shown_in_023",
         "label": "are hereby fixed",
         "annotators": [
           "gemma3:4b"
@@ -717,6 +814,12 @@
         "section_paths": [
           "enacting.article_1"
         ],
+        "qualifiers": [
+          "in the Annex hereto"
+        ],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
         "conflict_label": "granularity",
         "n_annotators": 1
       }
@@ -738,14 +841,18 @@
         "section_paths": [
           "enacting.article_2"
         ],
+        "qualifiers": [],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
         "conflict_label": "granularity",
         "n_annotators": 2
       }
     },
     {
       "data": {
-        "id": "e_ent_regulation_ec_no_2038_19_028__provides_that__ent_difference_between_quota_027",
-        "source": "ent_regulation_ec_no_2038_19_028",
+        "id": "e_ent_article_18_of_regulation_026__provides_that__ent_difference_between_quota_027",
+        "source": "ent_article_18_of_regulation_026",
         "target": "ent_difference_between_quota_027",
         "label": "provides that",
         "annotators": [
@@ -757,15 +864,22 @@
         "section_paths": [
           "preamble.recitals[0]"
         ],
+        "qualifiers": [
+          "of Regulation (EC) No 2038/1999",
+          "on the world market for the products listed in Article 1(1)("
+        ],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
         "conflict_label": "unlabeled",
         "n_annotators": 1
       }
     },
     {
       "data": {
-        "id": "e_ent_regulation_ec_no_2038_19_028__provides_that__ent_refunds_on_white_and_raw_029",
+        "id": "e_ent_regulation_ec_no_2038_19_028__provides_that__ent_when_refunds_on_white_an_029",
         "source": "ent_regulation_ec_no_2038_19_028",
-        "target": "ent_refunds_on_white_and_raw_029",
+        "target": "ent_when_refunds_on_white_an_029",
         "label": "provides that",
         "annotators": [
           "qwen3.5:4b"
@@ -776,15 +890,21 @@
         "section_paths": [
           "preamble.recitals[1]"
         ],
+        "qualifiers": [
+          "on white and raw sugar, undenatured and exported in its unal"
+        ],
+        "conditional": true,
+        "conditions": [],
+        "temporal": [],
         "conflict_label": "granularity",
         "n_annotators": 1
       }
     },
     {
       "data": {
-        "id": "e_ent_refund_for_sugar_030__must_be_fixed_in_respect__ent_standard_quality_031",
-        "source": "ent_refund_for_sugar_030",
-        "target": "ent_standard_quality_031",
+        "id": "e_ent_refund_for_sugar_014__must_be_fixed_in_respect__ent_standard_quality_034",
+        "source": "ent_refund_for_sugar_014",
+        "target": "ent_standard_quality_034",
         "label": "must be fixed in respect of",
         "annotators": [
           "qwen3.5:4b"
@@ -795,15 +915,19 @@
         "section_paths": [
           "preamble.recitals[2]"
         ],
+        "qualifiers": [],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
         "conflict_label": "granularity",
         "n_annotators": 1
       }
     },
     {
       "data": {
-        "id": "e_ent_standard_quality_031__is_defined_in__ent_council_regulation_ec_no_033",
-        "source": "ent_standard_quality_031",
-        "target": "ent_council_regulation_ec_no_033",
+        "id": "e_ent_standard_quality_034__is_defined_in__ent_article_1_of_council_reg_032",
+        "source": "ent_standard_quality_034",
+        "target": "ent_article_1_of_council_reg_032",
         "label": "is defined in",
         "annotators": [
           "qwen3.5:4b"
@@ -814,15 +938,22 @@
         "section_paths": [
           "preamble.recitals[2]"
         ],
+        "qualifiers": [
+          "of 9 April 1968",
+          "of Council Regulation (EC) No 431/68"
+        ],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
         "conflict_label": "granularity",
         "n_annotators": 1
       }
     },
     {
       "data": {
-        "id": "e_ent_council_regulation_ec_no_033__determines__ent_the_standard_quality_for_034",
+        "id": "e_ent_council_regulation_ec_no_033__determines__ent_standard_quality_034",
         "source": "ent_council_regulation_ec_no_033",
-        "target": "ent_the_standard_quality_for_034",
+        "target": "ent_standard_quality_034",
         "label": "determines",
         "annotators": [
           "qwen3.5:4b"
@@ -833,6 +964,13 @@
         "section_paths": [
           "preamble.recitals[2]"
         ],
+        "qualifiers": [
+          "for raw sugar and fixing the Community frontier crossing poi",
+          "of 9 April 1968"
+        ],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
         "conflict_label": "unlabeled",
         "n_annotators": 1
       }
@@ -852,15 +990,21 @@
         "section_paths": [
           "preamble.recitals[2]"
         ],
+        "qualifiers": [
+          "of 9 April 1968"
+        ],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
         "conflict_label": "unlabeled",
         "n_annotators": 1
       }
     },
     {
       "data": {
-        "id": "e_ent_refund_036__should_be_fixed_in_accor__ent_regulation_ec_no_2038_19_028",
-        "source": "ent_refund_036",
-        "target": "ent_regulation_ec_no_2038_19_028",
+        "id": "e_ent_refund_040__should_be_fixed_in_accor__ent_article_19_4_of_regulati_037",
+        "source": "ent_refund_040",
+        "target": "ent_article_19_4_of_regulati_037",
         "label": "should be fixed in accordance with",
         "annotators": [
           "qwen3.5:4b"
@@ -871,25 +1015,12 @@
         "section_paths": [
           "preamble.recitals[2]"
         ],
-        "conflict_label": "granularity",
-        "n_annotators": 1
-      }
-    },
-    {
-      "data": {
-        "id": "e_ent_candy_sugar_010__is_defined_in__ent_commission_regulation_ec_038",
-        "source": "ent_candy_sugar_010",
-        "target": "ent_commission_regulation_ec_038",
-        "label": "is defined in",
-        "annotators": [
-          "qwen3.5:4b"
+        "qualifiers": [
+          "of Regulation (EC) No 2038/1999"
         ],
-        "fact_ids": [
-          "f46aa0818baa6c69"
-        ],
-        "section_paths": [
-          "preamble.recitals[2]"
-        ],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
         "conflict_label": "granularity",
         "n_annotators": 1
       }
@@ -909,14 +1040,21 @@
         "section_paths": [
           "preamble.recitals[2]"
         ],
+        "qualifiers": [
+          "of 7 September 1995",
+          "of application for the grant of export refunds in the sugar "
+        ],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
         "conflict_label": "unlabeled",
         "n_annotators": 1
       }
     },
     {
       "data": {
-        "id": "e_ent_refund_calculated_for_su_040__must_apply_to__ent_their_sucrose_content_041",
-        "source": "ent_refund_calculated_for_su_040",
+        "id": "e_ent_refund_040__must_apply_to__ent_their_sucrose_content_041",
+        "source": "ent_refund_040",
         "target": "ent_their_sucrose_content_041",
         "label": "must apply to",
         "annotators": [
@@ -928,14 +1066,20 @@
         "section_paths": [
           "preamble.recitals[2]"
         ],
+        "qualifiers": [
+          "for sugar containing added flavouring or colouring matter"
+        ],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
         "conflict_label": "unlabeled",
         "n_annotators": 1
       }
     },
     {
       "data": {
-        "id": "e_ent_refund_calculated_for_su_040__must_be_fixed_per__ent_1_of_the_said_content_042",
-        "source": "ent_refund_calculated_for_su_040",
+        "id": "e_ent_refund_040__must_be_fixed_per__ent_1_of_the_said_content_042",
+        "source": "ent_refund_040",
         "target": "ent_1_of_the_said_content_042",
         "label": "must be fixed per",
         "annotators": [
@@ -947,14 +1091,20 @@
         "section_paths": [
           "preamble.recitals[2]"
         ],
+        "qualifiers": [
+          "for sugar containing added flavouring or colouring matter"
+        ],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
         "conflict_label": "granularity",
         "n_annotators": 1
       }
     },
     {
       "data": {
-        "id": "e_ent_export_refunds_on_the_pr_043__are_hereby_fixed_to__ent_the_amounts_shown_in_the_044",
-        "source": "ent_export_refunds_on_the_pr_043",
+        "id": "e_ent_export_refunds_043__are_hereby_fixed_to__ent_the_amounts_shown_in_the_044",
+        "source": "ent_export_refunds_043",
         "target": "ent_the_amounts_shown_in_the_044",
         "label": "are hereby fixed to",
         "annotators": [
@@ -966,6 +1116,12 @@
         "section_paths": [
           "enacting.article_1"
         ],
+        "qualifiers": [
+          "on the products listed in Article 1(1)(a) of Regulation (EC)"
+        ],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
         "conflict_label": "granularity",
         "n_annotators": 1
       }
@@ -985,17 +1141,21 @@
         "section_paths": [
           "enacting.article_2"
         ],
+        "qualifiers": [],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
         "conflict_label": "unlabeled",
         "n_annotators": 1
       }
     }
   ],
   "summary": {
-    "n_nodes": 29,
-    "n_edges": 27,
+    "n_nodes": 31,
+    "n_edges": 26,
     "edge_label_counts": {
       "unlabeled": 12,
-      "granularity": 15
+      "granularity": 14
     }
   }
 }

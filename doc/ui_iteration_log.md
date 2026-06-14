@@ -426,6 +426,85 @@ modals in future work.
   noun nodes are recoverable as an equivalence class over decontextualized
   mentions. The toggle keeps both worlds comparable for the write-up.
 
+### 2.26 Per-fact quality audit: qwen v1 vs v2 (see companion doc)
+Full audit in **`annotation_quality_qwen_v1_v2.md`**: v2 fixed 3½ of the 4
+targeted v1 patterns (null-object abrogation now fully decontextualized from
+the doc title; modifier splits gone; adverbial objects 34%→12%; entity
+confusion fixed) but over-corrected — 4 of 10 numeric facts lost their year
+(§7: 92%→60%) and two facts dropped semantically required prepositions
+("laid down [in]", "provided [by]"), inverting roles. Demonstratives not
+eradicated (2→2). Drafted v3 candidate rules from the regressions. Key
+methodological gain: quote/number fidelity is model-stable across versions
+while boundary decisions move with the guideline — the loop separates
+guideline-fixable from model-bound error classes.
+
+### 2.27 Qualifiers move to the edge (Wikidata-style, display layer only)
+- **Question (user).** "现在直接 SPO 对应节点-关系-节点是不是太简单了，
+  导致定语无法分开、节点非常复杂?" — verdict: as the *measurement* unit the
+  bare triple is sufficient (alignment runs on natural_language; IAA /
+  distribution-shift never touch KG structure); as a *KG representation*
+  it is genuinely under-expressive — binary relations cannot host the
+  time/condition/agent qualifiers legal prose attaches to every clause
+  (the 34% adverbial-object rate of v1 is the smoking gun). The mainstream
+  homes for qualifiers: Wikidata statement qualifiers, W3C n-ary patterns,
+  property-graph edge attributes.
+- **Change (no annotation-schema change).** `src/entity_norm.split_entity`
+  separates each S/O mention into core NP + qualifier list (date tails,
+  clause tails); verified 100% parity with the previous normalize_entity on
+  all regression cases. `kg_build` now attaches the stripped qualifiers to
+  the EDGE (`data.qualifiers`, deduped, ≤6) — the statement carries its
+  modifiers, the node stays a bare entity. Edge hover shows
+  `[label] pred · annotators · ⟨in 2004; of 7 June 2005⟩`.
+- **Escalation path documented.** A true fix at the annotation layer —
+  optional `qualifiers:{time, condition, agent}` slots (Wikidata-style) —
+  changes the atomic-fact unit definition and 4B schema-failure risk;
+  parked as a supervisor-gated v3-schema experiment, measurable with the
+  existing closed-loop machinery.
+- **Ops note.** During verification the mounted-volume staleness bit in a
+  new direction: a conflicts file written by the user-side Flask appeared
+  truncated at a fixed byte offset from the sandbox while the server read
+  it intact. Analysis of large user-written data files now goes through
+  the HTTP API, not the mount (memory + working conventions updated).
+
+### 2.28 Tuned force-directed profile + conditional-edge marking
+- **Change (layout).** fcose upgraded from a generic single pass to a tuned
+  profile: quality "proof", 5k iterations, randomize=true (fresh global
+  arrangement), degree-scaled ideal edge length (hubs 1.5×, leaf pairs
+  0.8×), degree-scaled repulsion, label-aware spacing, tiling for isolated
+  nodes. Rationale: uniform force parameters treat a 6-degree hub and a
+  leaf pair identically — exactly why hub neighbourhoods collapsed into
+  label soup.
+- **Change (logic visibility).** Edges whose riding facts contain
+  conditional markers (if/when/unless/provided that/subject to/…) in quote
+  or natural_language are flagged `conditional` by kg_build and rendered
+  *dashed*, with a ⧟conditional badge in the hover readout. This is the
+  poster's If/Or-node concept mapped onto our edge-centric KG without a
+  schema change — v1 §6 deliberately keeps antecedents inside source_quote,
+  so the signal is recoverable deterministically.
+
+### 2.29 Genre-difficulty contrast: biography vs legal text (live demo)
+- **Question (user).** "我是不是最好先拿传记类练手，现在的法律条文太复杂了?"
+- **Experiment.** A 5-sentence Einstein biography was uploaded through the
+  tool's own `+ Text` flow (doc `user-a60bde451b`) and run through the
+  identical pipeline — same guideline v1, same models (qwen3.5:4b 9 facts,
+  gemma3:4b 5 facts), same Phase-2 stub.
+- **Result.** Biography: section coverage 100%/100%, char coverage 98%
+  (qwen); IAA Jaccard 0.556, mean cosine 0.922; KG = ONE connected star of
+  10 bare-noun nodes ("Einstein", "14 March 1879", "1921 Nobel Prize in
+  Physics") — the poster aesthetic, zero fragmentation; conflicts are pure
+  granularity/redundancy. Legal baseline on the same screen: char coverage
+  50–57%, qwen↔gemma Jaccard ≈0.30 (v2), 42–57 nodes in 7–14 components
+  with clause-shaped labels, plus contradictions.
+- **Reading.** The pipeline, schema and guideline are NOT the bottleneck —
+  the *genre* controls guideline ambiguity. FActScore-style biographies are
+  easy precisely because their facts decontextualize into short SVO with
+  recurring subjects; EUR-Lex is hard because qualifiers are load-bearing.
+  Decision: corpus stays EUR-Lex (the difficulty IS the thesis signal, and
+  the dry-run gate passed); biographies serve as (a) a free practice/
+  calibration corpus via `+ Text`, (b) a 30-second easy-vs-hard demo for
+  supervision meetings, (c) a thesis figure candidate (two KGs side by
+  side: genre-dependent ambiguity).
+
 ## Open items (deliberately deferred)
 - Neo4j persistence + cardinality-constraint editor (proposal Phase-3
   "patching") — out of current scope; graph JSON serving is sufficient for
