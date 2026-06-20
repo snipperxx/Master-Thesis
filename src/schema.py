@@ -93,6 +93,19 @@ class AtomicFact(BaseModel):
     condition: str = ""
     temporal_context: str = ""
 
+    # Reification grouping: when one atomic annotation (a single natural_language /
+    # source span) decomposes into several SPO triples, every triple shares this
+    # group_id so the KG / Neo4j layer can group co-asserted statements.
+    group_id: str = ""
+
+    # Logical structure: facts that are branches/conjuncts of ONE logical
+    # construction ("either A or B", "A and B", "if X then A or B") share a
+    # logic_group id; logic_op names the relation among them. Lets the KG render
+    # an AND/OR/XOR operator node instead of cramming "A or B" into one object
+    # (the v1-v4 failure mode). Empty when the fact stands alone.
+    logic_group: str = ""
+    logic_op: str = ""  # "" | "AND" | "OR" | "XOR"
+
     # Free-text restatement (optional but recommended for LLM consumption
     # downstream, e.g. by the Layer-2 arbitrator).
     natural_language: Optional[str] = None

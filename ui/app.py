@@ -465,13 +465,67 @@ def _guideline_path(version: str) -> Path:
     return PROMPTS / f"extract_{version}.md"
 
 
-@app.route("/api/arbitrate_prompt", methods=["GET", "PUT"])
+@app.route("/api/arbitrate_prompts")
+def api_arbitrate_prompts_list():
+    """List all prompts/arbitrate_*.md versions."""
+    out = []
+    for p in sorted(PROMPTS.glob("arbitrate_*.md")):
+        version = p.stem.removeprefix("arbitrate_")
+        out.append({"version": version, "filename": p.name, "size": p.stat().st_size})
+    return jsonify({"arbitrate_prompts": out})
+
+
+@app.route("/api/schema_prompts")
+def api_schema_prompts_list():
+    """List all prompts/schema_*.md versions."""
+    out = []
+    for p in sorted(PROMPTS.glob("schema_*.md")):
+        version = p.stem.removeprefix("schema_")
+        out.append({"version": version, "filename": p.name, "size": p.stat().st_size})
+    return jsonify({"schema_prompts": out})
+
+
+@app.route("/api/schema_prompt", methods=["GET", "PUT", "DELETE"])
+def api_schema_prompt():
+    """Read/write/delete prompts/schema_<version>.md."""
+    version = (request.args.get("version") or "v1").strip()
+    if not _GUIDELINE_VERSION_RE.match(version):
+        abort(400, "version must be alphanumeric/underscore/dot/dash")
+    path = PROMPTS / f"schema_{version}.md"
+    if request.method == "DELETE":
+        if version == "v1":
+            abort(403, "v1 schema is protected and cannot be deleted")
+        if not path.exists():
+            abort(404, f"schema {version!r} not found")
+        path.unlink()
+        return jsonify({"ok": True, "version": version, "deleted": True})
+    if request.method == "GET":
+        if not path.exists():
+            abort(404, f"schema {version!r} not found")
+        return jsonify({"version": version, "text": path.read_text(encoding="utf-8"),
+                        "filename": path.name})
+    payload = request.get_json(silent=True) or {}
+    text = payload.get("text")
+    if not isinstance(text, str) or not text.strip():
+        abort(400, "text required")
+    path.write_text(text, encoding="utf-8")
+    return jsonify({"version": version, "saved": True, "size": path.stat().st_size})
+
+
+@app.route("/api/arbitrate_prompt", methods=["GET", "PUT", "DELETE"])
 def api_arbitrate_prompt():
-    """Read/write prompts/arbitrate_<version>.md (the conflict-detection prompt)."""
+    """Read/write/delete prompts/arbitrate_<version>.md (the conflict-detection prompt)."""
     version = (request.args.get("version") or "v1").strip()
     if not _GUIDELINE_VERSION_RE.match(version):
         abort(400, "version must be alphanumeric/underscore/dot/dash")
     path = PROMPTS / f"arbitrate_{version}.md"
+    if request.method == "DELETE":
+        if version == "v1":
+            abort(403, "v1 is the baseline arbitrate prompt and cannot be deleted")
+        if not path.exists():
+            abort(404, f"arbitrate prompt {version!r} not found")
+        path.unlink()
+        return jsonify({"version": version, "deleted": True})
     if request.method == "GET":
         if not path.exists():
             abort(404, f"arbitrate prompt {version!r} not found")
@@ -526,9 +580,16 @@ def api_guidelines_list():
     return jsonify({"guidelines": out})
 
 
-@app.route("/api/guidelines/<version>", methods=["GET", "PUT"])
+@app.route("/api/guidelines/<version>", methods=["GET", "PUT", "DELETE"])
 def api_guideline_one(version: str):
     path = _guideline_path(version)
+    if request.method == "DELETE":
+        if version == "v1":
+            abort(403, "v1 is the baseline guideline and cannot be deleted")
+        if not path.exists():
+            abort(404, f"guideline {version!r} not found")
+        path.unlink()
+        return jsonify({"ok": True, "version": version, "deleted": True})
     if request.method == "GET":
         if not path.exists():
             abort(404, f"guideline {version!r} not found")
@@ -687,6 +748,9 @@ def api_run_phase2():
         doc_ids = discover_all_doc_ids(facts_root)
     if not doc_ids:
         abort(400, f"no docs with >=2 annotators found under {facts_root}")
+    arbitrate_version = (payload.get("arbitrate_version") or "v1").strip()
+    if not _GUIDELINE_VERSION_RE.match(arbitrate_version):
+        arbitrate_version = "v1"
     params = {
         "skip_layer2": bool(payload.get("skip_layer2", True)),
         "align_threshold": float(payload.get("align_threshold", 0.78)),
@@ -696,10 +760,11 @@ def api_run_phase2():
         "layer2_url": payload.get("layer2_url", os.environ.get("OLLAMA_URL", "http://localhost:11434")),
         "facts_root": str(facts_root),
         "out_suffix": out_suffix,
+        "arbitrate_version": arbitrate_version,
     }
     job = rw.enqueue_phase2(
         doc_ids=doc_ids, params=params,
-        label=f"phase-2 ({version}, {len(doc_ids)} docs, {'stub' if params['skip_layer2'] else params['layer2_model']})")
+        label=f"phase-2 ({version}, {len(doc_ids)} docs, {'stub' if params['skip_layer2'] else params['layer2_model']}, arb={arbitrate_version})")
     return jsonify(rw.to_dict(job)), 202
 
 

@@ -134,7 +134,7 @@ def _stub_layer2(prompt: str, **_kw) -> str:
 
 def run(doc_id, *, facts_root, parsed_root, out_root, align_threshold,
         redundancy_cosine, merge_threshold, layer2_model, skip_layer2, layer2_url,
-        out_suffix: str = ""):
+        out_suffix: str = "", arbitrate_version: str = "v1"):
     facts_per_annotator = discover_annotators(facts_root, doc_id)
     if not facts_per_annotator:
         raise SystemExit(f"No annotators found under {facts_root} for doc {doc_id!r}")
@@ -157,7 +157,8 @@ def run(doc_id, *, facts_root, parsed_root, out_root, align_threshold,
     print(f"[phase2] Layer-1 counts: {l1_counts}")
 
     if skip_layer2:
-        final = arbitrate_all(pairs, chat_fn=_stub_layer2, doc_title=doc_id)
+        final = arbitrate_all(pairs, chat_fn=_stub_layer2, doc_title=doc_id,
+                              version=arbitrate_version)
         print(f"[phase2] Layer-2 (STUB) counts: { {k:v for k,v in final.items() if not k.startswith('_')} }")
     else:
         title = doc_id
@@ -165,7 +166,8 @@ def run(doc_id, *, facts_root, parsed_root, out_root, align_threshold,
         if parsed_path.exists():
             parsed = json.loads(parsed_path.read_text(encoding="utf-8"))
             title = parsed.get("document", {}).get("title", doc_id)
-        final = arbitrate_all(pairs, model_name=layer2_model, doc_title=title, base_url=layer2_url)
+        final = arbitrate_all(pairs, model_name=layer2_model, doc_title=title,
+                              base_url=layer2_url, version=arbitrate_version)
         print(f"[phase2] Layer-2 ({layer2_model}) counts: { {k:v for k,v in final.items() if not k.startswith('_')} }")
 
     surface_to_cluster = cluster_entities(facts_per_annotator,

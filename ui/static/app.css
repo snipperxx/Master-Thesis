@@ -886,6 +886,43 @@ body[data-color-mode="annotator"] #doc-body mark[data-fact-id] {
 .bg-runs #p1-status.ok,
 .bg-runs #p2-status.ok { color: var(--success); }
 
+/* Annotation tab — two-column split */
+.annotation-split {
+  display: flex;
+  gap: 16px;
+  height: calc(100% - 4px);
+}
+.annotation-half {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.annotation-half-title {
+  font-weight: 600;
+  font-size: 12.5px;
+  color: var(--ink);
+  margin: 0 0 2px;
+}
+.annotation-half textarea {
+  flex: 1;
+  min-height: 160px;
+  resize: vertical;
+}
+#sv-status, #gm-status {
+  font-size: 12px;
+}
+#sv-status.err, #gm-status.err { color: var(--warning); }
+#sv-status.ok,  #gm-status.ok  { color: var(--success); }
+
+/* Run matrix controls */
+.rm-controls { flex-wrap: wrap; gap: 10px; }
+.rm-phase-label { font-size: 12.5px; color: var(--ink-dim); display: flex; align-items: center; gap: 4px; }
+.rm-model-checks { display: flex; gap: 10px; }
+.rm-model-checks label { font-size: 12.5px; color: var(--ink-dim); display: flex; align-items: center; gap: 4px; }
+.rm-sep { width: 1px; background: var(--border); height: 18px; align-self: center; }
+
 /* Run matrix */
 #rm-matrix-wrap {
   max-height: 280px;
@@ -1349,6 +1386,17 @@ body.row-resizing * { cursor: row-resize !important; user-select: none !importan
   color: #374151; background: #f3f4f6;
   padding: 4px 8px; border-radius: 4px; margin-bottom: 4px;
 }
+/* By-paragraph layout */
+.fact-section-head {
+  background: #e0e7ff; color: #3730a3;
+  border-left: 3px solid #6366f1; border-radius: 0 4px 4px 0;
+  position: sticky; top: 0; z-index: 2;
+}
+.fact-annotator-head {
+  font-size: 11px; font-weight: 600; color: #6b7280;
+  padding: 2px 8px 2px 16px; margin: 3px 0 1px;
+  border-left: 2px solid #d1d5db;
+}
 .fact-item {
   display: flex; gap: 6px; align-items: flex-start;
   padding: 5px 8px; margin: 2px 0; cursor: pointer;
@@ -1391,3 +1439,12 @@ body.row-resizing * { cursor: row-resize !important; user-select: none !importan
 .neo4j-table th, .neo4j-table td { border: 1px solid #e2e8f0; padding: 3px 7px; text-align: left; vertical-align: top; }
 .neo4j-table thead th { background: #f1f5f9; position: sticky; top: 0; }
 .reified-legend { margin-right: 8px; }
+
+/* Model-selection checkbox groups in the Background runs panel */
+.bg-runs .model-row {
+  font-size: 12.5px;
+  color: var(--ink-dim);
+  display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+}
+.bg-runs .model-checks { display: inline-flex; flex-wrap: wrap; gap: 4px 12px; }
+.bg-runs .model-checks label { display: inline-flex; align-items: center; gap: 4px; }

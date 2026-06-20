@@ -188,6 +188,7 @@ def _run_phase2(job: Job, *, run_fn: Callable | None = None) -> None:
                 skip_layer2=skip_layer2,
                 layer2_url=params.get("layer2_url", os.environ.get("OLLAMA_URL", "http://localhost:11434")),
                 out_suffix=out_suffix,
+                arbitrate_version=params.get("arbitrate_version", "v1"),
             )
             confl = json.loads(Path(out_path).read_text(encoding="utf-8"))
             cell.update({
@@ -456,6 +457,7 @@ def _run_pipeline(job: Job, *, run_doc_fn: Callable | None = None,
                 skip_layer2=bool(params.get("skip_layer2", True)),
                 layer2_url=params.get("layer2_url", os.environ.get("OLLAMA_URL", "http://localhost:11434")),
                 out_suffix=out_suffix,
+                arbitrate_version=params.get("arbitrate_version", "v1"),
             )
             confl = json.loads(Path(out_path).read_text(encoding="utf-8"))
             cell.update({"status": "ok",

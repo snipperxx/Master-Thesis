@@ -82,15 +82,19 @@ def _chat_once(
     base_url: str,
     timeout: float = 90.0,
 ) -> str:
-    """One /api/generate call. think=ON (no /no_think, no think:false)."""
+    """One /api/generate call. think=OFF on purpose: with format=json the JSON
+    grammar forbids qwen3.5's free-text <think> block, so thinking-mode returned
+    empty responses (observed 2026-06-17: 20/20 arbitration calls empty ->
+    everything stuck on 'escalate'). /no_think makes it emit the {label,reason}
+    object directly; num_ctx raised so source_quote + both facts fit."""
     resp = requests.post(
         f"{base_url}/api/generate",
         json={
             "model": model_name,
-            "prompt": prompt,
+            "prompt": prompt + "\n\n/no_think",
             "stream": False,
             "format": "json",
-            "options": {"temperature": 0.1, "num_ctx": 2048},
+            "options": {"temperature": 0.1, "num_ctx": 4096},
         },
         timeout=timeout,
     )
@@ -150,6 +154,7 @@ def arbitrate(
     doc_title: str = "",
     base_url: str = _DEFAULT_OLLAMA_URL,
     template: str | None = None,
+    version: str = "v1",
     chat_fn=None,            # injectable for unit tests
 ) -> AlignedPair:
     """Resolve a single escalated pair via LLM. Mutates and returns `pair`."""
@@ -163,7 +168,7 @@ def arbitrate(
     fa, fb = pair.fact_a, pair.fact_b
     assert fa is not None and fb is not None
 
-    template = template or load_arbitrate_template("v1")
+    template = template or load_arbitrate_template(version)
     source_quote = (fa.get("source_locator", {}) or {}).get("quote", "") or \
                    (fb.get("source_locator", {}) or {}).get("quote", "")
     prompt = _render_prompt(
@@ -203,13 +208,14 @@ def arbitrate_all(
     model_name: str = _DEFAULT_MODEL,
     doc_title: str = "",
     base_url: str = _DEFAULT_OLLAMA_URL,
+    version: str = "v1",
     chat_fn=None,
 ) -> dict[str, int]:
     """Apply `arbitrate` to every escalated pair; return final label counts.
 
     Reads the prompt template once and shares it across calls.
     """
-    template = load_arbitrate_template("v1")
+    template = load_arbitrate_template(version)
     counts: dict[str, int] = {}
     n_arbitrated = 0
     for p in pairs:

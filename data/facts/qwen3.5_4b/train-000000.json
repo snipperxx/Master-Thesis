@@ -1,17 +1,22 @@
 {
   "doc_id": "train-000000",
   "annotator": "qwen3.5:4b",
-  "guideline_version": "v2",
-  "fact_count": 24,
+  "guideline_version": "v1",
+  "fact_count": 43,
   "facts": [
     {
-      "fact_id": "03b95596391985a0",
+      "fact_id": "05acafc0dee65520",
       "doc_id": "train-000000",
       "annotator": "qwen3.5:4b",
-      "guideline_version": "v2",
+      "guideline_version": "v1",
       "subject": "the Council",
       "predicate": "decided",
       "object": "that an excessive deficit existed in the Netherlands",
+      "condition": "",
+      "temporal_context": "",
+      "group_id": "ad0d67b3345d8c54",
+      "logic_group": "",
+      "logic_op": "",
       "natural_language": "The Council decided that an excessive deficit existed in the Netherlands.",
       "source_locator": {
         "source_type": "prose",
@@ -23,348 +28,948 @@
       "conflict_label": "unlabeled",
       "extra": {
         "anchor_score": 100.0,
-        "model_quote": "the Council decided that an excessive deficit existed in the Netherlands"
+        "model_quote": "the Council decided that an excessive deficit existed in the Netherlands",
+        "triple_index": 0
       }
     },
     {
-      "fact_id": "d68e8b2f60380086",
+      "fact_id": "3aeb145498e2030e",
       "doc_id": "train-000000",
       "annotator": "qwen3.5:4b",
-      "guideline_version": "v2",
-      "subject": "Decision 2005/136/EC",
-      "predicate": "followed",
-      "object": "a recommendation from the Commission",
-      "natural_language": "Decision 2005/136/EC followed a recommendation from the Commission.",
-      "source_locator": {
-        "source_type": "prose",
-        "section_path": "preamble.recitals[0]",
-        "char_start": 351,
-        "char_end": 425,
-        "quote": "By Decision 2005/136/EC (1) following a recommendation from the Commission"
-      },
-      "conflict_label": "unlabeled",
-      "extra": {
-        "anchor_score": 100.0,
-        "model_quote": "By Decision 2005/136/EC (1) following a recommendation from the Commission"
-      }
-    },
-    {
-      "fact_id": "4c8843a6d9575d76",
-      "doc_id": "train-000000",
-      "annotator": "qwen3.5:4b",
-      "guideline_version": "v2",
+      "guideline_version": "v1",
       "subject": "the Council",
       "predicate": "made",
       "object": "a Recommendation",
+      "condition": "In accordance with Article 104(7) of the Treaty",
+      "temporal_context": "",
+      "group_id": "b0265d28f4a19843",
+      "logic_group": "",
+      "logic_op": "",
       "natural_language": "The Council made a Recommendation on 2 June 2004 addressed to the Netherlands with a view to bringing the excessive deficit situation to an end.",
       "source_locator": {
         "source_type": "prose",
         "section_path": "preamble.recitals[1]",
-        "char_start": 602,
-        "char_end": 745,
-        "quote": "the Council made a Recommendation on 2 June 2004 addressed to the Netherlands with a view to bringing the excessive deficit situation to an end"
+        "char_start": 553,
+        "char_end": 746,
+        "quote": "In accordance with Article 104(7) of the Treaty, the Council made a Recommendation on 2 June 2004 addressed to the Netherlands with a view to bringing the excessive deficit situation to an end."
       },
       "conflict_label": "unlabeled",
       "extra": {
         "anchor_score": 100.0,
-        "model_quote": "the Council made a Recommendation on 2 June 2004 addressed to the Netherlands with a view to bringing the excessive deficit situation to an end"
+        "model_quote": "In accordance with Article 104(7) of the Treaty, the Council made a Recommendation on 2 June 2004 addressed to the Netherlands with a view to bringing the excessive deficit situation to an end.",
+        "triple_index": 0
       }
     },
     {
-      "fact_id": "093c4c93ea83fa6c",
+      "fact_id": "00897fc0e37e0480",
       "doc_id": "train-000000",
       "annotator": "qwen3.5:4b",
-      "guideline_version": "v2",
-      "subject": "This Recommendation",
+      "guideline_version": "v1",
+      "subject": "the Recommendation",
+      "predicate": "was made",
+      "object": "on 2 June 2004",
+      "condition": "",
+      "temporal_context": "",
+      "group_id": "b0265d28f4a19843",
+      "logic_group": "",
+      "logic_op": "",
+      "natural_language": "The Council made a Recommendation on 2 June 2004 addressed to the Netherlands with a view to bringing the excessive deficit situation to an end.",
+      "source_locator": {
+        "source_type": "prose",
+        "section_path": "preamble.recitals[1]",
+        "char_start": 553,
+        "char_end": 746,
+        "quote": "In accordance with Article 104(7) of the Treaty, the Council made a Recommendation on 2 June 2004 addressed to the Netherlands with a view to bringing the excessive deficit situation to an end."
+      },
+      "conflict_label": "unlabeled",
+      "extra": {
+        "anchor_score": 100.0,
+        "model_quote": "In accordance with Article 104(7) of the Treaty, the Council made a Recommendation on 2 June 2004 addressed to the Netherlands with a view to bringing the excessive deficit situation to an end.",
+        "triple_index": 1
+      }
+    },
+    {
+      "fact_id": "c1a8be761cd2ab51",
+      "doc_id": "train-000000",
+      "annotator": "qwen3.5:4b",
+      "guideline_version": "v1",
+      "subject": "the Recommendation",
+      "predicate": "was addressed to",
+      "object": "the Netherlands",
+      "condition": "",
+      "temporal_context": "",
+      "group_id": "b0265d28f4a19843",
+      "logic_group": "",
+      "logic_op": "",
+      "natural_language": "The Council made a Recommendation on 2 June 2004 addressed to the Netherlands with a view to bringing the excessive deficit situation to an end.",
+      "source_locator": {
+        "source_type": "prose",
+        "section_path": "preamble.recitals[1]",
+        "char_start": 553,
+        "char_end": 746,
+        "quote": "In accordance with Article 104(7) of the Treaty, the Council made a Recommendation on 2 June 2004 addressed to the Netherlands with a view to bringing the excessive deficit situation to an end."
+      },
+      "conflict_label": "unlabeled",
+      "extra": {
+        "anchor_score": 100.0,
+        "model_quote": "In accordance with Article 104(7) of the Treaty, the Council made a Recommendation on 2 June 2004 addressed to the Netherlands with a view to bringing the excessive deficit situation to an end.",
+        "triple_index": 2
+      }
+    },
+    {
+      "fact_id": "19694ae33106c5a4",
+      "doc_id": "train-000000",
+      "annotator": "qwen3.5:4b",
+      "guideline_version": "v1",
+      "subject": "the Recommendation",
+      "predicate": "was made with a view to",
+      "object": "bringing the excessive deficit situation to an end",
+      "condition": "",
+      "temporal_context": "",
+      "group_id": "b0265d28f4a19843",
+      "logic_group": "",
+      "logic_op": "",
+      "natural_language": "The Council made a Recommendation on 2 June 2004 addressed to the Netherlands with a view to bringing the excessive deficit situation to an end.",
+      "source_locator": {
+        "source_type": "prose",
+        "section_path": "preamble.recitals[1]",
+        "char_start": 553,
+        "char_end": 746,
+        "quote": "In accordance with Article 104(7) of the Treaty, the Council made a Recommendation on 2 June 2004 addressed to the Netherlands with a view to bringing the excessive deficit situation to an end."
+      },
+      "conflict_label": "unlabeled",
+      "extra": {
+        "anchor_score": 100.0,
+        "model_quote": "In accordance with Article 104(7) of the Treaty, the Council made a Recommendation on 2 June 2004 addressed to the Netherlands with a view to bringing the excessive deficit situation to an end.",
+        "triple_index": 3
+      }
+    },
+    {
+      "fact_id": "ca4c3c675fdc3d40",
+      "doc_id": "train-000000",
+      "annotator": "qwen3.5:4b",
+      "guideline_version": "v1",
+      "subject": "the Recommendation",
       "predicate": "established",
-      "object": "a deadline of 2005 at the latest",
-      "natural_language": "The Recommendation established a deadline of 2005 at the latest for the correction of the excessive deficit.",
+      "object": "a deadline",
+      "condition": "in conjunction with Article 3(4) of Council Regulation (EC) No 1467/97 of 7 July 1997",
+      "temporal_context": "at the latest",
+      "group_id": "d698e750a7654108",
+      "logic_group": "",
+      "logic_op": "",
+      "natural_language": "The Recommendation, in conjunction with Article 3(4) of Council Regulation (EC) No 1467/97 of 7 July 1997, established a deadline of 2005 at the latest for the correction of the excessive deficit.",
       "source_locator": {
         "source_type": "prose",
         "section_path": "preamble.recitals[1]",
         "char_start": 747,
-        "char_end": 1031,
-        "quote": "This Recommendation, in conjunction with Article 3(4) of Council Regulation (EC) No 1467/97 of 7 July 1997 on speeding up and clarifying the implementation of the excessive deficit procedure (2), established a deadline of 2005 at the latest for the correction of the excessive deficit"
+        "char_end": 1032,
+        "quote": "This Recommendation, in conjunction with Article 3(4) of Council Regulation (EC) No 1467/97 of 7 July 1997 on speeding up and clarifying the implementation of the excessive deficit procedure (2), established a deadline of 2005 at the latest for the correction of the excessive deficit."
       },
       "conflict_label": "unlabeled",
       "extra": {
         "anchor_score": 100.0,
-        "model_quote": "This Recommendation, in conjunction with Article 3(4) of Council Regulation (EC) No 1467/97 of 7 July 1997 on speeding up and clarifying the implementation of the excessive deficit procedure (2), established a deadline of 2005 at the latest for the correction of the excessive deficit"
+        "model_quote": "This Recommendation, in conjunction with Article 3(4) of Council Regulation (EC) No 1467/97 of 7 July 1997 on speeding up and clarifying the implementation of the excessive deficit procedure (2), established a deadline of 2005 at the latest for the correction of the excessive deficit.",
+        "triple_index": 0
       }
     },
     {
-      "fact_id": "13b11cfe9ddc3f2a",
+      "fact_id": "c72f40e9d191771c",
       "doc_id": "train-000000",
       "annotator": "qwen3.5:4b",
-      "guideline_version": "v2",
-      "subject": "the Council",
-      "predicate": "is to abrogate",
-      "object": "a Council Decision on the existence of an excessive deficit",
-      "natural_language": "The Council is to abrogate a Council Decision on the existence of an excessive deficit when the excessive deficit in the Member State concerned has been corrected.",
+      "guideline_version": "v1",
+      "subject": "the deadline",
+      "predicate": "was set",
+      "object": "for 2005",
+      "condition": "",
+      "temporal_context": "at the latest",
+      "group_id": "d698e750a7654108",
+      "logic_group": "",
+      "logic_op": "",
+      "natural_language": "The Recommendation, in conjunction with Article 3(4) of Council Regulation (EC) No 1467/97 of 7 July 1997, established a deadline of 2005 at the latest for the correction of the excessive deficit.",
+      "source_locator": {
+        "source_type": "prose",
+        "section_path": "preamble.recitals[1]",
+        "char_start": 747,
+        "char_end": 1032,
+        "quote": "This Recommendation, in conjunction with Article 3(4) of Council Regulation (EC) No 1467/97 of 7 July 1997 on speeding up and clarifying the implementation of the excessive deficit procedure (2), established a deadline of 2005 at the latest for the correction of the excessive deficit."
+      },
+      "conflict_label": "unlabeled",
+      "extra": {
+        "anchor_score": 100.0,
+        "model_quote": "This Recommendation, in conjunction with Article 3(4) of Council Regulation (EC) No 1467/97 of 7 July 1997 on speeding up and clarifying the implementation of the excessive deficit procedure (2), established a deadline of 2005 at the latest for the correction of the excessive deficit.",
+        "triple_index": 1
+      }
+    },
+    {
+      "fact_id": "38720c469f83c1ea",
+      "doc_id": "train-000000",
+      "annotator": "qwen3.5:4b",
+      "guideline_version": "v1",
+      "subject": "the deadline",
+      "predicate": "was set for",
+      "object": "the correction of the excessive deficit",
+      "condition": "",
+      "temporal_context": "",
+      "group_id": "d698e750a7654108",
+      "logic_group": "",
+      "logic_op": "",
+      "natural_language": "The Recommendation, in conjunction with Article 3(4) of Council Regulation (EC) No 1467/97 of 7 July 1997, established a deadline of 2005 at the latest for the correction of the excessive deficit.",
+      "source_locator": {
+        "source_type": "prose",
+        "section_path": "preamble.recitals[1]",
+        "char_start": 747,
+        "char_end": 1032,
+        "quote": "This Recommendation, in conjunction with Article 3(4) of Council Regulation (EC) No 1467/97 of 7 July 1997 on speeding up and clarifying the implementation of the excessive deficit procedure (2), established a deadline of 2005 at the latest for the correction of the excessive deficit."
+      },
+      "conflict_label": "unlabeled",
+      "extra": {
+        "anchor_score": 100.0,
+        "model_quote": "This Recommendation, in conjunction with Article 3(4) of Council Regulation (EC) No 1467/97 of 7 July 1997 on speeding up and clarifying the implementation of the excessive deficit procedure (2), established a deadline of 2005 at the latest for the correction of the excessive deficit.",
+        "triple_index": 2
+      }
+    },
+    {
+      "fact_id": "ace950aab9f51e3e",
+      "doc_id": "train-000000",
+      "annotator": "qwen3.5:4b",
+      "guideline_version": "v1",
+      "subject": "a Council Decision on the existence of an excessive deficit",
+      "predicate": "is to be abrogated",
+      "object": "when the excessive deficit in the Member State concerned has been corrected in the view of the Council",
+      "condition": "when the excessive deficit in the Member State concerned has, in the view of the Council, been corrected",
+      "temporal_context": "",
+      "group_id": "62a4733697ba1662",
+      "logic_group": "",
+      "logic_op": "",
+      "natural_language": "A Council Decision on the existence of an excessive deficit is to be abrogated when the excessive deficit in the Member State concerned has been corrected in the view of the Council.",
       "source_locator": {
         "source_type": "prose",
         "section_path": "preamble.recitals[2]",
-        "char_start": 1087,
+        "char_start": 1037,
         "char_end": 1271,
-        "quote": "a Council Decision on the existence of an excessive deficit is to be abrogated when the excessive deficit in the Member State concerned has, in the view of the Council, been corrected."
+        "quote": "In accordance with Article 104(12) of the Treaty, a Council Decision on the existence of an excessive deficit is to be abrogated when the excessive deficit in the Member State concerned has, in the view of the Council, been corrected."
       },
       "conflict_label": "unlabeled",
       "extra": {
         "anchor_score": 100.0,
-        "model_quote": "a Council Decision on the existence of an excessive deficit is to be abrogated when the excessive deficit in the Member State concerned has, in the view of the Council, been corrected."
+        "model_quote": "In accordance with Article 104(12) of the Treaty, a Council Decision on the existence of an excessive deficit is to be abrogated when the excessive deficit in the Member State concerned has, in the view of the Council, been corrected.",
+        "triple_index": 0
       }
     },
     {
-      "fact_id": "5856143e153b7cd4",
+      "fact_id": "5270dc15733ca3a3",
       "doc_id": "train-000000",
       "annotator": "qwen3.5:4b",
-      "guideline_version": "v2",
-      "subject": "the general government deficit",
+      "guideline_version": "v1",
+      "subject": "The definitions of 'government' and 'deficit'",
+      "predicate": "are laid down",
+      "object": "the Protocol on the excessive deficit procedure",
+      "condition": "",
+      "temporal_context": "",
+      "group_id": "3e863c708c6f70ea",
+      "logic_group": "",
+      "logic_op": "",
+      "natural_language": "The definitions of 'government' and 'deficit' are laid down in the Protocol on the excessive deficit procedure by reference to the European System of Integrated Economic Accounts, second edition.",
+      "source_locator": {
+        "source_type": "prose",
+        "section_path": "preamble.recitals[3]",
+        "char_start": 1276,
+        "char_end": 1471,
+        "quote": "The definitions of ‘government’ and ‘deficit’ are laid down in the Protocol on the excessive deficit procedure by reference to the European System of Integrated Economic Accounts, second edition."
+      },
+      "conflict_label": "unlabeled",
+      "extra": {
+        "anchor_score": 97.94871794871794,
+        "model_quote": "The definitions of 'government' and 'deficit' are laid down in the Protocol on the excessive deficit procedure by reference to the European System of Integrated Economic Accounts, second edition.",
+        "triple_index": 0
+      }
+    },
+    {
+      "fact_id": "37350469b729d888",
+      "doc_id": "train-000000",
+      "annotator": "qwen3.5:4b",
+      "guideline_version": "v1",
+      "subject": "the Protocol on the excessive deficit procedure",
+      "predicate": "is laid down by reference to",
+      "object": "the European System of Integrated Economic Accounts, second edition",
+      "condition": "",
+      "temporal_context": "",
+      "group_id": "3e863c708c6f70ea",
+      "logic_group": "",
+      "logic_op": "",
+      "natural_language": "The definitions of 'government' and 'deficit' are laid down in the Protocol on the excessive deficit procedure by reference to the European System of Integrated Economic Accounts, second edition.",
+      "source_locator": {
+        "source_type": "prose",
+        "section_path": "preamble.recitals[3]",
+        "char_start": 1276,
+        "char_end": 1471,
+        "quote": "The definitions of ‘government’ and ‘deficit’ are laid down in the Protocol on the excessive deficit procedure by reference to the European System of Integrated Economic Accounts, second edition."
+      },
+      "conflict_label": "unlabeled",
+      "extra": {
+        "anchor_score": 97.94871794871794,
+        "model_quote": "The definitions of 'government' and 'deficit' are laid down in the Protocol on the excessive deficit procedure by reference to the European System of Integrated Economic Accounts, second edition.",
+        "triple_index": 1
+      }
+    },
+    {
+      "fact_id": "764e68559532a0a6",
+      "doc_id": "train-000000",
+      "annotator": "qwen3.5:4b",
+      "guideline_version": "v1",
+      "subject": "The data for the excessive deficit procedure",
+      "predicate": "are provided by",
+      "object": "the Commission",
+      "condition": "",
+      "temporal_context": "",
+      "group_id": "5d4156d58a4e0299",
+      "logic_group": "",
+      "logic_op": "",
+      "natural_language": "The data for the excessive deficit procedure are provided by the Commission.",
+      "source_locator": {
+        "source_type": "prose",
+        "section_path": "preamble.recitals[3]",
+        "char_start": 1472,
+        "char_end": 1548,
+        "quote": "The data for the excessive deficit procedure are provided by the Commission."
+      },
+      "conflict_label": "unlabeled",
+      "extra": {
+        "anchor_score": 100.0,
+        "model_quote": "The data for the excessive deficit procedure are provided by the Commission.",
+        "triple_index": 0
+      }
+    },
+    {
+      "fact_id": "f59d9fde3c354ce8",
+      "doc_id": "train-000000",
+      "annotator": "qwen3.5:4b",
+      "guideline_version": "v1",
+      "subject": "general government deficit of the Netherlands",
       "predicate": "is estimated at",
       "object": "2,3 % of GDP in 2004",
-      "natural_language": "The general government deficit is estimated at 2.3 percent of GDP in 2004.",
+      "condition": "",
+      "temporal_context": "",
+      "group_id": "517031e9544f2457",
+      "logic_group": "",
+      "logic_op": "",
+      "natural_language": "The Commission services' Spring 2005 forecast estimates the general government deficit of the Netherlands at 2.3% of GDP in 2004, compared with 3.2% in 2003.",
       "source_locator": {
         "source_type": "prose",
         "section_path": "preamble.recitals[4]",
         "char_start": 2054,
-        "char_end": 2121,
-        "quote": "the general government deficit is estimated at 2,3 % of GDP in 2004"
+        "char_end": 2150,
+        "quote": "the general government deficit is estimated at 2,3 % of GDP in 2004, compared with 3,2 % in 2003"
       },
       "conflict_label": "unlabeled",
       "extra": {
         "anchor_score": 100.0,
-        "model_quote": "the general government deficit is estimated at 2,3 % of GDP in 2004"
+        "model_quote": "the general government deficit is estimated at 2,3 % of GDP in 2004, compared with 3,2 % in 2003",
+        "triple_index": 0
       }
     },
     {
-      "fact_id": "27eece1936dc3638",
+      "fact_id": "65a41ae66095a141",
       "doc_id": "train-000000",
       "annotator": "qwen3.5:4b",
-      "guideline_version": "v2",
-      "subject": "the general government deficit",
-      "predicate": "was",
-      "object": "3,2 % in 2003",
-      "natural_language": "The general government deficit was 3.2 percent in 2003.",
+      "guideline_version": "v1",
+      "subject": "general government deficit of the Netherlands",
+      "predicate": "was in 2003",
+      "object": "3,2 % of GDP",
+      "condition": "",
+      "temporal_context": "",
+      "group_id": "517031e9544f2457",
+      "logic_group": "",
+      "logic_op": "",
+      "natural_language": "The Commission services' Spring 2005 forecast estimates the general government deficit of the Netherlands at 2.3% of GDP in 2004, compared with 3.2% in 2003.",
       "source_locator": {
         "source_type": "prose",
         "section_path": "preamble.recitals[4]",
-        "char_start": 2123,
+        "char_start": 2054,
         "char_end": 2150,
-        "quote": "compared with 3,2 % in 2003"
+        "quote": "the general government deficit is estimated at 2,3 % of GDP in 2004, compared with 3,2 % in 2003"
       },
       "conflict_label": "unlabeled",
       "extra": {
         "anchor_score": 100.0,
-        "model_quote": "compared with 3,2 % in 2003"
+        "model_quote": "the general government deficit is estimated at 2,3 % of GDP in 2004, compared with 3,2 % in 2003",
+        "triple_index": 1
       }
     },
     {
-      "fact_id": "703a7760628ee117",
+      "fact_id": "d2ef6129874f235c",
       "doc_id": "train-000000",
       "annotator": "qwen3.5:4b",
-      "guideline_version": "v2",
-      "subject": "the outcome for 2004",
+      "guideline_version": "v1",
+      "subject": "outcome for 2004",
       "predicate": "is in compliance with",
-      "object": "the Council recommendation issued under Article 104(7) of the Treaty",
-      "natural_language": "The outcome for 2004 is in compliance with the Council recommendation issued under Article 104(7) of the Treaty.",
+      "object": "Council recommendation issued under Article 104(7) of the Treaty",
+      "condition": "",
+      "temporal_context": "",
+      "group_id": "f106916132996632",
+      "logic_group": "",
+      "logic_op": "",
+      "natural_language": "The outcome for 2004 is in compliance with the Council recommendation issued under Article 104(7) of the Treaty, particularly as regards the reduction of the government deficit below the reference value of 3% of GDP by 2005 at the latest.",
       "source_locator": {
         "source_type": "prose",
         "section_path": "preamble.recitals[4]",
         "char_start": 2152,
-        "char_end": 2263,
-        "quote": "The outcome for 2004 is in compliance with the Council recommendation issued under Article 104(7) of the Treaty"
+        "char_end": 2390,
+        "quote": "The outcome for 2004 is in compliance with the Council recommendation issued under Article 104(7) of the Treaty, particularly as regards the reduction of the government deficit below the reference value of 3 % of GDP by 2005 at the latest"
       },
       "conflict_label": "unlabeled",
       "extra": {
         "anchor_score": 100.0,
-        "model_quote": "The outcome for 2004 is in compliance with the Council recommendation issued under Article 104(7) of the Treaty"
+        "model_quote": "The outcome for 2004 is in compliance with the Council recommendation issued under Article 104(7) of the Treaty, particularly as regards the reduction of the government deficit below the reference value of 3 % of GDP by 2005 at the latest",
+        "triple_index": 0
       }
     },
     {
-      "fact_id": "79a3b5ae8949b2dd",
+      "fact_id": "dfd93201fab8784a",
       "doc_id": "train-000000",
       "annotator": "qwen3.5:4b",
-      "guideline_version": "v2",
-      "subject": "the government deficit",
-      "predicate": "was to be reduced below",
-      "object": "the reference value of 3 % of GDP by 2005 at the latest",
-      "natural_language": "The government deficit was to be reduced below the reference value of 3 percent of GDP by 2005 at the latest.",
+      "guideline_version": "v1",
+      "subject": "government deficit",
+      "predicate": "is to be reduced below",
+      "object": "reference value of 3 % of GDP by 2005 at the latest",
+      "condition": "",
+      "temporal_context": "",
+      "group_id": "f106916132996632",
+      "logic_group": "",
+      "logic_op": "",
+      "natural_language": "The outcome for 2004 is in compliance with the Council recommendation issued under Article 104(7) of the Treaty, particularly as regards the reduction of the government deficit below the reference value of 3% of GDP by 2005 at the latest.",
       "source_locator": {
         "source_type": "prose",
         "section_path": "preamble.recitals[4]",
-        "char_start": 2265,
+        "char_start": 2152,
         "char_end": 2390,
-        "quote": "particularly as regards the reduction of the government deficit below the reference value of 3 % of GDP by 2005 at the latest"
+        "quote": "The outcome for 2004 is in compliance with the Council recommendation issued under Article 104(7) of the Treaty, particularly as regards the reduction of the government deficit below the reference value of 3 % of GDP by 2005 at the latest"
       },
       "conflict_label": "unlabeled",
       "extra": {
         "anchor_score": 100.0,
-        "model_quote": "particularly as regards the reduction of the government deficit below the reference value of 3 % of GDP by 2005 at the latest"
+        "model_quote": "The outcome for 2004 is in compliance with the Council recommendation issued under Article 104(7) of the Treaty, particularly as regards the reduction of the government deficit below the reference value of 3 % of GDP by 2005 at the latest",
+        "triple_index": 1
       }
     },
     {
-      "fact_id": "63437a1f3668bb3b",
+      "fact_id": "e34c8cddcb0e6783",
       "doc_id": "train-000000",
       "annotator": "qwen3.5:4b",
-      "guideline_version": "v2",
-      "subject": "Fiscal adjustment",
+      "guideline_version": "v1",
+      "subject": "fiscal adjustment",
       "predicate": "was pursued in 2004",
       "object": "in the form of substantial savings measures",
-      "natural_language": "Fiscal adjustment was pursued in 2004 in the form of substantial savings measures.",
+      "condition": "",
+      "temporal_context": "",
+      "group_id": "c5ef242e75cd5c28",
+      "logic_group": "",
+      "logic_op": "",
+      "natural_language": "Fiscal adjustment was pursued in 2004 in the form of substantial savings measures, partly contained in the 2004 budget and partly decided in the additional consolidation package on 14 April 2004.",
       "source_locator": {
         "source_type": "prose",
         "section_path": "preamble.recitals[4]",
         "char_start": 2392,
-        "char_end": 2473,
-        "quote": "Fiscal adjustment was pursued in 2004 in the form of substantial savings measures"
-      },
-      "conflict_label": "unlabeled",
-      "extra": {
-        "anchor_score": 100.0,
-        "model_quote": "Fiscal adjustment was pursued in 2004 in the form of substantial savings measures"
-      }
-    },
-    {
-      "fact_id": "ad69577cbac9e51b",
-      "doc_id": "train-000000",
-      "annotator": "qwen3.5:4b",
-      "guideline_version": "v2",
-      "subject": "the additional consolidation package",
-      "predicate": "was decided",
-      "object": "on 14 April 2004",
-      "natural_language": "The additional consolidation package was decided on 14 April 2004.",
-      "source_locator": {
-        "source_type": "prose",
-        "section_path": "preamble.recitals[4]",
-        "char_start": 2515,
         "char_end": 2586,
-        "quote": "partly decided in the additional consolidation package on 14 April 2004"
+        "quote": "Fiscal adjustment was pursued in 2004 in the form of substantial savings measures, partly contained in the 2004 budget and partly decided in the additional consolidation package on 14 April 2004"
       },
       "conflict_label": "unlabeled",
       "extra": {
         "anchor_score": 100.0,
-        "model_quote": "partly decided in the additional consolidation package on 14 April 2004"
+        "model_quote": "Fiscal adjustment was pursued in 2004 in the form of substantial savings measures, partly contained in the 2004 budget and partly decided in the additional consolidation package on 14 April 2004",
+        "triple_index": 0
       }
     },
     {
-      "fact_id": "6f10ed88df9eb5ba",
+      "fact_id": "addb575c12bd34ec",
       "doc_id": "train-000000",
       "annotator": "qwen3.5:4b",
-      "guideline_version": "v2",
-      "subject": "the general government deficit",
+      "guideline_version": "v1",
+      "subject": "substantial savings measures",
+      "predicate": "were partly contained in",
+      "object": "the 2004 budget",
+      "condition": "",
+      "temporal_context": "",
+      "group_id": "c5ef242e75cd5c28",
+      "logic_group": "",
+      "logic_op": "",
+      "natural_language": "Fiscal adjustment was pursued in 2004 in the form of substantial savings measures, partly contained in the 2004 budget and partly decided in the additional consolidation package on 14 April 2004.",
+      "source_locator": {
+        "source_type": "prose",
+        "section_path": "preamble.recitals[4]",
+        "char_start": 2392,
+        "char_end": 2586,
+        "quote": "Fiscal adjustment was pursued in 2004 in the form of substantial savings measures, partly contained in the 2004 budget and partly decided in the additional consolidation package on 14 April 2004"
+      },
+      "conflict_label": "unlabeled",
+      "extra": {
+        "anchor_score": 100.0,
+        "model_quote": "Fiscal adjustment was pursued in 2004 in the form of substantial savings measures, partly contained in the 2004 budget and partly decided in the additional consolidation package on 14 April 2004",
+        "triple_index": 1
+      }
+    },
+    {
+      "fact_id": "22a8439f1582c47c",
+      "doc_id": "train-000000",
+      "annotator": "qwen3.5:4b",
+      "guideline_version": "v1",
+      "subject": "substantial savings measures",
+      "predicate": "were partly decided in",
+      "object": "the additional consolidation package on 14 April 2004",
+      "condition": "",
+      "temporal_context": "",
+      "group_id": "c5ef242e75cd5c28",
+      "logic_group": "",
+      "logic_op": "",
+      "natural_language": "Fiscal adjustment was pursued in 2004 in the form of substantial savings measures, partly contained in the 2004 budget and partly decided in the additional consolidation package on 14 April 2004.",
+      "source_locator": {
+        "source_type": "prose",
+        "section_path": "preamble.recitals[4]",
+        "char_start": 2392,
+        "char_end": 2586,
+        "quote": "Fiscal adjustment was pursued in 2004 in the form of substantial savings measures, partly contained in the 2004 budget and partly decided in the additional consolidation package on 14 April 2004"
+      },
+      "conflict_label": "unlabeled",
+      "extra": {
+        "anchor_score": 100.0,
+        "model_quote": "Fiscal adjustment was pursued in 2004 in the form of substantial savings measures, partly contained in the 2004 budget and partly decided in the additional consolidation package on 14 April 2004",
+        "triple_index": 2
+      }
+    },
+    {
+      "fact_id": "bf7e399d36815b2d",
+      "doc_id": "train-000000",
+      "annotator": "qwen3.5:4b",
+      "guideline_version": "v1",
+      "subject": "stronger-than-expected tax receipts",
+      "predicate": "helped reduce",
+      "object": "the deficit",
+      "condition": "",
+      "temporal_context": "",
+      "group_id": "799a4804ddd4e221",
+      "logic_group": "",
+      "logic_op": "",
+      "natural_language": "Stronger-than-expected tax receipts and additional revenues from the sale of natural gas in response to high oil prices helped reduce the deficit.",
+      "source_locator": {
+        "source_type": "prose",
+        "section_path": "preamble.recitals[4]",
+        "char_start": 2588,
+        "char_end": 2743,
+        "quote": "Moreover, stronger-than-expected tax receipts and additional revenues from the sale of natural gas in response to high oil prices helped reduce the deficit"
+      },
+      "conflict_label": "unlabeled",
+      "extra": {
+        "anchor_score": 100.0,
+        "model_quote": "Moreover, stronger-than-expected tax receipts and additional revenues from the sale of natural gas in response to high oil prices helped reduce the deficit",
+        "triple_index": 0
+      }
+    },
+    {
+      "fact_id": "d830ab6ddea42852",
+      "doc_id": "train-000000",
+      "annotator": "qwen3.5:4b",
+      "guideline_version": "v1",
+      "subject": "additional revenues from the sale of natural gas",
+      "predicate": "helped reduce",
+      "object": "the deficit",
+      "condition": "",
+      "temporal_context": "",
+      "group_id": "799a4804ddd4e221",
+      "logic_group": "",
+      "logic_op": "",
+      "natural_language": "Stronger-than-expected tax receipts and additional revenues from the sale of natural gas in response to high oil prices helped reduce the deficit.",
+      "source_locator": {
+        "source_type": "prose",
+        "section_path": "preamble.recitals[4]",
+        "char_start": 2588,
+        "char_end": 2743,
+        "quote": "Moreover, stronger-than-expected tax receipts and additional revenues from the sale of natural gas in response to high oil prices helped reduce the deficit"
+      },
+      "conflict_label": "unlabeled",
+      "extra": {
+        "anchor_score": 100.0,
+        "model_quote": "Moreover, stronger-than-expected tax receipts and additional revenues from the sale of natural gas in response to high oil prices helped reduce the deficit",
+        "triple_index": 1
+      }
+    },
+    {
+      "fact_id": "311a832e8a6e223b",
+      "doc_id": "train-000000",
+      "annotator": "qwen3.5:4b",
+      "guideline_version": "v1",
+      "subject": "budgetary measures taken",
+      "predicate": "are geared towards securing",
+      "object": "a lasting improvement in the general government balance",
+      "condition": "",
+      "temporal_context": "",
+      "group_id": "22f1b19feeed1a05",
+      "logic_group": "",
+      "logic_op": "",
+      "natural_language": "The budgetary measures taken are geared towards securing a lasting improvement in the general government balance.",
+      "source_locator": {
+        "source_type": "prose",
+        "section_path": "preamble.recitals[4]",
+        "char_start": 2747,
+        "char_end": 2859,
+        "quote": "the budgetary measures taken are geared towards securing a lasting improvement in the general government balance"
+      },
+      "conflict_label": "unlabeled",
+      "extra": {
+        "anchor_score": 100.0,
+        "model_quote": "the budgetary measures taken are geared towards securing a lasting improvement in the general government balance",
+        "triple_index": 0
+      }
+    },
+    {
+      "fact_id": "9e0036793f577866",
+      "doc_id": "train-000000",
+      "annotator": "qwen3.5:4b",
+      "guideline_version": "v1",
+      "subject": "general government deficit",
       "predicate": "is projected to decline to",
-      "object": "2,0 % of GDP",
-      "natural_language": "The general government deficit is projected to decline to 2.0 percent of GDP.",
+      "object": "2,0 % of GDP in 2005",
+      "condition": "",
+      "temporal_context": "",
+      "group_id": "018e9d07447da4fc",
+      "logic_group": "",
+      "logic_op": "",
+      "natural_language": "For 2005, the Commission services' Spring 2005 forecast projects a further decline in the general government deficit to 2.0% of GDP, largely in response to savings measures, mostly of a structural nature, adding up to 0.5% of GDP.",
       "source_locator": {
         "source_type": "prose",
         "section_path": "preamble.recitals[4]",
-        "char_start": 2871,
-        "char_end": 2993,
-        "quote": "the Commission services’ Spring 2005 forecast projects a further decline in the general government deficit to 2,0 % of GDP"
+        "char_start": 2861,
+        "char_end": 3092,
+        "quote": "For 2005, the Commission services’ Spring 2005 forecast projects a further decline in the general government deficit to 2,0 % of GDP, largely in response to savings measures, mostly of a structural nature, adding up to 0,5 % of GDP"
       },
       "conflict_label": "unlabeled",
       "extra": {
-        "anchor_score": 99.18032786885246,
-        "model_quote": "the Commission services' Spring 2005 forecast projects a further decline in the general government deficit to 2,0 % of GDP"
+        "anchor_score": 99.56709956709958,
+        "model_quote": "For 2005, the Commission services' Spring 2005 forecast projects a further decline in the general government deficit to 2,0 % of GDP, largely in response to savings measures, mostly of a structural nature, adding up to 0,5 % of GDP",
+        "triple_index": 0
       }
     },
     {
-      "fact_id": "8ac4c3ee75643435",
+      "fact_id": "cccc0b2876c7cc35",
       "doc_id": "train-000000",
       "annotator": "qwen3.5:4b",
-      "guideline_version": "v2",
-      "subject": "the general government deficit",
+      "guideline_version": "v1",
+      "subject": "decline in the general government deficit",
+      "predicate": "is largely in response to",
+      "object": "savings measures, mostly of a structural nature, adding up to 0,5 % of GDP",
+      "condition": "",
+      "temporal_context": "",
+      "group_id": "018e9d07447da4fc",
+      "logic_group": "",
+      "logic_op": "",
+      "natural_language": "For 2005, the Commission services' Spring 2005 forecast projects a further decline in the general government deficit to 2.0% of GDP, largely in response to savings measures, mostly of a structural nature, adding up to 0.5% of GDP.",
+      "source_locator": {
+        "source_type": "prose",
+        "section_path": "preamble.recitals[4]",
+        "char_start": 2861,
+        "char_end": 3092,
+        "quote": "For 2005, the Commission services’ Spring 2005 forecast projects a further decline in the general government deficit to 2,0 % of GDP, largely in response to savings measures, mostly of a structural nature, adding up to 0,5 % of GDP"
+      },
+      "conflict_label": "unlabeled",
+      "extra": {
+        "anchor_score": 99.56709956709958,
+        "model_quote": "For 2005, the Commission services' Spring 2005 forecast projects a further decline in the general government deficit to 2,0 % of GDP, largely in response to savings measures, mostly of a structural nature, adding up to 0,5 % of GDP",
+        "triple_index": 1
+      }
+    },
+    {
+      "fact_id": "90b2f6ab804be318",
+      "doc_id": "train-000000",
+      "annotator": "qwen3.5:4b",
+      "guideline_version": "v1",
+      "subject": "forecast for 2005",
+      "predicate": "is in line with",
+      "object": "official target of a deficit of 2,1 % of GDP",
+      "condition": "",
+      "temporal_context": "",
+      "group_id": "4998e7418d865c98",
+      "logic_group": "",
+      "logic_op": "",
+      "natural_language": "This is in line with the official target of a deficit of 2.1% of GDP.",
+      "source_locator": {
+        "source_type": "prose",
+        "section_path": "preamble.recitals[4]",
+        "char_start": 3094,
+        "char_end": 3163,
+        "quote": "This is in line with the official target of a deficit of 2,1 % of GDP"
+      },
+      "conflict_label": "unlabeled",
+      "extra": {
+        "anchor_score": 100.0,
+        "model_quote": "This is in line with the official target of a deficit of 2,1 % of GDP",
+        "triple_index": 0
+      }
+    },
+    {
+      "fact_id": "05a44cc8e5b79b16",
+      "doc_id": "train-000000",
+      "annotator": "qwen3.5:4b",
+      "guideline_version": "v1",
+      "subject": "deficit",
       "predicate": "is projected to fall to",
-      "object": "1,6 % of GDP",
-      "natural_language": "The general government deficit is projected to fall to 1.6 percent of GDP.",
+      "object": "1,6 % of GDP in 2006",
+      "condition": "",
+      "temporal_context": "",
+      "group_id": "9829120cf2a2b0c1",
+      "logic_group": "",
+      "logic_op": "",
+      "natural_language": "For 2006, the Commission services' Spring 2005 forecast projects, based on currently known policies, a further fall in the deficit to 1.6% of GDP, pointing to the durable correction of the budget deficit.",
       "source_locator": {
         "source_type": "prose",
         "section_path": "preamble.recitals[4]",
-        "char_start": 3175,
-        "char_end": 3311,
-        "quote": "the Commission services’ Spring 2005 forecast projects, based on currently known policies, a further fall in the deficit to 1,6 % of GDP"
+        "char_start": 3165,
+        "char_end": 3369,
+        "quote": "For 2006, the Commission services’ Spring 2005 forecast projects, based on currently known policies, a further fall in the deficit to 1,6 % of GDP, pointing to the durable correction of the budget deficit"
       },
       "conflict_label": "unlabeled",
       "extra": {
-        "anchor_score": 99.26470588235294,
-        "model_quote": "the Commission services' Spring 2005 forecast projects, based on currently known policies, a further fall in the deficit to 1,6 % of GDP"
+        "anchor_score": 99.50980392156863,
+        "model_quote": "For 2006, the Commission services' Spring 2005 forecast projects, based on currently known policies, a further fall in the deficit to 1,6 % of GDP, pointing to the durable correction of the budget deficit",
+        "triple_index": 0
       }
     },
     {
-      "fact_id": "4353ef6266c7d4e8",
+      "fact_id": "ae07ceb00a4ea854",
       "doc_id": "train-000000",
       "annotator": "qwen3.5:4b",
-      "guideline_version": "v2",
-      "subject": "the cyclically adjusted deficit",
+      "guideline_version": "v1",
+      "subject": "fall in the deficit",
+      "predicate": "points to",
+      "object": "the durable correction of the budget deficit",
+      "condition": "",
+      "temporal_context": "",
+      "group_id": "9829120cf2a2b0c1",
+      "logic_group": "",
+      "logic_op": "",
+      "natural_language": "For 2006, the Commission services' Spring 2005 forecast projects, based on currently known policies, a further fall in the deficit to 1.6% of GDP, pointing to the durable correction of the budget deficit.",
+      "source_locator": {
+        "source_type": "prose",
+        "section_path": "preamble.recitals[4]",
+        "char_start": 3165,
+        "char_end": 3369,
+        "quote": "For 2006, the Commission services’ Spring 2005 forecast projects, based on currently known policies, a further fall in the deficit to 1,6 % of GDP, pointing to the durable correction of the budget deficit"
+      },
+      "conflict_label": "unlabeled",
+      "extra": {
+        "anchor_score": 99.50980392156863,
+        "model_quote": "For 2006, the Commission services' Spring 2005 forecast projects, based on currently known policies, a further fall in the deficit to 1,6 % of GDP, pointing to the durable correction of the budget deficit",
+        "triple_index": 1
+      }
+    },
+    {
+      "fact_id": "ad7d3f8e6aeee6e0",
+      "doc_id": "train-000000",
+      "annotator": "qwen3.5:4b",
+      "guideline_version": "v1",
+      "subject": "budgetary consolidation",
+      "predicate": "will be sustained through",
+      "object": "a reduction in the cyclically adjusted deficit",
+      "condition": "",
+      "temporal_context": "",
+      "group_id": "af736a0ee2f1ccdc",
+      "logic_group": "",
+      "logic_op": "",
+      "natural_language": "The budgetary consolidation will be sustained through a reduction in the cyclically adjusted deficit which is expected to reach close to balance after the excessive deficit has been corrected.",
+      "source_locator": {
+        "source_type": "prose",
+        "section_path": "preamble.recitals[4]",
+        "char_start": 3373,
+        "char_end": 3564,
+        "quote": "the budgetary consolidation will be sustained through a reduction in the cyclically adjusted deficit which is expected to reach close to balance after the excessive deficit has been corrected"
+      },
+      "conflict_label": "unlabeled",
+      "extra": {
+        "anchor_score": 100.0,
+        "model_quote": "the budgetary consolidation will be sustained through a reduction in the cyclically adjusted deficit which is expected to reach close to balance after the excessive deficit has been corrected",
+        "triple_index": 0
+      }
+    },
+    {
+      "fact_id": "64a6126008b08cb6",
+      "doc_id": "train-000000",
+      "annotator": "qwen3.5:4b",
+      "guideline_version": "v1",
+      "subject": "cyclically adjusted deficit",
+      "predicate": "is expected to reach close to balance",
+      "object": "after the excessive deficit has been corrected",
+      "condition": "",
+      "temporal_context": "",
+      "group_id": "af736a0ee2f1ccdc",
+      "logic_group": "",
+      "logic_op": "",
+      "natural_language": "The budgetary consolidation will be sustained through a reduction in the cyclically adjusted deficit which is expected to reach close to balance after the excessive deficit has been corrected.",
+      "source_locator": {
+        "source_type": "prose",
+        "section_path": "preamble.recitals[4]",
+        "char_start": 3373,
+        "char_end": 3564,
+        "quote": "the budgetary consolidation will be sustained through a reduction in the cyclically adjusted deficit which is expected to reach close to balance after the excessive deficit has been corrected"
+      },
+      "conflict_label": "unlabeled",
+      "extra": {
+        "anchor_score": 100.0,
+        "model_quote": "the budgetary consolidation will be sustained through a reduction in the cyclically adjusted deficit which is expected to reach close to balance after the excessive deficit has been corrected",
+        "triple_index": 1
+      }
+    },
+    {
+      "fact_id": "883c8da06c20f7e8",
+      "doc_id": "train-000000",
+      "annotator": "qwen3.5:4b",
+      "guideline_version": "v1",
+      "subject": "cyclically adjusted deficit",
       "predicate": "fell to",
-      "object": "1,2 % of GDP",
-      "natural_language": "The cyclically adjusted deficit fell to 1.2 percent of GDP.",
+      "object": "1,2 % of GDP in 2004",
+      "condition": "",
+      "temporal_context": "",
+      "group_id": "c5bba48ba6749081",
+      "logic_group": "",
+      "logic_op": "",
+      "natural_language": "In 2004, the cyclically adjusted deficit fell markedly to 1.2% of GDP, compared to 2.0% of GDP in 2003.",
       "source_locator": {
         "source_type": "prose",
         "section_path": "preamble.recitals[4]",
         "char_start": 3566,
-        "char_end": 3636,
-        "quote": "In 2004, the cyclically adjusted deficit fell markedly to 1,2 % of GDP"
-      },
-      "conflict_label": "unlabeled",
-      "extra": {
-        "anchor_score": 100.0,
-        "model_quote": "In 2004, the cyclically adjusted deficit fell markedly to 1,2 % of GDP"
-      }
-    },
-    {
-      "fact_id": "cf31204d8676cb99",
-      "doc_id": "train-000000",
-      "annotator": "qwen3.5:4b",
-      "guideline_version": "v2",
-      "subject": "the cyclically adjusted deficit",
-      "predicate": "was",
-      "object": "2,0 % of GDP in 2003",
-      "natural_language": "The cyclically adjusted deficit was 2.0 percent of GDP in 2003.",
-      "source_locator": {
-        "source_type": "prose",
-        "section_path": "preamble.recitals[4]",
-        "char_start": 3638,
         "char_end": 3670,
-        "quote": "compared to 2,0 % of GDP in 2003"
+        "quote": "In 2004, the cyclically adjusted deficit fell markedly to 1,2 % of GDP, compared to 2,0 % of GDP in 2003"
       },
       "conflict_label": "unlabeled",
       "extra": {
         "anchor_score": 100.0,
-        "model_quote": "compared to 2,0 % of GDP in 2003"
+        "model_quote": "In 2004, the cyclically adjusted deficit fell markedly to 1,2 % of GDP, compared to 2,0 % of GDP in 2003",
+        "triple_index": 0
       }
     },
     {
-      "fact_id": "50eeb3afa16883db",
+      "fact_id": "6b60bcbc2c6cf4eb",
       "doc_id": "train-000000",
       "annotator": "qwen3.5:4b",
-      "guideline_version": "v2",
-      "subject": "the cyclically adjusted deficit",
-      "predicate": "is projected to decrease to",
-      "object": "0,4 % of GDP",
-      "natural_language": "The cyclically adjusted deficit is projected to decrease to 0.4 percent of GDP.",
+      "guideline_version": "v1",
+      "subject": "cyclically adjusted deficit",
+      "predicate": "was in 2003",
+      "object": "2,0 % of GDP",
+      "condition": "",
+      "temporal_context": "",
+      "group_id": "c5bba48ba6749081",
+      "logic_group": "",
+      "logic_op": "",
+      "natural_language": "In 2004, the cyclically adjusted deficit fell markedly to 1.2% of GDP, compared to 2.0% of GDP in 2003.",
       "source_locator": {
         "source_type": "prose",
         "section_path": "preamble.recitals[4]",
-        "char_start": 3673,
-        "char_end": 3828,
-        "quote": "he Commission services’ Spring 2005 forecast projects the cyclically adjusted deficit to further decrease in 2005 by another 0,8 % of GDP, to 0,4 % of GDP,"
+        "char_start": 3566,
+        "char_end": 3670,
+        "quote": "In 2004, the cyclically adjusted deficit fell markedly to 1,2 % of GDP, compared to 2,0 % of GDP in 2003"
       },
       "conflict_label": "unlabeled",
       "extra": {
-        "anchor_score": 98.70967741935483,
-        "model_quote": "the Commission services' Spring 2005 forecast projects the cyclically adjusted deficit to further decrease in 2005 by another 0,8 % of GDP, to 0,4 % of GDP"
+        "anchor_score": 100.0,
+        "model_quote": "In 2004, the cyclically adjusted deficit fell markedly to 1,2 % of GDP, compared to 2,0 % of GDP in 2003",
+        "triple_index": 1
       }
     },
     {
-      "fact_id": "a8508a238ca8bab7",
+      "fact_id": "7c9f266a34d7971e",
       "doc_id": "train-000000",
       "annotator": "qwen3.5:4b",
-      "guideline_version": "v2",
-      "subject": "the cyclically adjusted deficit",
+      "guideline_version": "v1",
+      "subject": "cyclically adjusted deficit",
+      "predicate": "is projected to decrease in 2005 by",
+      "object": "another 0,8 % of GDP",
+      "condition": "",
+      "temporal_context": "",
+      "group_id": "da8f73a7177ea44c",
+      "logic_group": "",
+      "logic_op": "",
+      "natural_language": "The Commission services' Spring 2005 forecast projects the cyclically adjusted deficit to further decrease in 2005 by another 0.8% of GDP, to 0.4% of GDP, which is close to balance.",
+      "source_locator": {
+        "source_type": "prose",
+        "section_path": "preamble.recitals[4]",
+        "char_start": 3672,
+        "char_end": 3854,
+        "quote": "The Commission services’ Spring 2005 forecast projects the cyclically adjusted deficit to further decrease in 2005 by another 0,8 % of GDP, to 0,4 % of GDP, which is close to balance"
+      },
+      "conflict_label": "unlabeled",
+      "extra": {
+        "anchor_score": 99.45054945054946,
+        "model_quote": "The Commission services' Spring 2005 forecast projects the cyclically adjusted deficit to further decrease in 2005 by another 0,8 % of GDP, to 0,4 % of GDP, which is close to balance",
+        "triple_index": 0
+      }
+    },
+    {
+      "fact_id": "6fa5324eb277707d",
+      "doc_id": "train-000000",
+      "annotator": "qwen3.5:4b",
+      "guideline_version": "v1",
+      "subject": "cyclically adjusted deficit",
+      "predicate": "is projected to reach",
+      "object": "0,4 % of GDP in 2005",
+      "condition": "",
+      "temporal_context": "",
+      "group_id": "da8f73a7177ea44c",
+      "logic_group": "",
+      "logic_op": "",
+      "natural_language": "The Commission services' Spring 2005 forecast projects the cyclically adjusted deficit to further decrease in 2005 by another 0.8% of GDP, to 0.4% of GDP, which is close to balance.",
+      "source_locator": {
+        "source_type": "prose",
+        "section_path": "preamble.recitals[4]",
+        "char_start": 3672,
+        "char_end": 3854,
+        "quote": "The Commission services’ Spring 2005 forecast projects the cyclically adjusted deficit to further decrease in 2005 by another 0,8 % of GDP, to 0,4 % of GDP, which is close to balance"
+      },
+      "conflict_label": "unlabeled",
+      "extra": {
+        "anchor_score": 99.45054945054946,
+        "model_quote": "The Commission services' Spring 2005 forecast projects the cyclically adjusted deficit to further decrease in 2005 by another 0,8 % of GDP, to 0,4 % of GDP, which is close to balance",
+        "triple_index": 1
+      }
+    },
+    {
+      "fact_id": "4a9d15d13765be3e",
+      "doc_id": "train-000000",
+      "annotator": "qwen3.5:4b",
+      "guideline_version": "v1",
+      "subject": "0,4 % of GDP",
+      "predicate": "is close to",
+      "object": "balance",
+      "condition": "",
+      "temporal_context": "",
+      "group_id": "da8f73a7177ea44c",
+      "logic_group": "",
+      "logic_op": "",
+      "natural_language": "The Commission services' Spring 2005 forecast projects the cyclically adjusted deficit to further decrease in 2005 by another 0.8% of GDP, to 0.4% of GDP, which is close to balance.",
+      "source_locator": {
+        "source_type": "prose",
+        "section_path": "preamble.recitals[4]",
+        "char_start": 3672,
+        "char_end": 3854,
+        "quote": "The Commission services’ Spring 2005 forecast projects the cyclically adjusted deficit to further decrease in 2005 by another 0,8 % of GDP, to 0,4 % of GDP, which is close to balance"
+      },
+      "conflict_label": "unlabeled",
+      "extra": {
+        "anchor_score": 99.45054945054946,
+        "model_quote": "The Commission services' Spring 2005 forecast projects the cyclically adjusted deficit to further decrease in 2005 by another 0,8 % of GDP, to 0,4 % of GDP, which is close to balance",
+        "triple_index": 2
+      }
+    },
+    {
+      "fact_id": "2eb8e495f413a13c",
+      "doc_id": "train-000000",
+      "annotator": "qwen3.5:4b",
+      "guideline_version": "v1",
+      "subject": "cyclically adjusted deficit",
       "predicate": "is projected to fall to",
-      "object": "0,0 % of GDP",
-      "natural_language": "The cyclically adjusted deficit is projected to fall to 0.0 percent of GDP.",
+      "object": "0,0 % of GDP in 2006",
+      "condition": "",
+      "temporal_context": "",
+      "group_id": "01e4bfc67d5576e1",
+      "logic_group": "",
+      "logic_op": "",
+      "natural_language": "The Commission services' Spring 2005 forecast projects the cyclically adjusted deficit to fall to 0.0% of GDP in 2006.",
       "source_locator": {
         "source_type": "prose",
         "section_path": "preamble.recitals[4]",
@@ -375,40 +980,52 @@
       "conflict_label": "unlabeled",
       "extra": {
         "anchor_score": 100.0,
-        "model_quote": "and to fall to 0,0 % of GDP in 2006"
+        "model_quote": "and to fall to 0,0 % of GDP in 2006",
+        "triple_index": 0
       }
     },
     {
-      "fact_id": "b082f29f35dcf0ae",
+      "fact_id": "0b12e22357698fd0",
       "doc_id": "train-000000",
       "annotator": "qwen3.5:4b",
-      "guideline_version": "v2",
-      "subject": "the government debt ratio",
+      "guideline_version": "v1",
+      "subject": "government debt ratio",
       "predicate": "was kept below",
-      "object": "the 60 % of GDP reference value",
-      "natural_language": "The government debt ratio was kept below the 60 percent of GDP reference value.",
+      "object": "60 % of GDP reference value in 2004",
+      "condition": "",
+      "temporal_context": "",
+      "group_id": "543c3e3a29494544",
+      "logic_group": "",
+      "logic_op": "",
+      "natural_language": "According to the March 2005 excessive deficit procedure notification, the government debt ratio was kept below the 60% of GDP reference value in 2004.",
       "source_locator": {
         "source_type": "prose",
         "section_path": "preamble.recitals[4]",
-        "char_start": 3965,
+        "char_start": 3895,
         "char_end": 4045,
-        "quote": "the government debt ratio was kept below the 60 % of GDP reference value in 2004"
+        "quote": "according to the March 2005 excessive deficit procedure notification, the government debt ratio was kept below the 60 % of GDP reference value in 2004"
       },
       "conflict_label": "unlabeled",
       "extra": {
         "anchor_score": 100.0,
-        "model_quote": "the government debt ratio was kept below the 60 % of GDP reference value in 2004"
+        "model_quote": "according to the March 2005 excessive deficit procedure notification, the government debt ratio was kept below the 60 % of GDP reference value in 2004",
+        "triple_index": 0
       }
     },
     {
-      "fact_id": "72f9c5e54940c1b0",
+      "fact_id": "957379900fdb4a6a",
       "doc_id": "train-000000",
       "annotator": "qwen3.5:4b",
-      "guideline_version": "v2",
-      "subject": "the government debt ratio",
+      "guideline_version": "v1",
+      "subject": "government debt ratio",
       "predicate": "is projected to remain below",
-      "object": "the 60 % of GDP reference value",
-      "natural_language": "The government debt ratio is projected to remain below the 60 percent of GDP reference value.",
+      "object": "this threshold in 2005 and 2006",
+      "condition": "",
+      "temporal_context": "",
+      "group_id": "054d93b9125eeb52",
+      "logic_group": "",
+      "logic_op": "",
+      "natural_language": "The Commission services' Spring 2004 forecast projects it to remain below this threshold in 2005 and 2006.",
       "source_locator": {
         "source_type": "prose",
         "section_path": "preamble.recitals[4]",
@@ -419,18 +1036,24 @@
       "conflict_label": "unlabeled",
       "extra": {
         "anchor_score": 99.04761904761905,
-        "model_quote": "The Commission services' Spring 2004 forecast projects it to remain below this threshold in 2005 and 2006"
+        "model_quote": "The Commission services' Spring 2004 forecast projects it to remain below this threshold in 2005 and 2006",
+        "triple_index": 0
       }
     },
     {
-      "fact_id": "9533a46350b53dc8",
+      "fact_id": "ffd2938b55fd2f87",
       "doc_id": "train-000000",
       "annotator": "qwen3.5:4b",
-      "guideline_version": "v2",
-      "subject": "Council Decision 2005/729/EC",
-      "predicate": "abrogates",
-      "object": "Council Decision 2005/136/EC",
-      "natural_language": "Council Decision 2005/729/EC abrogates Council Decision 2005/136/EC.",
+      "guideline_version": "v1",
+      "subject": "Decision 2005/136/EC",
+      "predicate": "should be",
+      "object": "abrogated",
+      "condition": "",
+      "temporal_context": "",
+      "group_id": "4a65958dfbabb8b9",
+      "logic_group": "",
+      "logic_op": "",
+      "natural_language": "Decision 2005/136/EC should be abrogated.",
       "source_locator": {
         "source_type": "prose",
         "section_path": "preamble.recitals[5]",
@@ -441,17 +1064,23 @@
       "conflict_label": "unlabeled",
       "extra": {
         "anchor_score": 100.0,
-        "model_quote": "Decision 2005/136/EC should therefore be abrogated,"
+        "model_quote": "Decision 2005/136/EC should therefore be abrogated,",
+        "triple_index": 0
       }
     },
     {
-      "fact_id": "9de6e927727999ac",
+      "fact_id": "2cb3f48f6ebb7ddc",
       "doc_id": "train-000000",
       "annotator": "qwen3.5:4b",
-      "guideline_version": "v2",
+      "guideline_version": "v1",
       "subject": "the correction of the excessive deficit situation in the Netherlands",
       "predicate": "was completed",
-      "object": "in 2004",
+      "object": "2004",
+      "condition": "",
+      "temporal_context": "",
+      "group_id": "79abb89d527333dc",
+      "logic_group": "",
+      "logic_op": "",
       "natural_language": "The correction of the excessive deficit situation in the Netherlands was completed in 2004.",
       "source_locator": {
         "source_type": "prose",
@@ -463,40 +1092,80 @@
       "conflict_label": "unlabeled",
       "extra": {
         "anchor_score": 100.0,
-        "model_quote": "the correction of the excessive deficit situation in the Netherlands was completed in 2004"
+        "model_quote": "the correction of the excessive deficit situation in the Netherlands was completed in 2004",
+        "triple_index": 0
       }
     },
     {
-      "fact_id": "f79af17ab271765e",
+      "fact_id": "4ee37b672774fa74",
       "doc_id": "train-000000",
       "annotator": "qwen3.5:4b",
-      "guideline_version": "v2",
-      "subject": "the recommendation addressed to the Netherlands on 2 June 2004",
-      "predicate": "was followed",
-      "object": "under the terms of Article 104(7) of the Treaty",
-      "natural_language": "The recommendation addressed to the Netherlands on 2 June 2004 was followed under the terms of Article 104(7) of the Treaty.",
+      "guideline_version": "v1",
+      "subject": "the completion of the correction",
+      "predicate": "followed",
+      "object": "the terms of the recommendation addressed to the Netherlands on 2 June 2004",
+      "condition": "",
+      "temporal_context": "",
+      "group_id": "dbf637a843b89861",
+      "logic_group": "",
+      "logic_op": "",
+      "natural_language": "The completion of the correction followed the terms of a recommendation addressed to the Netherlands on 2 June 2004.",
       "source_locator": {
         "source_type": "prose",
         "section_path": "enacting.article_1",
         "char_start": 145,
-        "char_end": 274,
-        "quote": "under the terms of the recommendation addressed to the Netherlands on 2 June 2004 in accordance with Article 104(7) of the Treaty"
+        "char_end": 226,
+        "quote": "under the terms of the recommendation addressed to the Netherlands on 2 June 2004"
       },
       "conflict_label": "unlabeled",
       "extra": {
         "anchor_score": 100.0,
-        "model_quote": "under the terms of the recommendation addressed to the Netherlands on 2 June 2004 in accordance with Article 104(7) of the Treaty"
+        "model_quote": "under the terms of the recommendation addressed to the Netherlands on 2 June 2004",
+        "triple_index": 0
       }
     },
     {
-      "fact_id": "7b186637c6131d09",
+      "fact_id": "cdc8f8c7ec01cbdd",
       "doc_id": "train-000000",
       "annotator": "qwen3.5:4b",
-      "guideline_version": "v2",
-      "subject": "Council Decision 2005/729/EC",
-      "predicate": "abrogates",
-      "object": "Council Decision 2005/136/EC",
-      "natural_language": "Council Decision 2005/729/EC abrogates Council Decision 2005/136/EC.",
+      "guideline_version": "v1",
+      "subject": "the recommendation addressed to the Netherlands",
+      "predicate": "was issued",
+      "object": "in accordance with Article 104(7) of the Treaty",
+      "condition": "",
+      "temporal_context": "",
+      "group_id": "e5303ea215e5ea09",
+      "logic_group": "",
+      "logic_op": "",
+      "natural_language": "The recommendation addressed to the Netherlands was issued in accordance with Article 104(7) of the Treaty.",
+      "source_locator": {
+        "source_type": "prose",
+        "section_path": "enacting.article_1",
+        "char_start": 227,
+        "char_end": 274,
+        "quote": "in accordance with Article 104(7) of the Treaty"
+      },
+      "conflict_label": "unlabeled",
+      "extra": {
+        "anchor_score": 100.0,
+        "model_quote": "in accordance with Article 104(7) of the Treaty",
+        "triple_index": 0
+      }
+    },
+    {
+      "fact_id": "e6ba8db1d3dc45ac",
+      "doc_id": "train-000000",
+      "annotator": "qwen3.5:4b",
+      "guideline_version": "v1",
+      "subject": "Decision 2005/136/EC",
+      "predicate": "is abrogated by",
+      "object": "this Decision",
+      "condition": "",
+      "temporal_context": "",
+      "group_id": "c72b37e6134ba19a",
+      "logic_group": "",
+      "logic_op": "",
+      "natural_language": "Decision 2005/136/EC is hereby abrogated.",
       "source_locator": {
         "source_type": "prose",
         "section_path": "enacting.article_2",
@@ -507,18 +1176,24 @@
       "conflict_label": "unlabeled",
       "extra": {
         "anchor_score": 100.0,
-        "model_quote": "Decision 2005/136/EC is hereby abrogated."
+        "model_quote": "Decision 2005/136/EC is hereby abrogated.",
+        "triple_index": 0
       }
     },
     {
-      "fact_id": "85208ffc1a80a000",
+      "fact_id": "12202f4a3b318e21",
       "doc_id": "train-000000",
       "annotator": "qwen3.5:4b",
-      "guideline_version": "v2",
-      "subject": "Council Decision 2005/729/EC",
+      "guideline_version": "v1",
+      "subject": "This Decision",
       "predicate": "is addressed to",
       "object": "the Kingdom of the Netherlands",
-      "natural_language": "The Council Decision 2005/729/EC is addressed to the Kingdom of the Netherlands.",
+      "condition": "",
+      "temporal_context": "",
+      "group_id": "96db041f2381aa47",
+      "logic_group": "",
+      "logic_op": "",
+      "natural_language": "This Decision is addressed to the Kingdom of the Netherlands.",
       "source_locator": {
         "source_type": "prose",
         "section_path": "enacting.article_3",
@@ -529,7 +1204,8 @@
       "conflict_label": "unlabeled",
       "extra": {
         "anchor_score": 100.0,
-        "model_quote": "This Decision is addressed to the Kingdom of the Netherlands."
+        "model_quote": "This Decision is addressed to the Kingdom of the Netherlands.",
+        "triple_index": 0
       }
     }
   ]

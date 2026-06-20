@@ -155,10 +155,8 @@
         <span class="pane-tools">
           <label class="sort-label">Sort
             <select id="facts-sort">
-              <option value="default">default</option>
-              <option value="alignment">by alignment cluster</option>
-              <option value="model">by model</option>
-              <option value="section">by section</option>
+              <option value="model" selected>by model</option>
+              <option value="paragraph">by paragraph</option>
             </select>
           </label>
           <button class="tool-btn" id="facts-extract-btn" title="Run Phase-1 extraction for this doc">Extract here</button>
@@ -241,11 +239,11 @@
 
   <footer id="bottombar">
     <nav id="drawer-tabs">
-      <button class="tab active" data-tab="background-runs">Background runs</button>
+      <button class="tab active" data-tab="background-runs">Runs</button>
+      <button class="tab" data-tab="annotation">Annotation</button>
+      <button class="tab" data-tab="arbitrate-manager">Conflict detect</button>
       <button class="tab" data-tab="experiment">Experiment</button>
       <button class="tab" data-tab="review">Review</button>
-      <button class="tab" data-tab="guideline-edit">Guideline editor</button>
-      <button class="tab" data-tab="guideline-manager">Guidelines</button>
       <button class="tab" data-tab="run-matrix">Run matrix</button>
       <button class="tab" data-tab="neo4j">Neo4j</button>
     </nav>
@@ -257,8 +255,15 @@
       <div class="bg-runs">
         <fieldset>
           <legend>Phase-1 — extract facts</legend>
-          <label>Models <input type="text" id="p1-models" value="qwen3.5:4b" size="36"></label>
-          <label>Guideline <select id="p1-guideline"></select></label>
+          <div class="model-row"><span class="ml">Models</span>
+            <span class="model-checks" data-target="p1-models">
+              <label><input type="checkbox" value="qwen3.5:4b" checked> qwen3.5:4b</label>
+              <label><input type="checkbox" value="gemma3:4b" checked> gemma3:4b</label>
+              <label><input type="checkbox" value="nemotron-3-nano:4b" checked> nemotron-3-nano:4b</label>
+            </span>
+            <input type="hidden" id="p1-models" value="qwen3.5:4b,gemma3:4b,nemotron-3-nano:4b">
+          </div>
+          <label>Annotation guideline <select id="p1-guideline"></select></label>
           <label>Doc subset <input type="text" id="p1-doc-subset" placeholder="leave blank = all parsed docs" size="40"></label>
           <div class="row">
             <button id="run-phase1-btn">Run Phase-1</button>
@@ -271,9 +276,17 @@
         <fieldset>
           <legend>Phase-2 — align + detect conflicts</legend>
           <label><input type="checkbox" id="p2-skip-layer2" checked> Skip Layer-2 (use deterministic stub; uncheck for real Qwen arbitration)</label>
-          <label>Layer-2 model <input type="text" id="p2-layer2-model" value="qwen3.5:4b" size="18"></label>
+          <div class="model-row"><span class="ml">Layer-2 model</span>
+            <span class="model-checks single" data-target="p2-layer2-model">
+              <label><input type="checkbox" value="qwen3.5:4b" checked> qwen3.5:4b</label>
+              <label><input type="checkbox" value="gemma3:4b"> gemma3:4b</label>
+              <label><input type="checkbox" value="nemotron-3-nano:4b"> nemotron-3-nano:4b</label>
+            </span>
+            <input type="hidden" id="p2-layer2-model" value="qwen3.5:4b">
+          </div>
           <label>Align threshold <input type="number" id="p2-align-threshold" value="0.78" step="0.01" min="0" max="1" style="width:60px"></label>
-          <label>Guideline <select id="p2-guideline" title="Which guideline version to align: reads data/facts__<version>/, writes conflicts/<doc>__<version>.json"></select></label>
+          <label>Annotation guideline <select id="p2-guideline" title="Which guideline version to align: reads data/facts__<version>/, writes conflicts/<doc>__<version>.json"></select></label>
+          <label>Conflict detect guideline <select id="p2-arbitrate-version" title="Which arbitrate_*.md prompt to use for Layer-2 conflict classification"></select></label>
           <div class="row">
             <button id="run-phase2-btn">Run Phase-2</button>
             <span id="p2-status"></span>
@@ -337,36 +350,26 @@
       </div>
     </div>
 
-    <div class="tab-pane" data-tab="guideline-edit">
-      <p class="hint">Edit a guideline body and enqueue a Phase-1 re-extraction job for the full doc set.</p>
-      <textarea id="guideline-text" rows="9" placeholder="Paste a v2 guideline here."></textarea>
-      <div class="row">
-        <button id="guideline-save">Save &amp; enqueue re-extract</button>
-        <label>Models <input type="text" id="guideline-models" value="qwen3.5:4b" size="22"></label>
-        <span id="guideline-status"></span>
-      </div>
       <div id="job-status"></div>
     </div>
 
-    <div class="tab-pane" data-tab="guideline-manager">
-      <p class="hint">Load existing prompts/extract_*.md, edit, save as a new version (must contain
-        &lt;&lt;DOC_TITLE&gt;&gt; &lt;&lt;SECTION_PATH&gt;&gt; &lt;&lt;SECTION_TEXT&gt;&gt; sentinels).</p>
-      <div class="row">
-        <label>Version <select id="gm-select"></select></label>
-        <label>Save as <input type="text" id="gm-new-version" placeholder="v3" size="10"></label>
-        <button id="gm-load">Load</button>
-        <button id="gm-save">Save</button>
-        <span id="gm-status"></span>
-      </div>
-      <textarea id="gm-text" rows="14" placeholder="Pick a version and click Load."></textarea>
-    </div>
+
 
     <div class="tab-pane" data-tab="run-matrix">
       <p class="hint">Pick (doc &times; model &times; guideline) cells. Submit enqueues one job per cell.
         Cell tooltips show last run's fact_count.</p>
-      <div class="row">
-        <label>Models <input type="text" id="rm-models" value="qwen3.5:4b,gemma3:4b,phi4-mini" size="34"></label>
-        <button id="rm-add-combo">Add model/guideline columns</button>
+      <div class="row rm-controls">
+        <span class="ml">Phase</span>
+        <label class="rm-phase-label"><input type="radio" name="rm-phase" value="phase1" checked> Phase-1 (extract)</label>
+        <label class="rm-phase-label"><input type="radio" name="rm-phase" value="phase2"> Phase-2 (align)</label>
+        <span class="rm-sep"></span>
+        <span class="ml">Models</span>
+        <span class="model-checks rm-model-checks">
+          <label><input type="checkbox" value="qwen3.5:4b" checked> qwen3.5:4b</label>
+          <label><input type="checkbox" value="gemma3:4b" checked> gemma3:4b</label>
+          <label><input type="checkbox" value="nemotron-3-nano:4b" checked> nemotron-3-nano:4b</label>
+        </span>
+        <button id="rm-add-combo">Refresh columns</button>
         <button id="rm-submit">Submit selected cells</button>
         <span id="rm-status"></span>
       </div>
@@ -399,6 +402,51 @@
       <textarea id="neo4j-cypher" rows="7" spellcheck="false" placeholder="MATCH ... RETURN ..."></textarea>
       <div id="neo4j-results"></div>
     </div>
+
+    <div class="tab-pane" data-tab="annotation">
+      <div class="annotation-split">
+        <div class="annotation-half">
+          <p class="annotation-half-title">Schema versions</p>
+          <p class="hint">I/O contract embedded in every extraction prompt (schema_*.md). v1 is protected.</p>
+          <div class="row">
+            <label>Version <select id="sv-select"></select></label>
+            <label>Save as <input type="text" id="sv-new-version" placeholder="v2" size="10"></label>
+            <button id="sv-load">Load</button>
+            <button id="sv-save">Save</button>
+            <button id="sv-delete" class="danger" title="Delete this version (v1 is protected)">Delete</button>
+            <span id="sv-status"></span>
+          </div>
+          <textarea id="sv-text" rows="14" spellcheck="false" placeholder="Pick a version and click Load."></textarea>
+        </div>
+        <div class="annotation-half">
+          <p class="annotation-half-title">Annotation guidelines</p>
+          <p class="hint">Extraction rules injected as the &lt;&lt;GUIDELINE&gt;&gt; slot (extract_*.md). v1 is protected.</p>
+          <div class="row">
+            <label>Version <select id="gm-select"></select></label>
+            <label>Save as <input type="text" id="gm-new-version" placeholder="v2" size="10"></label>
+            <button id="gm-load">Load</button>
+            <button id="gm-save">Save</button>
+            <button id="gm-delete" class="danger" title="Delete this version (v1 is protected)">Delete</button>
+            <span id="gm-status"></span>
+          </div>
+          <textarea id="gm-text" rows="14" spellcheck="false" placeholder="Pick a version and click Load."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-pane" data-tab="arbitrate-manager">
+      <p class="hint">Conflict-detection prompt used by Phase-2 Layer-2 (arbitrate_*.md). Edit the rules, save as a new version, then select it in the Phase-2 panel. v1 is protected.</p>
+      <div class="row">
+        <label>Version <select id="am-select"></select></label>
+        <label>Save as <input type="text" id="am-new-version" placeholder="v2" size="10"></label>
+        <button id="am-load">Load</button>
+        <button id="am-save">Save</button>
+        <button id="am-delete" class="danger" title="Delete this version (v1 is protected)">Delete</button>
+        <span id="am-status"></span>
+      </div>
+      <textarea id="am-text" rows="16" spellcheck="false" placeholder="Pick a version and click Load."></textarea>
+    </div>
+
 
   </footer>
 

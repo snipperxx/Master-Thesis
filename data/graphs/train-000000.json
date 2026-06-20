@@ -6,533 +6,334 @@
     "merge_threshold": 0.78,
     "layer2_model": "stub",
     "core_entities": true,
-    "facts_root": "C:\\Users\\Administrator\\Desktop\\Coding\\Python\\MasterThesis\\data\\facts",
-    "variant": null
+    "facts_root": "/app/data/facts",
+    "variant": null,
+    "labeled": true
   },
   "nodes": [
     {
       "data": {
-        "id": "ent_the_council_010",
-        "label": "the Council",
+        "id": "ent_council_089",
+        "label": "Council",
+        "full_label": "Council",
         "surface_forms": [
+          "Council",
           "Council Decision on the existence of an excessive deficit",
+          "Council recommendation",
+          "Council recommendation issued under Article 104(7) of the Treaty",
+          "a Council Decision on the existence of an excessive deficit",
           "the Council"
         ],
         "annotators": [
-          "gemma3-4b-sim",
-          "phi4-mini-sim",
+          "gemma3:4b",
+          "nemotron-3-nano:4b",
           "qwen3.5:4b"
         ],
-        "n_surface": 2,
+        "n_surface": 6,
         "n_annotators": 3,
         "conflict_label": "granularity"
       }
     },
     {
       "data": {
-        "id": "ent_the_excessive_deficit_si_060",
-        "label": "the excessive deficit situation",
+        "id": "ent_excessive_deficit_in_the_087",
+        "label": "excessive deficit in the Netherla…",
+        "full_label": "excessive deficit in the Netherlands",
         "surface_forms": [
-          "The data for the excessive deficit procedure",
-          "after the excessive deficit has been corrected",
-          "correction of the excessive deficit situation in Netherlands",
-          "correction of the excessive deficit situation in the Netherlands",
-          "that an excessive deficit existed in the Netherlands",
-          "the excessive deficit situation",
-          "when the excessive deficit in the Member State concerned has, in the view of Council of the European Union, been corrected",
-          "when the excessive deficit in the Member State concerned has, in the view of the Council, been corrected"
+          "an excessive deficit existed in the Netherlands",
+          "excessive deficit in the Netherlands",
+          "general government deficit of the Netherlands"
         ],
         "annotators": [
-          "gemma3-4b-sim",
-          "phi4-mini-sim",
-          "qwen3.5:4b"
-        ],
-        "n_surface": 8,
-        "n_annotators": 3,
-        "conflict_label": "granularity"
-      }
-    },
-    {
-      "data": {
-        "id": "ent_decision_2005_136_ec_048",
-        "label": "Decision 2005/136/EC",
-        "surface_forms": [
-          "Decision (2005/136/EC)",
-          "Decision 2005/136/EC"
-        ],
-        "annotators": [
-          "gemma3-4b-sim",
-          "phi4-mini-sim",
-          "qwen3.5:4b"
-        ],
-        "n_surface": 2,
-        "n_annotators": 3,
-        "conflict_label": "redundancy"
-      }
-    },
-    {
-      "data": {
-        "id": "ent_a_recommendation_from_th_003",
-        "label": "a recommendation from the Commission",
-        "surface_forms": [
-          "a recommendation from the Commission"
-        ],
-        "annotators": [
-          "gemma3-4b-sim",
-          "qwen3.5:4b"
-        ],
-        "n_surface": 1,
-        "n_annotators": 2,
-        "conflict_label": "redundancy"
-      }
-    },
-    {
-      "data": {
-        "id": "ent_the_eu_council_051",
-        "label": "the EU Council",
-        "surface_forms": [
-          "Council of the European Union",
-          "the EU Council"
-        ],
-        "annotators": [
-          "gemma3-4b-sim",
-          "phi4-mini-sim"
-        ],
-        "n_surface": 2,
-        "n_annotators": 2,
-        "conflict_label": "granularity"
-      }
-    },
-    {
-      "data": {
-        "id": "ent_on_2_june_2004_addressed_005",
-        "label": "on 2 June 2004 addressed to the Kingdom of the Netherlands",
-        "surface_forms": [
-          "on 2 June 2004 addressed to the Kingdom of the Netherlands"
-        ],
-        "annotators": [
-          "gemma3-4b-sim"
-        ],
-        "n_surface": 1,
-        "n_annotators": 1,
-        "conflict_label": "granularity"
-      }
-    },
-    {
-      "data": {
-        "id": "ent_by_the_recommendation_007",
-        "label": "by the Recommendation",
-        "surface_forms": [
-          "by the Recommendation"
-        ],
-        "annotators": [
-          "gemma3-4b-sim",
-          "phi4-mini-sim",
-          "qwen3.5:4b"
-        ],
-        "n_surface": 1,
-        "n_annotators": 3,
-        "conflict_label": "redundancy"
-      }
-    },
-    {
-      "data": {
-        "id": "ent_the_recommendation_008",
-        "label": "the Recommendation",
-        "surface_forms": [
-          "the Recommendation"
-        ],
-        "annotators": [
-          "gemma3-4b-sim",
-          "phi4-mini-sim",
-          "qwen3.5:4b"
-        ],
-        "n_surface": 1,
-        "n_annotators": 3,
-        "conflict_label": "redundancy"
-      }
-    },
-    {
-      "data": {
-        "id": "ent_in_2004_044",
-        "label": "in 2004",
-        "surface_forms": [
-          "in 2004",
-          "of 2005 at the latest for the correction of the excessive deficit"
-        ],
-        "annotators": [
-          "gemma3-4b-sim",
-          "phi4-mini-sim",
-          "qwen3.5:4b"
-        ],
-        "n_surface": 2,
-        "n_annotators": 3,
-        "conflict_label": "redundancy"
-      }
-    },
-    {
-      "data": {
-        "id": "ent_the_definitions_of_gover_012",
-        "label": "The definitions of 'government' and 'deficit'",
-        "surface_forms": [
-          "The definitions of 'government' and 'deficit'"
-        ],
-        "annotators": [
-          "gemma3-4b-sim",
-          "phi4-mini-sim",
-          "qwen3.5:4b"
-        ],
-        "n_surface": 1,
-        "n_annotators": 3,
-        "conflict_label": "redundancy"
-      }
-    },
-    {
-      "data": {
-        "id": "ent_in_the_protocol_on_the_e_013",
-        "label": "in the Protocol on the excessive deficit procedure by reference to the European System of Integrated Economic Accounts, second edition",
-        "surface_forms": [
-          "in the Protocol on the excessive deficit procedure by reference to the European System of Integrated Economic Accounts, second edition"
-        ],
-        "annotators": [
-          "gemma3-4b-sim",
-          "phi4-mini-sim",
-          "qwen3.5:4b"
-        ],
-        "n_surface": 1,
-        "n_annotators": 3,
-        "conflict_label": "redundancy"
-      }
-    },
-    {
-      "data": {
-        "id": "ent_by_the_commission_015",
-        "label": "by the Commission",
-        "surface_forms": [
-          "by the Commission"
-        ],
-        "annotators": [
-          "gemma3-4b-sim",
-          "qwen3.5:4b"
-        ],
-        "n_surface": 1,
-        "n_annotators": 2,
-        "conflict_label": "granularity"
-      }
-    },
-    {
-      "data": {
-        "id": "ent_government_deficit_022",
-        "label": "government deficit",
-        "surface_forms": [
-          "general government deficit",
-          "government deficit"
-        ],
-        "annotators": [
-          "gemma3-4b-sim",
-          "phi4-mini-sim",
-          "qwen3.5:4b"
-        ],
-        "n_surface": 2,
-        "n_annotators": 3,
-        "conflict_label": "granularity"
-      }
-    },
-    {
-      "data": {
-        "id": "ent_0_5_of_gdp_040",
-        "label": "0,5 % of GDP",
-        "surface_forms": [
-          "0,0 % of GDP in 2006",
-          "0,4 % of GDP in 2005",
-          "0,5 % of GDP",
-          "1,2 % of GDP",
-          "1,2 % of GDP in 2004",
-          "1,6 % of GDP in 2006",
-          "1,9 % of GDP in 2006",
-          "2,0 % of GDP in 2003",
-          "2,3 % of GDP in 2004",
-          "2,8 % of GDP in 2004",
-          "another 0,8 % of GDP",
-          "to 2,0 % of GDP"
-        ],
-        "annotators": [
-          "gemma3-4b-sim",
-          "phi4-mini-sim",
-          "qwen3.5:4b"
-        ],
-        "n_surface": 12,
-        "n_annotators": 3,
-        "conflict_label": "contradiction"
-      }
-    },
-    {
-      "data": {
-        "id": "ent_general_government_balan_018",
-        "label": "general government balance",
-        "surface_forms": [
-          "general government balance"
-        ],
-        "annotators": [
-          "gemma3-4b-sim",
-          "phi4-mini-sim",
-          "qwen3.5:4b"
-        ],
-        "n_surface": 1,
-        "n_annotators": 3,
-        "conflict_label": "granularity"
-      }
-    },
-    {
-      "data": {
-        "id": "ent_3_2_in_2003_019",
-        "label": "3,2 % in 2003",
-        "surface_forms": [
-          "3,2 % in 2003"
-        ],
-        "annotators": [
-          "gemma3-4b-sim",
-          "phi4-mini-sim",
-          "qwen3.5:4b"
-        ],
-        "n_surface": 1,
-        "n_annotators": 3,
-        "conflict_label": "granularity"
-      }
-    },
-    {
-      "data": {
-        "id": "ent_outcome_for_2004_020",
-        "label": "outcome for 2004",
-        "surface_forms": [
-          "outcome for 2004"
-        ],
-        "annotators": [
-          "gemma3-4b-sim",
-          "phi4-mini-sim",
-          "qwen3.5:4b"
-        ],
-        "n_surface": 1,
-        "n_annotators": 3,
-        "conflict_label": "granularity"
-      }
-    },
-    {
-      "data": {
-        "id": "ent_the_council_recommendati_021",
-        "label": "the Council recommendation issued under Article 104(7) of the Treaty",
-        "surface_forms": [
-          "the Council recommendation issued under Article 104(7) of the Treaty"
-        ],
-        "annotators": [
-          "gemma3-4b-sim",
-          "phi4-mini-sim",
-          "qwen3.5:4b"
-        ],
-        "n_surface": 1,
-        "n_annotators": 3,
-        "conflict_label": "granularity"
-      }
-    },
-    {
-      "data": {
-        "id": "ent_the_reference_value_of_3_023",
-        "label": "the reference value of 3 % of GDP by 2005 at the latest",
-        "surface_forms": [
-          "the reference value of 3 % of GDP by 2005 at the latest"
-        ],
-        "annotators": [
-          "gemma3-4b-sim",
-          "phi4-mini-sim",
-          "qwen3.5:4b"
-        ],
-        "n_surface": 1,
-        "n_annotators": 3,
-        "conflict_label": "granularity"
-      }
-    },
-    {
-      "data": {
-        "id": "ent_fiscal_adjustment_024",
-        "label": "Fiscal adjustment",
-        "surface_forms": [
-          "Fiscal adjustment"
-        ],
-        "annotators": [
-          "gemma3-4b-sim",
-          "phi4-mini-sim",
-          "qwen3.5:4b"
-        ],
-        "n_surface": 1,
-        "n_annotators": 3,
-        "conflict_label": "granularity"
-      }
-    },
-    {
-      "data": {
-        "id": "ent_in_the_form_065",
-        "label": "in the form",
-        "surface_forms": [
-          "in the form",
-          "in the form of substantial fiscal measures",
-          "in the form of substantial savings measures"
-        ],
-        "annotators": [
-          "gemma3-4b-sim",
-          "phi4-mini-sim",
+          "gemma3:4b",
+          "nemotron-3-nano:4b",
           "qwen3.5:4b"
         ],
         "n_surface": 3,
         "n_annotators": 3,
+        "conflict_label": "contradiction"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_2_june_2004_075",
+        "label": "2 June 2004",
+        "full_label": "2 June 2004",
+        "surface_forms": [
+          "2 June 2004",
+          "on 2 June 2004"
+        ],
+        "annotators": [
+          "gemma3:4b",
+          "nemotron-3-nano:4b",
+          "qwen3.5:4b"
+        ],
+        "n_surface": 2,
+        "n_annotators": 3,
         "conflict_label": "granularity"
       }
     },
     {
       "data": {
-        "id": "ent_savings_measures_029",
-        "label": "savings measures",
+        "id": "ent_a_recommendation_076",
+        "label": "a Recommendation",
+        "full_label": "a Recommendation",
         "surface_forms": [
-          "savings measures",
-          "substantial savings measures"
+          "This Recommendation",
+          "a Recommendation",
+          "the Recommendation",
+          "the recommendation"
         ],
         "annotators": [
-          "gemma3-4b-sim",
-          "phi4-mini-sim",
+          "gemma3:4b",
+          "nemotron-3-nano:4b",
           "qwen3.5:4b"
         ],
-        "n_surface": 2,
+        "n_surface": 4,
+        "n_annotators": 3,
+        "conflict_label": "granularity"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_the_netherlands_004",
+        "label": "the Netherlands",
+        "full_label": "the Netherlands",
+        "surface_forms": [
+          "the Netherlands"
+        ],
+        "annotators": [
+          "gemma3:4b",
+          "nemotron-3-nano:4b",
+          "qwen3.5:4b"
+        ],
+        "n_surface": 1,
+        "n_annotators": 3,
+        "conflict_label": "granularity"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_deficit_102",
+        "label": "deficit",
+        "full_label": "deficit",
+        "surface_forms": [
+          "Protocol on the excessive deficit procedure",
+          "The data for the excessive deficit procedure",
+          "after the excessive deficit has been corrected",
+          "bringing the excessive deficit situation to an end",
+          "correction of the excessive deficit situation in the Netherlands",
+          "data for the excessive deficit procedure",
+          "decline in the general government deficit",
+          "deficit",
+          "fall in the deficit",
+          "general government deficit",
+          "government deficit",
+          "projected deficit",
+          "that an excessive deficit existed in the Netherlands",
+          "the Protocol on the excessive deficit procedure",
+          "the budget deficit",
+          "the correction of the excessive deficit",
+          "the correction of the excessive deficit situation in the Netherlands",
+          "the deficit",
+          "the durable correction of the budget deficit",
+          "the excessive deficit",
+          "the excessive deficit situation to an end",
+          "when the excessive deficit in the Member State concerned has been corrected",
+          "when the excessive deficit in the Member State concerned has been corrected in the view of the Council"
+        ],
+        "annotators": [
+          "gemma3:4b",
+          "nemotron-3-nano:4b",
+          "qwen3.5:4b"
+        ],
+        "n_surface": 23,
         "n_annotators": 3,
         "conflict_label": "contradiction"
       }
     },
     {
       "data": {
-        "id": "ent_fiscal_measures_027",
-        "label": "fiscal measures",
+        "id": "ent_article_3_4_of_council_r_006",
+        "label": "Article 3(4) of Council Regulatio…",
+        "full_label": "Article 3(4) of Council Regulation (EC) No 1467/97",
         "surface_forms": [
-          "fiscal measures"
+          "Article 3(4) of Council Regulation (EC) No 1467/97"
         ],
         "annotators": [
-          "gemma3-4b-sim",
-          "phi4-mini-sim"
+          "gemma3:4b"
         ],
         "n_surface": 1,
+        "n_annotators": 1,
+        "conflict_label": "granularity"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_council_regulation_ec_no_007",
+        "label": "Council Regulation (EC) No 1467/97",
+        "full_label": "Council Regulation (EC) No 1467/97",
+        "surface_forms": [
+          "Council Regulation (EC) No 1467/97"
+        ],
+        "annotators": [
+          "gemma3:4b"
+        ],
+        "n_surface": 1,
+        "n_annotators": 1,
+        "conflict_label": "granularity"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_of_2005_at_the_latest_008",
+        "label": "of 2005 at the latest",
+        "full_label": "of 2005 at the latest",
+        "surface_forms": [
+          "of 2005 at the latest"
+        ],
+        "annotators": [
+          "gemma3:4b"
+        ],
+        "n_surface": 1,
+        "n_annotators": 1,
+        "conflict_label": "granularity"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_in_the_member_state_conc_012",
+        "label": "in the Member State concerned",
+        "full_label": "in the Member State concerned",
+        "surface_forms": [
+          "in the Member State concerned"
+        ],
+        "annotators": [
+          "gemma3:4b"
+        ],
+        "n_surface": 1,
+        "n_annotators": 1,
+        "conflict_label": "granularity"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_definitions_013",
+        "label": "definitions",
+        "full_label": "definitions",
+        "surface_forms": [
+          "definitions"
+        ],
+        "annotators": [
+          "gemma3:4b"
+        ],
+        "n_surface": 1,
+        "n_annotators": 1,
+        "conflict_label": "granularity"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_european_system_of_integ_084",
+        "label": "European System of Integrated Eco…",
+        "full_label": "European System of Integrated Economic Accounts, second edition",
+        "surface_forms": [
+          "European System of Integrated Economic Accounts, second edition",
+          "the European System of Integrated Economic Accounts, second edition"
+        ],
+        "annotators": [
+          "gemma3:4b",
+          "nemotron-3-nano:4b",
+          "qwen3.5:4b"
+        ],
+        "n_surface": 2,
+        "n_annotators": 3,
+        "conflict_label": "granularity"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_data_016",
+        "label": "data",
+        "full_label": "data",
+        "surface_forms": [
+          "data"
+        ],
+        "annotators": [
+          "gemma3:4b"
+        ],
+        "n_surface": 1,
+        "n_annotators": 1,
+        "conflict_label": "granularity"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_commission_086",
+        "label": "Commission",
+        "full_label": "Commission",
+        "surface_forms": [
+          "Commission",
+          "the Commission"
+        ],
+        "annotators": [
+          "gemma3:4b",
+          "nemotron-3-nano:4b",
+          "qwen3.5:4b"
+        ],
+        "n_surface": 2,
+        "n_annotators": 3,
+        "conflict_label": "granularity"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_decision_2005_136_ec_018",
+        "label": "Decision 2005/136/EC",
+        "full_label": "Decision 2005/136/EC",
+        "surface_forms": [
+          "Decision 2005/136/EC"
+        ],
+        "annotators": [
+          "gemma3:4b",
+          "nemotron-3-nano:4b",
+          "qwen3.5:4b"
+        ],
+        "n_surface": 1,
+        "n_annotators": 3,
+        "conflict_label": "granularity"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_this_decision_116",
+        "label": "This Decision",
+        "full_label": "This Decision",
+        "surface_forms": [
+          "This Decision",
+          "this Decision"
+        ],
+        "annotators": [
+          "gemma3:4b",
+          "qwen3.5:4b"
+        ],
+        "n_surface": 2,
         "n_annotators": 2,
         "conflict_label": "granularity"
       }
     },
     {
       "data": {
-        "id": "ent_the_2004_budget_028",
-        "label": "the 2004 budget",
+        "id": "ent_kingdom_of_the_netherlan_077",
+        "label": "Kingdom of the Netherlands",
+        "full_label": "Kingdom of the Netherlands",
         "surface_forms": [
-          "the 2004 budget"
+          "Kingdom of the Netherlands",
+          "the Kingdom of the Netherlands"
         ],
         "annotators": [
-          "gemma3-4b-sim",
-          "phi4-mini-sim",
-          "qwen3.5:4b"
-        ],
-        "n_surface": 1,
-        "n_annotators": 3,
-        "conflict_label": "granularity"
-      }
-    },
-    {
-      "data": {
-        "id": "ent_the_additional_consolida_030",
-        "label": "the additional consolidation package on 14 April 2004",
-        "surface_forms": [
-          "the additional consolidation package on 14 April 2004"
-        ],
-        "annotators": [
-          "gemma3-4b-sim",
-          "phi4-mini-sim",
-          "qwen3.5:4b"
-        ],
-        "n_surface": 1,
-        "n_annotators": 3,
-        "conflict_label": "redundancy"
-      }
-    },
-    {
-      "data": {
-        "id": "ent_structural_deficit_034",
-        "label": "structural deficit",
-        "surface_forms": [
-          "structural deficit"
-        ],
-        "annotators": [
-          "gemma3-4b-sim",
-          "phi4-mini-sim"
-        ],
-        "n_surface": 1,
-        "n_annotators": 2,
-        "conflict_label": "granularity"
-      }
-    },
-    {
-      "data": {
-        "id": "ent_cyclically_adjusted_defi_037",
-        "label": "cyclically adjusted deficit",
-        "surface_forms": [
-          "cyclically adjusted deficit"
-        ],
-        "annotators": [
-          "gemma3-4b-sim",
-          "phi4-mini-sim",
-          "qwen3.5:4b"
-        ],
-        "n_surface": 1,
-        "n_annotators": 3,
-        "conflict_label": "granularity"
-      }
-    },
-    {
-      "data": {
-        "id": "ent_government_debt_ratio_041",
-        "label": "government debt ratio",
-        "surface_forms": [
-          "government debt ratio"
-        ],
-        "annotators": [
-          "gemma3-4b-sim",
-          "phi4-mini-sim",
-          "qwen3.5:4b"
-        ],
-        "n_surface": 1,
-        "n_annotators": 3,
-        "conflict_label": "redundancy"
-      }
-    },
-    {
-      "data": {
-        "id": "ent_this_threshold_in_2005_a_042",
-        "label": "this threshold in 2005 and 2006",
-        "surface_forms": [
-          "this threshold in 2005 and 2006"
-        ],
-        "annotators": [
-          "gemma3-4b-sim",
-          "phi4-mini-sim",
-          "qwen3.5:4b"
-        ],
-        "n_surface": 1,
-        "n_annotators": 3,
-        "conflict_label": "redundancy"
-      }
-    },
-    {
-      "data": {
-        "id": "ent_under_the_terms_of_the_r_064",
-        "label": "under the terms of the recommendation addressed to Netherlands on 2 June 2004",
-        "surface_forms": [
-          "under the terms of the recommendation addressed to Netherlands on 2 June 2004",
-          "under the terms of the recommendation addressed to the Netherlands on 2 June 2004"
-        ],
-        "annotators": [
-          "gemma3-4b-sim",
-          "phi4-mini-sim",
+          "gemma3:4b",
+          "nemotron-3-nano:4b",
           "qwen3.5:4b"
         ],
         "n_surface": 2,
@@ -542,13 +343,14 @@
     },
     {
       "data": {
-        "id": "ent_in_accordance_with_artic_046",
-        "label": "in accordance with Article 104(7)",
+        "id": "ent_a_deadline_of_2005_at_th_025",
+        "label": "a deadline of 2005 at the latest",
+        "full_label": "a deadline of 2005 at the latest",
         "surface_forms": [
-          "in accordance with Article 104(7)"
+          "a deadline of 2005 at the latest"
         ],
         "annotators": [
-          "gemma3-4b-sim"
+          "nemotron-3-nano:4b"
         ],
         "n_surface": 1,
         "n_annotators": 1,
@@ -557,13 +359,239 @@
     },
     {
       "data": {
-        "id": "ent_the_treaty_047",
-        "label": "the Treaty",
+        "id": "ent_a_deadline_078",
+        "label": "a deadline",
+        "full_label": "a deadline",
         "surface_forms": [
-          "the Treaty"
+          "a deadline",
+          "the deadline"
         ],
         "annotators": [
-          "gemma3-4b-sim"
+          "nemotron-3-nano:4b",
+          "qwen3.5:4b"
+        ],
+        "n_surface": 2,
+        "n_annotators": 2,
+        "conflict_label": "granularity"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_in_the_view_of_the_counc_030",
+        "label": "in the view of the Council",
+        "full_label": "in the view of the Council",
+        "surface_forms": [
+          "in the view of the Council"
+        ],
+        "annotators": [
+          "nemotron-3-nano:4b"
+        ],
+        "n_surface": 1,
+        "n_annotators": 1,
+        "conflict_label": "granularity"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_3_of_gdp_108",
+        "label": "3 % of GDP",
+        "full_label": "3 % of GDP",
+        "surface_forms": [
+          "0,0 % of GDP",
+          "0,0 % of GDP in 2006",
+          "0,4 % of GDP",
+          "0,4 % of GDP in 2005",
+          "0,5 % of GDP",
+          "1,2 % of GDP",
+          "1,2 % of GDP in 2004",
+          "1,6 % of GDP",
+          "1,6 % of GDP in 2006",
+          "2,0 % of GDP",
+          "2,0 % of GDP in 2005",
+          "2,1 % of GDP",
+          "2,3 % of GDP",
+          "2,3 % of GDP in 2004",
+          "3 % of GDP",
+          "3,2 % of GDP",
+          "60 % of GDP",
+          "60 % of GDP reference value in 2004",
+          "another 0,8 % of GDP"
+        ],
+        "annotators": [
+          "nemotron-3-nano:4b",
+          "qwen3.5:4b"
+        ],
+        "n_surface": 19,
+        "n_annotators": 2,
+        "conflict_label": "contradiction"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_outcome_for_2004_035",
+        "label": "outcome for 2004",
+        "full_label": "outcome for 2004",
+        "surface_forms": [
+          "outcome for 2004"
+        ],
+        "annotators": [
+          "nemotron-3-nano:4b",
+          "qwen3.5:4b"
+        ],
+        "n_surface": 1,
+        "n_annotators": 2,
+        "conflict_label": "granularity"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_fiscal_adjustment_039",
+        "label": "fiscal adjustment",
+        "full_label": "fiscal adjustment",
+        "surface_forms": [
+          "fiscal adjustment"
+        ],
+        "annotators": [
+          "nemotron-3-nano:4b",
+          "qwen3.5:4b"
+        ],
+        "n_surface": 1,
+        "n_annotators": 2,
+        "conflict_label": "granularity"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_savings_measures_097",
+        "label": "savings measures",
+        "full_label": "savings measures",
+        "surface_forms": [
+          "savings measures",
+          "savings measures, mostly of a structural nature, adding up to 0,5 % of GDP",
+          "substantial savings measures"
+        ],
+        "annotators": [
+          "nemotron-3-nano:4b",
+          "qwen3.5:4b"
+        ],
+        "n_surface": 3,
+        "n_annotators": 2,
+        "conflict_label": "contradiction"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_the_2004_budget_041",
+        "label": "the 2004 budget",
+        "full_label": "the 2004 budget",
+        "surface_forms": [
+          "the 2004 budget"
+        ],
+        "annotators": [
+          "nemotron-3-nano:4b",
+          "qwen3.5:4b"
+        ],
+        "n_surface": 1,
+        "n_annotators": 2,
+        "conflict_label": "redundancy"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_the_additional_consolida_092",
+        "label": "the additional consolidation pack…",
+        "full_label": "the additional consolidation package",
+        "surface_forms": [
+          "the additional consolidation package",
+          "the additional consolidation package on 14 April 2004"
+        ],
+        "annotators": [
+          "nemotron-3-nano:4b",
+          "qwen3.5:4b"
+        ],
+        "n_surface": 2,
+        "n_annotators": 2,
+        "conflict_label": "redundancy"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_stronger_than_expected_t_043",
+        "label": "stronger-than-expected tax receip…",
+        "full_label": "stronger-than-expected tax receipts",
+        "surface_forms": [
+          "stronger-than-expected tax receipts"
+        ],
+        "annotators": [
+          "nemotron-3-nano:4b",
+          "qwen3.5:4b"
+        ],
+        "n_surface": 1,
+        "n_annotators": 2,
+        "conflict_label": "redundancy"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_additional_revenues_from_045",
+        "label": "additional revenues from the sale…",
+        "full_label": "additional revenues from the sale of natural gas",
+        "surface_forms": [
+          "additional revenues from the sale of natural gas"
+        ],
+        "annotators": [
+          "nemotron-3-nano:4b",
+          "qwen3.5:4b"
+        ],
+        "n_surface": 1,
+        "n_annotators": 2,
+        "conflict_label": "redundancy"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_budgetary_measures_093",
+        "label": "budgetary measures",
+        "full_label": "budgetary measures",
+        "surface_forms": [
+          "budgetary measures",
+          "budgetary measures taken"
+        ],
+        "annotators": [
+          "nemotron-3-nano:4b",
+          "qwen3.5:4b"
+        ],
+        "n_surface": 2,
+        "n_annotators": 2,
+        "conflict_label": "granularity"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_securing_a_lasting_impro_047",
+        "label": "securing a lasting improvement",
+        "full_label": "securing a lasting improvement",
+        "surface_forms": [
+          "securing a lasting improvement"
+        ],
+        "annotators": [
+          "nemotron-3-nano:4b"
+        ],
+        "n_surface": 1,
+        "n_annotators": 1,
+        "conflict_label": "granularity"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_general_government_balan_048",
+        "label": "general government balance",
+        "full_label": "general government balance",
+        "surface_forms": [
+          "general government balance"
+        ],
+        "annotators": [
+          "nemotron-3-nano:4b"
         ],
         "n_surface": 1,
         "n_annotators": 1,
@@ -572,76 +600,14 @@
     },
     {
       "data": {
-        "id": "ent_the_commission_049",
-        "label": "the Commission",
+        "id": "ent_lasting_049",
+        "label": "lasting",
+        "full_label": "lasting",
         "surface_forms": [
-          "the Commission"
+          "lasting"
         ],
         "annotators": [
-          "phi4-mini-sim",
-          "qwen3.5:4b"
-        ],
-        "n_surface": 1,
-        "n_annotators": 2,
-        "conflict_label": "redundancy"
-      }
-    },
-    {
-      "data": {
-        "id": "ent_a_recommendation_in_acco_050",
-        "label": "a recommendation in accordance with Article 104(6) of the Treaty",
-        "surface_forms": [
-          "a recommendation in accordance with Article 104(6) of the Treaty"
-        ],
-        "annotators": [
-          "phi4-mini-sim",
-          "qwen3.5:4b"
-        ],
-        "n_surface": 1,
-        "n_annotators": 2,
-        "conflict_label": "redundancy"
-      }
-    },
-    {
-      "data": {
-        "id": "ent_on_2_june_2004_addressed_052",
-        "label": "on 2 June 2004 addressed to the Netherlands",
-        "surface_forms": [
-          "on 2 June 2004 addressed to the Netherlands"
-        ],
-        "annotators": [
-          "phi4-mini-sim",
-          "qwen3.5:4b"
-        ],
-        "n_surface": 1,
-        "n_annotators": 2,
-        "conflict_label": "granularity"
-      }
-    },
-    {
-      "data": {
-        "id": "ent_by_european_commission_054",
-        "label": "by European Commission",
-        "surface_forms": [
-          "by European Commission"
-        ],
-        "annotators": [
-          "phi4-mini-sim"
-        ],
-        "n_surface": 1,
-        "n_annotators": 1,
-        "conflict_label": "granularity"
-      }
-    },
-    {
-      "data": {
-        "id": "ent_austerity_measures_057",
-        "label": "austerity measures",
-        "surface_forms": [
-          "austerity measures"
-        ],
-        "annotators": [
-          "phi4-mini-sim"
+          "nemotron-3-nano:4b"
         ],
         "n_surface": 1,
         "n_annotators": 1,
@@ -650,28 +616,64 @@
     },
     {
       "data": {
-        "id": "ent_cyclically_adjusted_bala_061",
-        "label": "cyclically adjusted balance",
+        "id": "ent_structural_052",
+        "label": "structural",
+        "full_label": "structural",
         "surface_forms": [
-          "cyclically adjusted balance"
+          "structural"
         ],
         "annotators": [
-          "phi4-mini-sim"
+          "nemotron-3-nano:4b"
         ],
         "n_surface": 1,
         "n_annotators": 1,
-        "conflict_label": "granularity"
+        "conflict_label": "contradiction"
       }
     },
     {
       "data": {
-        "id": "ent_the_60_of_gdp_reference_062",
-        "label": "the 60 % of GDP reference value in 2004",
+        "id": "ent_official_target_099",
+        "label": "official target",
+        "full_label": "official target",
         "surface_forms": [
-          "the 60 % of GDP reference value in 2004"
+          "official target",
+          "official target of a deficit of 2,1 % of GDP"
         ],
         "annotators": [
-          "phi4-mini-sim",
+          "nemotron-3-nano:4b",
+          "qwen3.5:4b"
+        ],
+        "n_surface": 2,
+        "n_annotators": 2,
+        "conflict_label": "contradiction"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_durable_correction_059",
+        "label": "durable correction",
+        "full_label": "durable correction",
+        "surface_forms": [
+          "durable correction"
+        ],
+        "annotators": [
+          "nemotron-3-nano:4b"
+        ],
+        "n_surface": 1,
+        "n_annotators": 1,
+        "conflict_label": "contradiction"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_budgetary_consolidation_061",
+        "label": "budgetary consolidation",
+        "full_label": "budgetary consolidation",
+        "surface_forms": [
+          "budgetary consolidation"
+        ],
+        "annotators": [
+          "nemotron-3-nano:4b",
           "qwen3.5:4b"
         ],
         "n_surface": 1,
@@ -681,40 +683,275 @@
     },
     {
       "data": {
-        "id": "ent_in_accordance_with_artic_066",
-        "label": "in accordance with Article 104(7) of the Treaty",
+        "id": "ent_cyclically_adjusted_defi_063",
+        "label": "cyclically adjusted deficit",
+        "full_label": "cyclically adjusted deficit",
+        "surface_forms": [
+          "a reduction in the cyclically adjusted deficit",
+          "cyclically adjusted deficit"
+        ],
+        "annotators": [
+          "nemotron-3-nano:4b",
+          "qwen3.5:4b"
+        ],
+        "n_surface": 2,
+        "n_annotators": 2,
+        "conflict_label": "contradiction"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_balance_067",
+        "label": "balance",
+        "full_label": "balance",
+        "surface_forms": [
+          "balance",
+          "close to balance"
+        ],
+        "annotators": [
+          "nemotron-3-nano:4b",
+          "qwen3.5:4b"
+        ],
+        "n_surface": 2,
+        "n_annotators": 2,
+        "conflict_label": "contradiction"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_government_debt_ratio_069",
+        "label": "government debt ratio",
+        "full_label": "government debt ratio",
+        "surface_forms": [
+          "government debt ratio"
+        ],
+        "annotators": [
+          "nemotron-3-nano:4b",
+          "qwen3.5:4b"
+        ],
+        "n_surface": 1,
+        "n_annotators": 2,
+        "conflict_label": "contradiction"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_yes_071",
+        "label": "yes",
+        "full_label": "yes",
+        "surface_forms": [
+          "yes"
+        ],
+        "annotators": [
+          "nemotron-3-nano:4b"
+        ],
+        "n_surface": 1,
+        "n_annotators": 1,
+        "conflict_label": "granularity"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_2004_073",
+        "label": "2004",
+        "full_label": "2004",
+        "surface_forms": [
+          "2004"
+        ],
+        "annotators": [
+          "nemotron-3-nano:4b",
+          "qwen3.5:4b"
+        ],
+        "n_surface": 1,
+        "n_annotators": 2,
+        "conflict_label": "granularity"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_recommendation_addressed_114",
+        "label": "recommendation addressed to the N…",
+        "full_label": "recommendation addressed to the Netherlands",
+        "surface_forms": [
+          "recommendation addressed to the Netherlands",
+          "the recommendation addressed to the Netherlands"
+        ],
+        "annotators": [
+          "nemotron-3-nano:4b",
+          "qwen3.5:4b"
+        ],
+        "n_surface": 2,
+        "n_annotators": 2,
+        "conflict_label": "granularity"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_for_2005_079",
+        "label": "for 2005",
+        "full_label": "for 2005",
+        "surface_forms": [
+          "for 2005"
+        ],
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "n_surface": 1,
+        "n_annotators": 1,
+        "conflict_label": "granularity"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_the_definitions_of_gover_082",
+        "label": "The definitions of 'government' a…",
+        "full_label": "The definitions of 'government' and 'deficit'",
+        "surface_forms": [
+          "The definitions of 'government' and 'deficit'"
+        ],
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "n_surface": 1,
+        "n_annotators": 1,
+        "conflict_label": "granularity"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_reference_value_of_3_of_090",
+        "label": "reference value of 3 % of GDP by…",
+        "full_label": "reference value of 3 % of GDP by 2005 at the latest",
+        "surface_forms": [
+          "reference value of 3 % of GDP by 2005 at the latest"
+        ],
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "n_surface": 1,
+        "n_annotators": 1,
+        "conflict_label": "granularity"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_in_the_form_of_substanti_091",
+        "label": "in the form of substantial saving…",
+        "full_label": "in the form of substantial savings measures",
+        "surface_forms": [
+          "in the form of substantial savings measures"
+        ],
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "n_surface": 1,
+        "n_annotators": 1,
+        "conflict_label": "granularity"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_a_lasting_improvement_in_094",
+        "label": "a lasting improvement in the gene…",
+        "full_label": "a lasting improvement in the general government balance",
+        "surface_forms": [
+          "a lasting improvement in the general government balance"
+        ],
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "n_surface": 1,
+        "n_annotators": 1,
+        "conflict_label": "granularity"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_forecast_for_2005_098",
+        "label": "forecast for 2005",
+        "full_label": "forecast for 2005",
+        "surface_forms": [
+          "forecast for 2005"
+        ],
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "n_surface": 1,
+        "n_annotators": 1,
+        "conflict_label": "contradiction"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_this_threshold_in_2005_a_109",
+        "label": "this threshold in 2005 and 2006",
+        "full_label": "this threshold in 2005 and 2006",
+        "surface_forms": [
+          "this threshold in 2005 and 2006"
+        ],
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "n_surface": 1,
+        "n_annotators": 1,
+        "conflict_label": "granularity"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_abrogated_110",
+        "label": "abrogated",
+        "full_label": "abrogated",
+        "surface_forms": [
+          "abrogated"
+        ],
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "n_surface": 1,
+        "n_annotators": 1,
+        "conflict_label": "granularity"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_the_completion_of_the_co_112",
+        "label": "the completion of the correction",
+        "full_label": "the completion of the correction",
+        "surface_forms": [
+          "the completion of the correction"
+        ],
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "n_surface": 1,
+        "n_annotators": 1,
+        "conflict_label": "unlabeled"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_the_terms_of_the_recomme_113",
+        "label": "the terms of the recommendation a…",
+        "full_label": "the terms of the recommendation addressed to the Netherlands on 2 June 2004",
+        "surface_forms": [
+          "the terms of the recommendation addressed to the Netherlands on 2 June 2004"
+        ],
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "n_surface": 1,
+        "n_annotators": 1,
+        "conflict_label": "unlabeled"
+      }
+    },
+    {
+      "data": {
+        "id": "ent_in_accordance_with_artic_115",
+        "label": "in accordance with Article 104(7)…",
+        "full_label": "in accordance with Article 104(7) of the Treaty",
         "surface_forms": [
           "in accordance with Article 104(7) of the Treaty"
-        ],
-        "annotators": [
-          "qwen3.5:4b"
-        ],
-        "n_surface": 1,
-        "n_annotators": 1,
-        "conflict_label": "granularity"
-      }
-    },
-    {
-      "data": {
-        "id": "ent_this_decision_067",
-        "label": "This Decision",
-        "surface_forms": [
-          "This Decision"
-        ],
-        "annotators": [
-          "qwen3.5:4b"
-        ],
-        "n_surface": 1,
-        "n_annotators": 1,
-        "conflict_label": "unlabeled"
-      }
-    },
-    {
-      "data": {
-        "id": "ent_the_kingdom_of_the_nethe_068",
-        "label": "the Kingdom of the Netherlands",
-        "surface_forms": [
-          "the Kingdom of the Netherlands"
         ],
         "annotators": [
           "qwen3.5:4b"
@@ -728,1154 +965,2596 @@
   "edges": [
     {
       "data": {
-        "id": "e_ent_the_council_010__decided__ent_the_excessive_deficit_si_060",
-        "source": "ent_the_council_010",
-        "target": "ent_the_excessive_deficit_si_060",
-        "label": "decided",
+        "id": "e_ent_council_089__decided_that__ent_excessive_deficit_in_the_087",
+        "source": "ent_council_089",
+        "target": "ent_excessive_deficit_in_the_087",
+        "label": "decided that",
         "annotators": [
-          "gemma3-4b-sim",
-          "qwen3.5:4b"
+          "gemma3:4b"
         ],
         "fact_ids": [
-          "03b95596391985a0",
-          "c6dc14e8b2cc0f8a"
+          "8390871b60123b5f"
+        ],
+        "group_ids": [
+          "2a4b24f71571e69c"
         ],
         "section_paths": [
           "preamble.recitals[0]"
         ],
+        "qualifiers": [],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
         "conflict_label": "redundancy",
-        "n_annotators": 2
+        "n_annotators": 1
       }
     },
     {
       "data": {
-        "id": "e_ent_decision_2005_136_ec_048__followed__ent_a_recommendation_from_th_003",
-        "source": "ent_decision_2005_136_ec_048",
-        "target": "ent_a_recommendation_from_th_003",
-        "label": "followed",
-        "annotators": [
-          "gemma3-4b-sim",
-          "qwen3.5:4b"
-        ],
-        "fact_ids": [
-          "3e5e042e0d9719b2",
-          "d68e8b2f60380086"
-        ],
-        "section_paths": [
-          "preamble.recitals[0]"
-        ],
-        "conflict_label": "redundancy",
-        "n_annotators": 2
-      }
-    },
-    {
-      "data": {
-        "id": "e_ent_the_eu_council_051__made_a_recommendation__ent_on_2_june_2004_addressed_005",
-        "source": "ent_the_eu_council_051",
-        "target": "ent_on_2_june_2004_addressed_005",
+        "id": "e_ent_council_089__made_a_recommendation__ent_2_june_2004_075",
+        "source": "ent_council_089",
+        "target": "ent_2_june_2004_075",
         "label": "made a recommendation",
         "annotators": [
-          "gemma3-4b-sim"
+          "gemma3:4b"
         ],
         "fact_ids": [
-          "2bfcd16be7bdb75a"
+          "78412914ae380e4c"
+        ],
+        "group_ids": [
+          "488bcecba6a7cce1"
         ],
         "section_paths": [
           "preamble.recitals[1]"
         ],
+        "qualifiers": [
+          "on 2 June 2004"
+        ],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
         "conflict_label": "granularity",
         "n_annotators": 1
       }
     },
     {
       "data": {
-        "id": "e_ent_the_excessive_deficit_si_060__was_to_be_brought_to_an___ent_by_the_recommendation_007",
-        "source": "ent_the_excessive_deficit_si_060",
-        "target": "ent_by_the_recommendation_007",
-        "label": "was to be brought to an end",
+        "id": "e_ent_a_recommendation_076__addressed_to__ent_the_netherlands_004",
+        "source": "ent_a_recommendation_076",
+        "target": "ent_the_netherlands_004",
+        "label": "addressed to",
         "annotators": [
-          "gemma3-4b-sim",
-          "phi4-mini-sim",
+          "gemma3:4b",
+          "nemotron-3-nano:4b",
           "qwen3.5:4b"
         ],
         "fact_ids": [
-          "093c4c93ea83fa6c",
-          "9d67cb4023083d1b",
-          "f98eda38715e3011"
+          "1b13d1edc61da110",
+          "c1a8be761cd2ab51",
+          "fd33a7dd836f64f9"
+        ],
+        "group_ids": [
+          "1b85f4dae1e42cc8",
+          "488bcecba6a7cce1",
+          "b0265d28f4a19843"
         ],
         "section_paths": [
           "preamble.recitals[1]"
         ],
-        "conflict_label": "redundancy",
+        "qualifiers": [],
+        "conditional": true,
+        "conditions": [
+          "In accordance with Article 104(7) of the Treaty"
+        ],
+        "temporal": [
+          "on 2 June 2004"
+        ],
+        "conflict_label": "granularity",
         "n_annotators": 3
       }
     },
     {
       "data": {
-        "id": "e_ent_the_recommendation_008__fixed_a_deadline__ent_in_2004_044",
-        "source": "ent_the_recommendation_008",
-        "target": "ent_in_2004_044",
-        "label": "fixed a deadline",
+        "id": "e_ent_a_recommendation_076__with_a_view_to_bringing__ent_deficit_102",
+        "source": "ent_a_recommendation_076",
+        "target": "ent_deficit_102",
+        "label": "with a view to bringing",
         "annotators": [
-          "gemma3-4b-sim",
-          "phi4-mini-sim"
+          "gemma3:4b"
         ],
         "fact_ids": [
-          "56e606b88d3a48c8",
-          "8d465ca89cfb6301"
+          "f7dd2d06c4647e3a"
+        ],
+        "group_ids": [
+          "488bcecba6a7cce1"
         ],
         "section_paths": [
           "preamble.recitals[1]"
         ],
-        "conflict_label": "redundancy",
-        "n_annotators": 2
+        "qualifiers": [],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
+        "conflict_label": "granularity",
+        "n_annotators": 1
       }
     },
     {
       "data": {
-        "id": "e_ent_the_council_010__is_to_be_abrogated__ent_the_excessive_deficit_si_060",
-        "source": "ent_the_council_010",
-        "target": "ent_the_excessive_deficit_si_060",
-        "label": "is to be abrogated",
+        "id": "e_ent_a_recommendation_076__in_conjunction_with__ent_article_3_4_of_council_r_006",
+        "source": "ent_a_recommendation_076",
+        "target": "ent_article_3_4_of_council_r_006",
+        "label": "in conjunction with",
         "annotators": [
-          "gemma3-4b-sim",
-          "phi4-mini-sim",
-          "qwen3.5:4b"
+          "gemma3:4b"
         ],
         "fact_ids": [
-          "13b11cfe9ddc3f2a",
-          "615cc44b99dde4ac",
-          "ee16f04a80c19929"
+          "c529837740479d7d"
+        ],
+        "group_ids": [
+          "b09cbda94fe057be"
+        ],
+        "section_paths": [
+          "preamble.recitals[1]"
+        ],
+        "qualifiers": [
+          "of Council Regulation (EC) No 1467/97"
+        ],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
+        "conflict_label": "granularity",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_council_regulation_ec_no_007__established_a_deadline__ent_of_2005_at_the_latest_008",
+        "source": "ent_council_regulation_ec_no_007",
+        "target": "ent_of_2005_at_the_latest_008",
+        "label": "established a deadline",
+        "annotators": [
+          "gemma3:4b"
+        ],
+        "fact_ids": [
+          "b6f83c3c6d8caffc"
+        ],
+        "group_ids": [
+          "b09cbda94fe057be"
+        ],
+        "section_paths": [
+          "preamble.recitals[1]"
+        ],
+        "qualifiers": [],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
+        "conflict_label": "granularity",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_council_regulation_ec_no_007__for_the_correction_of__ent_deficit_102",
+        "source": "ent_council_regulation_ec_no_007",
+        "target": "ent_deficit_102",
+        "label": "for the correction of",
+        "annotators": [
+          "gemma3:4b"
+        ],
+        "fact_ids": [
+          "d5c33cedb0434f51"
+        ],
+        "group_ids": [
+          "b09cbda94fe057be"
+        ],
+        "section_paths": [
+          "preamble.recitals[1]"
+        ],
+        "qualifiers": [],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
+        "conflict_label": "granularity",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_council_089__abrogate__ent_council_089",
+        "source": "ent_council_089",
+        "target": "ent_council_089",
+        "label": "abrogate",
+        "annotators": [
+          "gemma3:4b"
+        ],
+        "fact_ids": [
+          "88997df301271a89"
+        ],
+        "group_ids": [
+          "89f3da46a3cd6399"
         ],
         "section_paths": [
           "preamble.recitals[2]"
         ],
+        "qualifiers": [
+          "on the existence of an excessive deficit"
+        ],
+        "conditional": true,
+        "conditions": [],
+        "temporal": [],
         "conflict_label": "granularity",
-        "n_annotators": 3
+        "n_annotators": 1
       }
     },
     {
       "data": {
-        "id": "e_ent_the_definitions_of_gover_012__are_defined__ent_in_the_protocol_on_the_e_013",
-        "source": "ent_the_definitions_of_gover_012",
-        "target": "ent_in_the_protocol_on_the_e_013",
-        "label": "are defined",
+        "id": "e_ent_council_089__corrected__ent_in_the_member_state_conc_012",
+        "source": "ent_council_089",
+        "target": "ent_in_the_member_state_conc_012",
+        "label": "corrected",
         "annotators": [
-          "gemma3-4b-sim",
-          "phi4-mini-sim"
+          "gemma3:4b"
         ],
         "fact_ids": [
-          "7348a2ad9b94ad1c",
-          "929f6ef29521c65e"
+          "a60d7a25d3ac901c"
+        ],
+        "group_ids": [
+          "89f3da46a3cd6399"
+        ],
+        "section_paths": [
+          "preamble.recitals[2]"
+        ],
+        "qualifiers": [
+          "on the existence of an excessive deficit"
+        ],
+        "conditional": true,
+        "conditions": [],
+        "temporal": [],
+        "conflict_label": "granularity",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_definitions_013__laid_down_in__ent_deficit_102",
+        "source": "ent_definitions_013",
+        "target": "ent_deficit_102",
+        "label": "laid down in",
+        "annotators": [
+          "gemma3:4b"
+        ],
+        "fact_ids": [
+          "48997867e40390b5"
+        ],
+        "group_ids": [
+          "c0613a1f89043b93"
         ],
         "section_paths": [
           "preamble.recitals[3]"
         ],
-        "conflict_label": "redundancy",
-        "n_annotators": 2
+        "qualifiers": [],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
+        "conflict_label": "granularity",
+        "n_annotators": 1
       }
     },
     {
       "data": {
-        "id": "e_ent_the_excessive_deficit_si_060__are_provided__ent_by_the_commission_015",
-        "source": "ent_the_excessive_deficit_si_060",
-        "target": "ent_by_the_commission_015",
-        "label": "are provided",
+        "id": "e_ent_definitions_013__by_reference_to__ent_european_system_of_integ_084",
+        "source": "ent_definitions_013",
+        "target": "ent_european_system_of_integ_084",
+        "label": "by reference to",
         "annotators": [
-          "gemma3-4b-sim",
-          "qwen3.5:4b"
+          "gemma3:4b"
         ],
         "fact_ids": [
-          "4a8545998f27ba8e",
-          "d2a468d784b3a650"
+          "680216d2855fd6cc"
+        ],
+        "group_ids": [
+          "c0613a1f89043b93"
         ],
         "section_paths": [
           "preamble.recitals[3]"
         ],
-        "conflict_label": "granularity",
-        "n_annotators": 2
-      }
-    },
-    {
-      "data": {
-        "id": "e_ent_government_deficit_022__is_estimated_at__ent_0_5_of_gdp_040",
-        "source": "ent_government_deficit_022",
-        "target": "ent_0_5_of_gdp_040",
-        "label": "is estimated at",
-        "annotators": [
-          "gemma3-4b-sim",
-          "phi4-mini-sim",
-          "qwen3.5:4b"
+        "qualifiers": [
+          "of Integrated Economic Accounts, second edition"
         ],
-        "fact_ids": [
-          "1fbfc733860799f2",
-          "5856143e153b7cd4",
-          "844a9393302ecf4e"
-        ],
-        "section_paths": [
-          "preamble.recitals[4]"
-        ],
-        "conflict_label": "redundancy",
-        "n_annotators": 3
-      }
-    },
-    {
-      "data": {
-        "id": "e_ent_general_government_balan_018__was__ent_3_2_in_2003_019",
-        "source": "ent_general_government_balan_018",
-        "target": "ent_3_2_in_2003_019",
-        "label": "was",
-        "annotators": [
-          "gemma3-4b-sim"
-        ],
-        "fact_ids": [
-          "69956ecf27ffa1a9"
-        ],
-        "section_paths": [
-          "preamble.recitals[4]"
-        ],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
         "conflict_label": "granularity",
         "n_annotators": 1
       }
     },
     {
       "data": {
-        "id": "e_ent_outcome_for_2004_020__complies_with__ent_the_council_recommendati_021",
-        "source": "ent_outcome_for_2004_020",
-        "target": "ent_the_council_recommendati_021",
-        "label": "complies with",
+        "id": "e_ent_data_016__provided_by__ent_commission_086",
+        "source": "ent_data_016",
+        "target": "ent_commission_086",
+        "label": "provided by",
         "annotators": [
-          "gemma3-4b-sim"
+          "gemma3:4b"
         ],
         "fact_ids": [
-          "c45966cbb9727220"
+          "1fe8cc439d8e7e63"
         ],
-        "section_paths": [
-          "preamble.recitals[4]"
-        ],
-        "conflict_label": "granularity",
-        "n_annotators": 1
-      }
-    },
-    {
-      "data": {
-        "id": "e_ent_government_deficit_022__was_to_be_reduced_below__ent_the_reference_value_of_3_023",
-        "source": "ent_government_deficit_022",
-        "target": "ent_the_reference_value_of_3_023",
-        "label": "was to be reduced below",
-        "annotators": [
-          "gemma3-4b-sim",
-          "qwen3.5:4b"
-        ],
-        "fact_ids": [
-          "428d5edda73a7e70",
-          "79a3b5ae8949b2dd"
-        ],
-        "section_paths": [
-          "preamble.recitals[4]"
-        ],
-        "conflict_label": "granularity",
-        "n_annotators": 2
-      }
-    },
-    {
-      "data": {
-        "id": "e_ent_fiscal_adjustment_024__was_pursued_in_2004__ent_in_the_form_065",
-        "source": "ent_fiscal_adjustment_024",
-        "target": "ent_in_the_form_065",
-        "label": "was pursued in 2004",
-        "annotators": [
-          "gemma3-4b-sim",
-          "phi4-mini-sim",
-          "qwen3.5:4b"
-        ],
-        "fact_ids": [
-          "13b9e1524b5dff06",
-          "52807291a34d9217",
-          "63437a1f3668bb3b"
-        ],
-        "section_paths": [
-          "preamble.recitals[4]"
-        ],
-        "conflict_label": "granularity",
-        "n_annotators": 3
-      }
-    },
-    {
-      "data": {
-        "id": "e_ent_fiscal_adjustment_024__qualified_of__ent_savings_measures_029",
-        "source": "ent_fiscal_adjustment_024",
-        "target": "ent_savings_measures_029",
-        "label": "qualified of",
-        "annotators": [
-          "gemma3-4b-sim"
-        ],
-        "fact_ids": [
-          "13a173bc809129d7"
-        ],
-        "section_paths": [
-          "preamble.recitals[4]"
-        ],
-        "conflict_label": "granularity",
-        "n_annotators": 1
-      }
-    },
-    {
-      "data": {
-        "id": "e_ent_fiscal_measures_027__were_partly_contained_in__ent_the_2004_budget_028",
-        "source": "ent_fiscal_measures_027",
-        "target": "ent_the_2004_budget_028",
-        "label": "were partly contained in",
-        "annotators": [
-          "gemma3-4b-sim"
-        ],
-        "fact_ids": [
-          "7eb7d427b3265831"
-        ],
-        "section_paths": [
-          "preamble.recitals[4]"
-        ],
-        "conflict_label": "granularity",
-        "n_annotators": 1
-      }
-    },
-    {
-      "data": {
-        "id": "e_ent_savings_measures_029__were_partly_defined_in__ent_the_additional_consolida_030",
-        "source": "ent_savings_measures_029",
-        "target": "ent_the_additional_consolida_030",
-        "label": "were partly defined in",
-        "annotators": [
-          "gemma3-4b-sim"
-        ],
-        "fact_ids": [
-          "b69434baecb0b0aa"
-        ],
-        "section_paths": [
-          "preamble.recitals[4]"
-        ],
-        "conflict_label": "redundancy",
-        "n_annotators": 1
-      }
-    },
-    {
-      "data": {
-        "id": "e_ent_general_government_balan_018__was_projected_to_show_a___ent_0_5_of_gdp_040",
-        "source": "ent_general_government_balan_018",
-        "target": "ent_0_5_of_gdp_040",
-        "label": "was projected to show a further decline in 2005",
-        "annotators": [
-          "gemma3-4b-sim",
-          "qwen3.5:4b"
-        ],
-        "fact_ids": [
-          "171ed0c6677bbbb9",
-          "8ac4c3ee75643435"
-        ],
-        "section_paths": [
-          "preamble.recitals[4]"
-        ],
-        "conflict_label": "granularity",
-        "n_annotators": 2
-      }
-    },
-    {
-      "data": {
-        "id": "e_ent_savings_measures_029__added_up_to__ent_0_5_of_gdp_040",
-        "source": "ent_savings_measures_029",
-        "target": "ent_0_5_of_gdp_040",
-        "label": "added up to",
-        "annotators": [
-          "gemma3-4b-sim",
-          "phi4-mini-sim",
-          "qwen3.5:4b"
-        ],
-        "fact_ids": [
-          "4353ef6266c7d4e8",
-          "b476e28294cf1d15",
-          "c57b0783bf5f8613"
-        ],
-        "section_paths": [
-          "preamble.recitals[4]"
-        ],
-        "conflict_label": "contradiction",
-        "n_annotators": 3
-      }
-    },
-    {
-      "data": {
-        "id": "e_ent_general_government_balan_018__was_forecast_to_hit__ent_0_5_of_gdp_040",
-        "source": "ent_general_government_balan_018",
-        "target": "ent_0_5_of_gdp_040",
-        "label": "was forecast to hit",
-        "annotators": [
-          "gemma3-4b-sim"
-        ],
-        "fact_ids": [
-          "4b8175cf43fe8ac2"
-        ],
-        "section_paths": [
-          "preamble.recitals[4]"
-        ],
-        "conflict_label": "unlabeled",
-        "n_annotators": 1
-      }
-    },
-    {
-      "data": {
-        "id": "e_ent_structural_deficit_034__declined_to__ent_0_5_of_gdp_040",
-        "source": "ent_structural_deficit_034",
-        "target": "ent_0_5_of_gdp_040",
-        "label": "declined to",
-        "annotators": [
-          "gemma3-4b-sim"
-        ],
-        "fact_ids": [
-          "e845c456526de87a"
-        ],
-        "section_paths": [
-          "preamble.recitals[4]"
-        ],
-        "conflict_label": "granularity",
-        "n_annotators": 1
-      }
-    },
-    {
-      "data": {
-        "id": "e_ent_structural_deficit_034__compared_with__ent_0_5_of_gdp_040",
-        "source": "ent_structural_deficit_034",
-        "target": "ent_0_5_of_gdp_040",
-        "label": "compared with",
-        "annotators": [
-          "gemma3-4b-sim"
-        ],
-        "fact_ids": [
-          "c55b7275149769d4"
-        ],
-        "section_paths": [
-          "preamble.recitals[4]"
-        ],
-        "conflict_label": "unlabeled",
-        "n_annotators": 1
-      }
-    },
-    {
-      "data": {
-        "id": "e_ent_cyclically_adjusted_defi_037__was_projected_to_decreas__ent_0_5_of_gdp_040",
-        "source": "ent_cyclically_adjusted_defi_037",
-        "target": "ent_0_5_of_gdp_040",
-        "label": "was projected to decrease in 2005 by",
-        "annotators": [
-          "gemma3-4b-sim",
-          "phi4-mini-sim",
-          "qwen3.5:4b"
-        ],
-        "fact_ids": [
-          "1bbb7d6dda31475f",
-          "47a4f938b445b54a",
-          "72f9c5e54940c1b0"
-        ],
-        "section_paths": [
-          "preamble.recitals[4]"
-        ],
-        "conflict_label": "redundancy",
-        "n_annotators": 3
-      }
-    },
-    {
-      "data": {
-        "id": "e_ent_cyclically_adjusted_defi_037__was_forecast_to_hit__ent_0_5_of_gdp_040",
-        "source": "ent_cyclically_adjusted_defi_037",
-        "target": "ent_0_5_of_gdp_040",
-        "label": "was forecast to hit",
-        "annotators": [
-          "gemma3-4b-sim"
-        ],
-        "fact_ids": [
-          "48f23bdb898bf634"
-        ],
-        "section_paths": [
-          "preamble.recitals[4]"
-        ],
-        "conflict_label": "granularity",
-        "n_annotators": 1
-      }
-    },
-    {
-      "data": {
-        "id": "e_ent_cyclically_adjusted_defi_037__was_forecast_to_drop_to__ent_0_5_of_gdp_040",
-        "source": "ent_cyclically_adjusted_defi_037",
-        "target": "ent_0_5_of_gdp_040",
-        "label": "was forecast to drop to",
-        "annotators": [
-          "gemma3-4b-sim"
-        ],
-        "fact_ids": [
-          "8f7af441c9a258e2"
-        ],
-        "section_paths": [
-          "preamble.recitals[4]"
-        ],
-        "conflict_label": "granularity",
-        "n_annotators": 1
-      }
-    },
-    {
-      "data": {
-        "id": "e_ent_government_debt_ratio_041__was_projected_to_remain___ent_this_threshold_in_2005_a_042",
-        "source": "ent_government_debt_ratio_041",
-        "target": "ent_this_threshold_in_2005_a_042",
-        "label": "was projected to remain below",
-        "annotators": [
-          "gemma3-4b-sim",
-          "phi4-mini-sim",
-          "qwen3.5:4b"
-        ],
-        "fact_ids": [
-          "1460ab49c55d838c",
-          "41d16aacdbed3d3a",
-          "a2391de8bddae5f0"
-        ],
-        "section_paths": [
-          "preamble.recitals[4]"
-        ],
-        "conflict_label": "redundancy",
-        "n_annotators": 3
-      }
-    },
-    {
-      "data": {
-        "id": "e_ent_the_excessive_deficit_si_060__was_finalised__ent_in_2004_044",
-        "source": "ent_the_excessive_deficit_si_060",
-        "target": "ent_in_2004_044",
-        "label": "was finalised",
-        "annotators": [
-          "gemma3-4b-sim"
-        ],
-        "fact_ids": [
-          "77872bd9788f0836"
-        ],
-        "section_paths": [
-          "enacting.article_1"
-        ],
-        "conflict_label": "redundancy",
-        "n_annotators": 1
-      }
-    },
-    {
-      "data": {
-        "id": "e_ent_the_excessive_deficit_si_060__was_concluded__ent_under_the_terms_of_the_r_064",
-        "source": "ent_the_excessive_deficit_si_060",
-        "target": "ent_under_the_terms_of_the_r_064",
-        "label": "was concluded",
-        "annotators": [
-          "gemma3-4b-sim",
-          "phi4-mini-sim"
-        ],
-        "fact_ids": [
-          "11b23fdee8765f0a",
-          "c65ae70b6f909db0"
-        ],
-        "section_paths": [
-          "enacting.article_1"
-        ],
-        "conflict_label": "redundancy",
-        "n_annotators": 2
-      }
-    },
-    {
-      "data": {
-        "id": "e_ent_the_excessive_deficit_si_060__was_completed__ent_in_accordance_with_artic_046",
-        "source": "ent_the_excessive_deficit_si_060",
-        "target": "ent_in_accordance_with_artic_046",
-        "label": "was completed",
-        "annotators": [
-          "gemma3-4b-sim"
-        ],
-        "fact_ids": [
-          "d9f359d6238edb39"
-        ],
-        "section_paths": [
-          "enacting.article_1"
-        ],
-        "conflict_label": "granularity",
-        "n_annotators": 1
-      }
-    },
-    {
-      "data": {
-        "id": "e_ent_the_excessive_deficit_si_060__qualified_of__ent_the_treaty_047",
-        "source": "ent_the_excessive_deficit_si_060",
-        "target": "ent_the_treaty_047",
-        "label": "qualified of",
-        "annotators": [
-          "gemma3-4b-sim"
-        ],
-        "fact_ids": [
-          "7201765e473db4d8"
-        ],
-        "section_paths": [
-          "enacting.article_1"
-        ],
-        "conflict_label": "unlabeled",
-        "n_annotators": 1
-      }
-    },
-    {
-      "data": {
-        "id": "e_ent_the_commission_049__made__ent_a_recommendation_in_acco_050",
-        "source": "ent_the_commission_049",
-        "target": "ent_a_recommendation_in_acco_050",
-        "label": "made",
-        "annotators": [
-          "phi4-mini-sim",
-          "qwen3.5:4b"
-        ],
-        "fact_ids": [
-          "34938f8ca61d1616",
-          "be07bd7992d5f4e9"
-        ],
-        "section_paths": [
-          "preamble.recitals[0]"
-        ],
-        "conflict_label": "redundancy",
-        "n_annotators": 2
-      }
-    },
-    {
-      "data": {
-        "id": "e_ent_the_eu_council_051__made_a_recommendation__ent_on_2_june_2004_addressed_052",
-        "source": "ent_the_eu_council_051",
-        "target": "ent_on_2_june_2004_addressed_052",
-        "label": "made a recommendation",
-        "annotators": [
-          "phi4-mini-sim"
-        ],
-        "fact_ids": [
-          "716c164941cd4332"
-        ],
-        "section_paths": [
-          "preamble.recitals[1]"
-        ],
-        "conflict_label": "granularity",
-        "n_annotators": 1
-      }
-    },
-    {
-      "data": {
-        "id": "e_ent_the_excessive_deficit_si_060__are_supplied__ent_by_european_commission_054",
-        "source": "ent_the_excessive_deficit_si_060",
-        "target": "ent_by_european_commission_054",
-        "label": "are supplied",
-        "annotators": [
-          "phi4-mini-sim"
-        ],
-        "fact_ids": [
-          "42b26b1c93e0b29f"
+        "group_ids": [
+          "e0cc2cca948a8b04"
         ],
         "section_paths": [
           "preamble.recitals[3]"
         ],
+        "qualifiers": [],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
         "conflict_label": "granularity",
         "n_annotators": 1
       }
     },
     {
       "data": {
-        "id": "e_ent_government_deficit_022__was__ent_3_2_in_2003_019",
-        "source": "ent_government_deficit_022",
-        "target": "ent_3_2_in_2003_019",
-        "label": "was",
+        "id": "e_ent_decision_2005_136_ec_018__abrogated__ent_decision_2005_136_ec_018",
+        "source": "ent_decision_2005_136_ec_018",
+        "target": "ent_decision_2005_136_ec_018",
+        "label": "abrogated",
         "annotators": [
-          "phi4-mini-sim",
-          "qwen3.5:4b"
+          "gemma3:4b"
         ],
         "fact_ids": [
-          "27eece1936dc3638",
-          "620864598708f135"
+          "125aad3e9fb7ee0a"
+        ],
+        "group_ids": [
+          "7972334d7358a0a5"
         ],
         "section_paths": [
-          "preamble.recitals[4]"
+          "enacting.article_2"
         ],
-        "conflict_label": "granularity",
-        "n_annotators": 2
-      }
-    },
-    {
-      "data": {
-        "id": "e_ent_outcome_for_2004_020__is_in_compliance_with__ent_the_council_recommendati_021",
-        "source": "ent_outcome_for_2004_020",
-        "target": "ent_the_council_recommendati_021",
-        "label": "is in compliance with",
-        "annotators": [
-          "phi4-mini-sim",
-          "qwen3.5:4b"
-        ],
-        "fact_ids": [
-          "1ea55f75bbf014ea",
-          "703a7760628ee117"
-        ],
-        "section_paths": [
-          "preamble.recitals[4]"
-        ],
-        "conflict_label": "granularity",
-        "n_annotators": 2
-      }
-    },
-    {
-      "data": {
-        "id": "e_ent_government_deficit_022__was_required_to_drop_bel__ent_the_reference_value_of_3_023",
-        "source": "ent_government_deficit_022",
-        "target": "ent_the_reference_value_of_3_023",
-        "label": "was required to drop below",
-        "annotators": [
-          "phi4-mini-sim"
-        ],
-        "fact_ids": [
-          "ca95e7dd6a1039b0"
-        ],
-        "section_paths": [
-          "preamble.recitals[4]"
-        ],
+        "qualifiers": [],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
         "conflict_label": "granularity",
         "n_annotators": 1
       }
     },
     {
       "data": {
-        "id": "e_ent_fiscal_measures_027__were_partly_included_in__ent_the_2004_budget_028",
-        "source": "ent_fiscal_measures_027",
-        "target": "ent_the_2004_budget_028",
-        "label": "were partly included in",
+        "id": "e_ent_this_decision_116__addressed_to__ent_kingdom_of_the_netherlan_077",
+        "source": "ent_this_decision_116",
+        "target": "ent_kingdom_of_the_netherlan_077",
+        "label": "addressed to",
         "annotators": [
-          "phi4-mini-sim"
-        ],
-        "fact_ids": [
-          "12e141b85633e14f"
-        ],
-        "section_paths": [
-          "preamble.recitals[4]"
-        ],
-        "conflict_label": "granularity",
-        "n_annotators": 1
-      }
-    },
-    {
-      "data": {
-        "id": "e_ent_austerity_measures_057__were_partly_defined_in__ent_the_additional_consolida_030",
-        "source": "ent_austerity_measures_057",
-        "target": "ent_the_additional_consolida_030",
-        "label": "were partly defined in",
-        "annotators": [
-          "phi4-mini-sim"
-        ],
-        "fact_ids": [
-          "fb52db83f165ffb7"
-        ],
-        "section_paths": [
-          "preamble.recitals[4]"
-        ],
-        "conflict_label": "unlabeled",
-        "n_annotators": 1
-      }
-    },
-    {
-      "data": {
-        "id": "e_ent_general_government_balan_018__was_forecast_to_decline___ent_0_5_of_gdp_040",
-        "source": "ent_general_government_balan_018",
-        "target": "ent_0_5_of_gdp_040",
-        "label": "was forecast to decline further in 2005",
-        "annotators": [
-          "phi4-mini-sim"
-        ],
-        "fact_ids": [
-          "867f1d3a406e5905"
-        ],
-        "section_paths": [
-          "preamble.recitals[4]"
-        ],
-        "conflict_label": "granularity",
-        "n_annotators": 1
-      }
-    },
-    {
-      "data": {
-        "id": "e_ent_government_deficit_022__was_projected_to_reach__ent_0_5_of_gdp_040",
-        "source": "ent_government_deficit_022",
-        "target": "ent_0_5_of_gdp_040",
-        "label": "was projected to reach",
-        "annotators": [
-          "phi4-mini-sim",
+          "gemma3:4b",
           "qwen3.5:4b"
         ],
         "fact_ids": [
-          "cf31204d8676cb99",
-          "dcfce0c5dd6e36b0"
+          "12202f4a3b318e21",
+          "9ed4717d9b8bcfc1"
         ],
-        "section_paths": [
-          "preamble.recitals[4]"
-        ],
-        "conflict_label": "redundancy",
-        "n_annotators": 2
-      }
-    },
-    {
-      "data": {
-        "id": "e_ent_structural_deficit_034__was_expected_to_reach_cl__ent_the_excessive_deficit_si_060",
-        "source": "ent_structural_deficit_034",
-        "target": "ent_the_excessive_deficit_si_060",
-        "label": "was expected to reach close to balance",
-        "annotators": [
-          "phi4-mini-sim"
-        ],
-        "fact_ids": [
-          "ed87daa396b2c8f6"
-        ],
-        "section_paths": [
-          "preamble.recitals[4]"
-        ],
-        "conflict_label": "granularity",
-        "n_annotators": 1
-      }
-    },
-    {
-      "data": {
-        "id": "e_ent_cyclically_adjusted_bala_061__fell_to__ent_0_5_of_gdp_040",
-        "source": "ent_cyclically_adjusted_bala_061",
-        "target": "ent_0_5_of_gdp_040",
-        "label": "fell to",
-        "annotators": [
-          "phi4-mini-sim"
-        ],
-        "fact_ids": [
-          "c9ef1b6bc068a293"
-        ],
-        "section_paths": [
-          "preamble.recitals[4]"
-        ],
-        "conflict_label": "granularity",
-        "n_annotators": 1
-      }
-    },
-    {
-      "data": {
-        "id": "e_ent_cyclically_adjusted_defi_037__was_compared_to__ent_0_5_of_gdp_040",
-        "source": "ent_cyclically_adjusted_defi_037",
-        "target": "ent_0_5_of_gdp_040",
-        "label": "was compared to",
-        "annotators": [
-          "phi4-mini-sim",
-          "qwen3.5:4b"
-        ],
-        "fact_ids": [
-          "b082f29f35dcf0ae",
-          "de47da087f071e3c"
-        ],
-        "section_paths": [
-          "preamble.recitals[4]"
-        ],
-        "conflict_label": "redundancy",
-        "n_annotators": 2
-      }
-    },
-    {
-      "data": {
-        "id": "e_ent_cyclically_adjusted_bala_061__was_expected_to_reach__ent_0_5_of_gdp_040",
-        "source": "ent_cyclically_adjusted_bala_061",
-        "target": "ent_0_5_of_gdp_040",
-        "label": "was expected to reach",
-        "annotators": [
-          "phi4-mini-sim"
-        ],
-        "fact_ids": [
-          "cc93e0b592232542"
-        ],
-        "section_paths": [
-          "preamble.recitals[4]"
-        ],
-        "conflict_label": "granularity",
-        "n_annotators": 1
-      }
-    },
-    {
-      "data": {
-        "id": "e_ent_government_debt_ratio_041__was_kept_below__ent_the_60_of_gdp_reference_062",
-        "source": "ent_government_debt_ratio_041",
-        "target": "ent_the_60_of_gdp_reference_062",
-        "label": "was kept below",
-        "annotators": [
-          "phi4-mini-sim",
-          "qwen3.5:4b"
-        ],
-        "fact_ids": [
-          "64ca5372ab889912",
-          "9e02dc6e684fc596"
-        ],
-        "section_paths": [
-          "preamble.recitals[4]"
-        ],
-        "conflict_label": "redundancy",
-        "n_annotators": 2
-      }
-    },
-    {
-      "data": {
-        "id": "e_ent_the_excessive_deficit_si_060__was_completed__ent_in_2004_044",
-        "source": "ent_the_excessive_deficit_si_060",
-        "target": "ent_in_2004_044",
-        "label": "was completed",
-        "annotators": [
-          "phi4-mini-sim",
-          "qwen3.5:4b"
-        ],
-        "fact_ids": [
-          "9de6e927727999ac",
-          "d5260ac391e9f582"
-        ],
-        "section_paths": [
-          "enacting.article_1"
-        ],
-        "conflict_label": "redundancy",
-        "n_annotators": 2
-      }
-    },
-    {
-      "data": {
-        "id": "e_ent_the_council_010__made_a_recommendation__ent_on_2_june_2004_addressed_052",
-        "source": "ent_the_council_010",
-        "target": "ent_on_2_june_2004_addressed_052",
-        "label": "made a recommendation",
-        "annotators": [
-          "qwen3.5:4b"
-        ],
-        "fact_ids": [
-          "4c8843a6d9575d76"
-        ],
-        "section_paths": [
-          "preamble.recitals[1]"
-        ],
-        "conflict_label": "granularity",
-        "n_annotators": 1
-      }
-    },
-    {
-      "data": {
-        "id": "e_ent_the_recommendation_008__established_a_deadline__ent_in_2004_044",
-        "source": "ent_the_recommendation_008",
-        "target": "ent_in_2004_044",
-        "label": "established a deadline",
-        "annotators": [
-          "qwen3.5:4b"
-        ],
-        "fact_ids": [
-          "78034a3f5bb75112"
-        ],
-        "section_paths": [
-          "preamble.recitals[1]"
-        ],
-        "conflict_label": "redundancy",
-        "n_annotators": 1
-      }
-    },
-    {
-      "data": {
-        "id": "e_ent_the_definitions_of_gover_012__are_laid_down__ent_in_the_protocol_on_the_e_013",
-        "source": "ent_the_definitions_of_gover_012",
-        "target": "ent_in_the_protocol_on_the_e_013",
-        "label": "are laid down",
-        "annotators": [
-          "qwen3.5:4b"
-        ],
-        "fact_ids": [
-          "af8035444f88e6bf"
-        ],
-        "section_paths": [
-          "preamble.recitals[3]"
-        ],
-        "conflict_label": "redundancy",
-        "n_annotators": 1
-      }
-    },
-    {
-      "data": {
-        "id": "e_ent_savings_measures_029__were_partly_contained_in__ent_the_2004_budget_028",
-        "source": "ent_savings_measures_029",
-        "target": "ent_the_2004_budget_028",
-        "label": "were partly contained in",
-        "annotators": [
-          "qwen3.5:4b"
-        ],
-        "fact_ids": [
-          "ad69577cbac9e51b"
-        ],
-        "section_paths": [
-          "preamble.recitals[4]"
-        ],
-        "conflict_label": "granularity",
-        "n_annotators": 1
-      }
-    },
-    {
-      "data": {
-        "id": "e_ent_savings_measures_029__were_partly_decided_in__ent_the_additional_consolida_030",
-        "source": "ent_savings_measures_029",
-        "target": "ent_the_additional_consolida_030",
-        "label": "were partly decided in",
-        "annotators": [
-          "qwen3.5:4b"
-        ],
-        "fact_ids": [
-          "6f10ed88df9eb5ba"
-        ],
-        "section_paths": [
-          "preamble.recitals[4]"
-        ],
-        "conflict_label": "redundancy",
-        "n_annotators": 1
-      }
-    },
-    {
-      "data": {
-        "id": "e_ent_cyclically_adjusted_defi_037__was_expected_to_reach_cl__ent_the_excessive_deficit_si_060",
-        "source": "ent_cyclically_adjusted_defi_037",
-        "target": "ent_the_excessive_deficit_si_060",
-        "label": "was expected to reach close to balance",
-        "annotators": [
-          "qwen3.5:4b"
-        ],
-        "fact_ids": [
-          "50eeb3afa16883db"
-        ],
-        "section_paths": [
-          "preamble.recitals[4]"
-        ],
-        "conflict_label": "granularity",
-        "n_annotators": 1
-      }
-    },
-    {
-      "data": {
-        "id": "e_ent_cyclically_adjusted_defi_037__fell_to__ent_0_5_of_gdp_040",
-        "source": "ent_cyclically_adjusted_defi_037",
-        "target": "ent_0_5_of_gdp_040",
-        "label": "fell to",
-        "annotators": [
-          "qwen3.5:4b"
-        ],
-        "fact_ids": [
-          "a8508a238ca8bab7"
-        ],
-        "section_paths": [
-          "preamble.recitals[4]"
-        ],
-        "conflict_label": "granularity",
-        "n_annotators": 1
-      }
-    },
-    {
-      "data": {
-        "id": "e_ent_cyclically_adjusted_defi_037__was_projected_to_reach__ent_0_5_of_gdp_040",
-        "source": "ent_cyclically_adjusted_defi_037",
-        "target": "ent_0_5_of_gdp_040",
-        "label": "was projected to reach",
-        "annotators": [
-          "qwen3.5:4b"
-        ],
-        "fact_ids": [
-          "6050f974d3f33731"
-        ],
-        "section_paths": [
-          "preamble.recitals[4]"
-        ],
-        "conflict_label": "granularity",
-        "n_annotators": 1
-      }
-    },
-    {
-      "data": {
-        "id": "e_ent_cyclically_adjusted_defi_037__was_projected_to_fall_to__ent_0_5_of_gdp_040",
-        "source": "ent_cyclically_adjusted_defi_037",
-        "target": "ent_0_5_of_gdp_040",
-        "label": "was projected to fall to",
-        "annotators": [
-          "qwen3.5:4b"
-        ],
-        "fact_ids": [
-          "c2dacddca139bab3"
-        ],
-        "section_paths": [
-          "preamble.recitals[4]"
-        ],
-        "conflict_label": "granularity",
-        "n_annotators": 1
-      }
-    },
-    {
-      "data": {
-        "id": "e_ent_the_excessive_deficit_si_060__was_completed__ent_under_the_terms_of_the_r_064",
-        "source": "ent_the_excessive_deficit_si_060",
-        "target": "ent_under_the_terms_of_the_r_064",
-        "label": "was completed",
-        "annotators": [
-          "qwen3.5:4b"
-        ],
-        "fact_ids": [
-          "f79af17ab271765e"
-        ],
-        "section_paths": [
-          "enacting.article_1"
-        ],
-        "conflict_label": "redundancy",
-        "n_annotators": 1
-      }
-    },
-    {
-      "data": {
-        "id": "e_ent_the_excessive_deficit_si_060__was_completed__ent_in_accordance_with_artic_066",
-        "source": "ent_the_excessive_deficit_si_060",
-        "target": "ent_in_accordance_with_artic_066",
-        "label": "was completed",
-        "annotators": [
-          "qwen3.5:4b"
-        ],
-        "fact_ids": [
-          "a1e857aa4fdeb260"
-        ],
-        "section_paths": [
-          "enacting.article_1"
-        ],
-        "conflict_label": "granularity",
-        "n_annotators": 1
-      }
-    },
-    {
-      "data": {
-        "id": "e_ent_this_decision_067__is_addressed_to__ent_the_kingdom_of_the_nethe_068",
-        "source": "ent_this_decision_067",
-        "target": "ent_the_kingdom_of_the_nethe_068",
-        "label": "is addressed to",
-        "annotators": [
-          "qwen3.5:4b"
-        ],
-        "fact_ids": [
-          "85208ffc1a80a000"
+        "group_ids": [
+          "96db041f2381aa47",
+          "f76b7f8071cdbe97"
         ],
         "section_paths": [
           "enacting.article_3"
         ],
+        "qualifiers": [],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
+        "conflict_label": "redundancy",
+        "n_annotators": 2
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_council_089__decided__ent_deficit_102",
+        "source": "ent_council_089",
+        "target": "ent_deficit_102",
+        "label": "decided",
+        "annotators": [
+          "nemotron-3-nano:4b",
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "05acafc0dee65520",
+          "4474cf8bd588d761"
+        ],
+        "group_ids": [
+          "12ca451e08605c18",
+          "ad0d67b3345d8c54"
+        ],
+        "section_paths": [
+          "preamble.recitals[0]"
+        ],
+        "qualifiers": [
+          "in the Netherlands"
+        ],
+        "conditional": true,
+        "conditions": [
+          "following a recommendation from the Commission in accordance with Article 104(6)"
+        ],
+        "temporal": [],
+        "conflict_label": "redundancy",
+        "n_annotators": 2
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_council_089__made__ent_a_recommendation_076",
+        "source": "ent_council_089",
+        "target": "ent_a_recommendation_076",
+        "label": "made",
+        "annotators": [
+          "nemotron-3-nano:4b",
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "3aeb145498e2030e",
+          "754bd934f07c3fdb"
+        ],
+        "group_ids": [
+          "1b85f4dae1e42cc8",
+          "b0265d28f4a19843"
+        ],
+        "section_paths": [
+          "preamble.recitals[1]"
+        ],
+        "qualifiers": [],
+        "conditional": true,
+        "conditions": [
+          "In accordance with Article 104(7) of the Treaty"
+        ],
+        "temporal": [
+          "on 2 June 2004"
+        ],
+        "conflict_label": "granularity",
+        "n_annotators": 2
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_a_recommendation_076__view_to__ent_deficit_102",
+        "source": "ent_a_recommendation_076",
+        "target": "ent_deficit_102",
+        "label": "view to",
+        "annotators": [
+          "nemotron-3-nano:4b"
+        ],
+        "fact_ids": [
+          "e769539e6d4a83e8"
+        ],
+        "group_ids": [
+          "1b85f4dae1e42cc8"
+        ],
+        "section_paths": [
+          "preamble.recitals[1]"
+        ],
+        "qualifiers": [
+          "to an end"
+        ],
+        "conditional": true,
+        "conditions": [
+          "In accordance with Article 104(7) of the Treaty"
+        ],
+        "temporal": [
+          "on 2 June 2004"
+        ],
+        "conflict_label": "granularity",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_a_recommendation_076__established__ent_a_deadline_of_2005_at_th_025",
+        "source": "ent_a_recommendation_076",
+        "target": "ent_a_deadline_of_2005_at_th_025",
+        "label": "established",
+        "annotators": [
+          "nemotron-3-nano:4b"
+        ],
+        "fact_ids": [
+          "adf8b9a8e71c5cae"
+        ],
+        "group_ids": [
+          "e9a272a126ee35c5"
+        ],
+        "section_paths": [
+          "preamble.recitals[1]"
+        ],
+        "qualifiers": [],
+        "conditional": true,
+        "conditions": [
+          "in conjunction with Article 3(4) of Council Regulation (EC) No 1467/97 of 7 July"
+        ],
+        "temporal": [
+          "established a deadline of 2005 at the latest"
+        ],
+        "conflict_label": "granularity",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_a_deadline_078__for__ent_deficit_102",
+        "source": "ent_a_deadline_078",
+        "target": "ent_deficit_102",
+        "label": "for",
+        "annotators": [
+          "nemotron-3-nano:4b"
+        ],
+        "fact_ids": [
+          "dbab3b1b01cd61c3"
+        ],
+        "group_ids": [
+          "e9a272a126ee35c5"
+        ],
+        "section_paths": [
+          "preamble.recitals[1]"
+        ],
+        "qualifiers": [],
+        "conditional": true,
+        "conditions": [
+          "in conjunction with Article 3(4) of Council Regulation (EC) No 1467/97 of 7 July"
+        ],
+        "temporal": [
+          "established a deadline of 2005 at the latest"
+        ],
+        "conflict_label": "granularity",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_council_089__abrogated__ent_deficit_102",
+        "source": "ent_council_089",
+        "target": "ent_deficit_102",
+        "label": "abrogated",
+        "annotators": [
+          "nemotron-3-nano:4b",
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "8df1c44672732edb",
+          "ace950aab9f51e3e"
+        ],
+        "group_ids": [
+          "62a4733697ba1662",
+          "959f8264b8857e66"
+        ],
+        "section_paths": [
+          "preamble.recitals[2]"
+        ],
+        "qualifiers": [
+          "in the Member State concerned has been corrected",
+          "in the Member State concerned has been corrected in the view",
+          "on the existence of an excessive deficit"
+        ],
+        "conditional": true,
+        "conditions": [
+          "when",
+          "when the excessive deficit in the Member State concerned has, in the view of the"
+        ],
+        "temporal": [],
+        "conflict_label": "granularity",
+        "n_annotators": 2
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_excessive_deficit_in_the_087__corrected__ent_in_the_view_of_the_counc_030",
+        "source": "ent_excessive_deficit_in_the_087",
+        "target": "ent_in_the_view_of_the_counc_030",
+        "label": "corrected",
+        "annotators": [
+          "nemotron-3-nano:4b"
+        ],
+        "fact_ids": [
+          "7acbb3f7e10c8ef8"
+        ],
+        "group_ids": [
+          "959f8264b8857e66"
+        ],
+        "section_paths": [
+          "preamble.recitals[2]"
+        ],
+        "qualifiers": [],
+        "conditional": true,
+        "conditions": [
+          "when"
+        ],
+        "temporal": [],
+        "conflict_label": "granularity",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_deficit_102__laid_down__ent_deficit_102",
+        "source": "ent_deficit_102",
+        "target": "ent_deficit_102",
+        "label": "laid down",
+        "annotators": [
+          "nemotron-3-nano:4b"
+        ],
+        "fact_ids": [
+          "58f00aca11af3dbd"
+        ],
+        "group_ids": [
+          "edd5224065548c31"
+        ],
+        "section_paths": [
+          "preamble.recitals[3]"
+        ],
+        "qualifiers": [],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
+        "conflict_label": "granularity",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_deficit_102__by_reference_to__ent_european_system_of_integ_084",
+        "source": "ent_deficit_102",
+        "target": "ent_european_system_of_integ_084",
+        "label": "by reference to",
+        "annotators": [
+          "nemotron-3-nano:4b"
+        ],
+        "fact_ids": [
+          "52ecc4ecf6d580a7"
+        ],
+        "group_ids": [
+          "edd5224065548c31"
+        ],
+        "section_paths": [
+          "preamble.recitals[3]"
+        ],
+        "qualifiers": [
+          "of Integrated Economic Accounts, second edition"
+        ],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
+        "conflict_label": "granularity",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_commission_086__provides__ent_deficit_102",
+        "source": "ent_commission_086",
+        "target": "ent_deficit_102",
+        "label": "provides",
+        "annotators": [
+          "nemotron-3-nano:4b"
+        ],
+        "fact_ids": [
+          "3f2e22ecebf449d0"
+        ],
+        "group_ids": [
+          "367eba5baacb4665"
+        ],
+        "section_paths": [
+          "preamble.recitals[3]"
+        ],
+        "qualifiers": [],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
+        "conflict_label": "granularity",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_deficit_102__estimated__ent_3_of_gdp_108",
+        "source": "ent_deficit_102",
+        "target": "ent_3_of_gdp_108",
+        "label": "estimated",
+        "annotators": [
+          "nemotron-3-nano:4b"
+        ],
+        "fact_ids": [
+          "e5e80b28d2fb4fa3"
+        ],
+        "group_ids": [
+          "6038de46fbd38469"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "qualifiers": [],
+        "conditional": true,
+        "conditions": [
+          "in 2004"
+        ],
+        "temporal": [
+          "in 2004"
+        ],
+        "conflict_label": "contradiction",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_deficit_102__compared_with__ent_3_of_gdp_108",
+        "source": "ent_deficit_102",
+        "target": "ent_3_of_gdp_108",
+        "label": "compared with",
+        "annotators": [
+          "nemotron-3-nano:4b"
+        ],
+        "fact_ids": [
+          "22710a45cff9f4ca"
+        ],
+        "group_ids": [
+          "6038de46fbd38469"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "qualifiers": [],
+        "conditional": true,
+        "conditions": [
+          "in 2003"
+        ],
+        "temporal": [
+          "in 2003"
+        ],
+        "conflict_label": "contradiction",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_outcome_for_2004_035__in_compliance_with__ent_council_089",
+        "source": "ent_outcome_for_2004_035",
+        "target": "ent_council_089",
+        "label": "in compliance with",
+        "annotators": [
+          "nemotron-3-nano:4b",
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "d2ef6129874f235c",
+          "ed558ef4b70a9db5"
+        ],
+        "group_ids": [
+          "0d623db2c2fbba3b",
+          "f106916132996632"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "qualifiers": [
+          "under Article 104(7) of the Treaty"
+        ],
+        "conditional": true,
+        "conditions": [
+          "under Article 104(7) of the Treaty"
+        ],
+        "temporal": [
+          "by 2005 at the latest"
+        ],
+        "conflict_label": "granularity",
+        "n_annotators": 2
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_deficit_102__reduced_below__ent_3_of_gdp_108",
+        "source": "ent_deficit_102",
+        "target": "ent_3_of_gdp_108",
+        "label": "reduced below",
+        "annotators": [
+          "nemotron-3-nano:4b"
+        ],
+        "fact_ids": [
+          "d8296282aaf49be0"
+        ],
+        "group_ids": [
+          "0d623db2c2fbba3b"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "qualifiers": [],
+        "conditional": true,
+        "conditions": [
+          "by 2005 at the latest"
+        ],
+        "temporal": [
+          "by 2005 at the latest"
+        ],
+        "conflict_label": "granularity",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_fiscal_adjustment_039__pursued__ent_savings_measures_097",
+        "source": "ent_fiscal_adjustment_039",
+        "target": "ent_savings_measures_097",
+        "label": "pursued",
+        "annotators": [
+          "nemotron-3-nano:4b"
+        ],
+        "fact_ids": [
+          "291a283d68206428"
+        ],
+        "group_ids": [
+          "cd73e9e8e92001a3"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "qualifiers": [],
+        "conditional": true,
+        "conditions": [
+          "in 2004"
+        ],
+        "temporal": [
+          "in 2004"
+        ],
+        "conflict_label": "granularity",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_savings_measures_097__partly_contained__ent_the_2004_budget_041",
+        "source": "ent_savings_measures_097",
+        "target": "ent_the_2004_budget_041",
+        "label": "partly contained",
+        "annotators": [
+          "nemotron-3-nano:4b"
+        ],
+        "fact_ids": [
+          "61088d19e6771c88"
+        ],
+        "group_ids": [
+          "cd73e9e8e92001a3"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "qualifiers": [],
+        "conditional": true,
+        "conditions": [
+          "in 2004"
+        ],
+        "temporal": [
+          "in 2004"
+        ],
+        "conflict_label": "redundancy",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_savings_measures_097__partly_decided__ent_the_additional_consolida_092",
+        "source": "ent_savings_measures_097",
+        "target": "ent_the_additional_consolida_092",
+        "label": "partly decided",
+        "annotators": [
+          "nemotron-3-nano:4b"
+        ],
+        "fact_ids": [
+          "a69e18f127bcad92"
+        ],
+        "group_ids": [
+          "cd73e9e8e92001a3"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "qualifiers": [],
+        "conditional": true,
+        "conditions": [
+          "on 14 April 2004"
+        ],
+        "temporal": [
+          "on 14 April 2004"
+        ],
+        "conflict_label": "redundancy",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_stronger_than_expected_t_043__helped_reduce__ent_deficit_102",
+        "source": "ent_stronger_than_expected_t_043",
+        "target": "ent_deficit_102",
+        "label": "helped reduce",
+        "annotators": [
+          "nemotron-3-nano:4b",
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "272f13c23a0fbbda",
+          "bf7e399d36815b2d"
+        ],
+        "group_ids": [
+          "799a4804ddd4e221",
+          "8b2fa04207c97ecc"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "qualifiers": [],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
+        "conflict_label": "redundancy",
+        "n_annotators": 2
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_additional_revenues_from_045__helped_reduce__ent_deficit_102",
+        "source": "ent_additional_revenues_from_045",
+        "target": "ent_deficit_102",
+        "label": "helped reduce",
+        "annotators": [
+          "nemotron-3-nano:4b",
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "0eeddcf4bcf1f963",
+          "d830ab6ddea42852"
+        ],
+        "group_ids": [
+          "799a4804ddd4e221",
+          "8b2fa04207c97ecc"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "qualifiers": [
+          "from the sale of natural gas"
+        ],
+        "conditional": true,
+        "conditions": [
+          "in response to high oil prices"
+        ],
+        "temporal": [
+          "in response to high oil prices"
+        ],
+        "conflict_label": "redundancy",
+        "n_annotators": 2
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_budgetary_measures_093__geared_towards__ent_securing_a_lasting_impro_047",
+        "source": "ent_budgetary_measures_093",
+        "target": "ent_securing_a_lasting_impro_047",
+        "label": "geared towards",
+        "annotators": [
+          "nemotron-3-nano:4b"
+        ],
+        "fact_ids": [
+          "bc74958ea81a0a25"
+        ],
+        "group_ids": [
+          "84e2517a37f3d2f2"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "qualifiers": [],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
+        "conflict_label": "granularity",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_general_government_balan_048__improved__ent_lasting_049",
+        "source": "ent_general_government_balan_048",
+        "target": "ent_lasting_049",
+        "label": "improved",
+        "annotators": [
+          "nemotron-3-nano:4b"
+        ],
+        "fact_ids": [
+          "1ced974ee7bd3fa8"
+        ],
+        "group_ids": [
+          "84e2517a37f3d2f2"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "qualifiers": [],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
         "conflict_label": "unlabeled",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_deficit_102__projects_a_further_decli__ent_3_of_gdp_108",
+        "source": "ent_deficit_102",
+        "target": "ent_3_of_gdp_108",
+        "label": "projects a further decline to",
+        "annotators": [
+          "nemotron-3-nano:4b"
+        ],
+        "fact_ids": [
+          "c60ed9f5fd7fa713"
+        ],
+        "group_ids": [
+          "8248f761e37caa4b"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "qualifiers": [],
+        "conditional": true,
+        "conditions": [
+          "For 2005"
+        ],
+        "temporal": [
+          "For 2005"
+        ],
+        "conflict_label": "redundancy",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_savings_measures_097__mostly__ent_structural_052",
+        "source": "ent_savings_measures_097",
+        "target": "ent_structural_052",
+        "label": "mostly",
+        "annotators": [
+          "nemotron-3-nano:4b"
+        ],
+        "fact_ids": [
+          "0525a13db06275a4"
+        ],
+        "group_ids": [
+          "8248f761e37caa4b"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "qualifiers": [],
+        "conditional": true,
+        "conditions": [
+          "For 2005"
+        ],
+        "temporal": [
+          "For 2005"
+        ],
+        "conflict_label": "contradiction",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_savings_measures_097__add_up_to__ent_3_of_gdp_108",
+        "source": "ent_savings_measures_097",
+        "target": "ent_3_of_gdp_108",
+        "label": "add up to",
+        "annotators": [
+          "nemotron-3-nano:4b"
+        ],
+        "fact_ids": [
+          "9b85d0e1eb33b8f9"
+        ],
+        "group_ids": [
+          "8248f761e37caa4b"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "qualifiers": [],
+        "conditional": true,
+        "conditions": [
+          "For 2005"
+        ],
+        "temporal": [
+          "For 2005"
+        ],
+        "conflict_label": "contradiction",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_deficit_102__in_line_with__ent_official_target_099",
+        "source": "ent_deficit_102",
+        "target": "ent_official_target_099",
+        "label": "in line with",
+        "annotators": [
+          "nemotron-3-nano:4b"
+        ],
+        "fact_ids": [
+          "5b9d24af60ba857f"
+        ],
+        "group_ids": [
+          "c586b4456d4f5f8b"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "qualifiers": [],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
+        "conflict_label": "contradiction",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_official_target_099__deficit_of__ent_3_of_gdp_108",
+        "source": "ent_official_target_099",
+        "target": "ent_3_of_gdp_108",
+        "label": "deficit of",
+        "annotators": [
+          "nemotron-3-nano:4b"
+        ],
+        "fact_ids": [
+          "982e7da7d0f77d43"
+        ],
+        "group_ids": [
+          "c586b4456d4f5f8b"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "qualifiers": [],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
+        "conflict_label": "unlabeled",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_deficit_102__projects_a_further_fall___ent_3_of_gdp_108",
+        "source": "ent_deficit_102",
+        "target": "ent_3_of_gdp_108",
+        "label": "projects a further fall to",
+        "annotators": [
+          "nemotron-3-nano:4b"
+        ],
+        "fact_ids": [
+          "3a8393629a671010"
+        ],
+        "group_ids": [
+          "c245caf0f49a3fbd"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "qualifiers": [],
+        "conditional": true,
+        "conditions": [
+          "For 2006"
+        ],
+        "temporal": [
+          "For 2006"
+        ],
+        "conflict_label": "contradiction",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_durable_correction_059__points_to__ent_deficit_102",
+        "source": "ent_durable_correction_059",
+        "target": "ent_deficit_102",
+        "label": "points to",
+        "annotators": [
+          "nemotron-3-nano:4b"
+        ],
+        "fact_ids": [
+          "4bb7f8018dd9f1e2"
+        ],
+        "group_ids": [
+          "c245caf0f49a3fbd"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "qualifiers": [],
+        "conditional": true,
+        "conditions": [
+          "For 2006"
+        ],
+        "temporal": [
+          "For 2006"
+        ],
+        "conflict_label": "contradiction",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_budgetary_consolidation_061__sustained_through__ent_cyclically_adjusted_defi_063",
+        "source": "ent_budgetary_consolidation_061",
+        "target": "ent_cyclically_adjusted_defi_063",
+        "label": "sustained through",
+        "annotators": [
+          "nemotron-3-nano:4b",
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "57c17862f2479b5a",
+          "ad7d3f8e6aeee6e0"
+        ],
+        "group_ids": [
+          "af736a0ee2f1ccdc",
+          "b14044d028da7a20"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "qualifiers": [],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
+        "conflict_label": "redundancy",
+        "n_annotators": 2
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_cyclically_adjusted_defi_063__expected_to_reach__ent_balance_067",
+        "source": "ent_cyclically_adjusted_defi_063",
+        "target": "ent_balance_067",
+        "label": "expected to reach",
+        "annotators": [
+          "nemotron-3-nano:4b"
+        ],
+        "fact_ids": [
+          "ed1e127bfc5a8beb"
+        ],
+        "group_ids": [
+          "b14044d028da7a20"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "qualifiers": [],
+        "conditional": true,
+        "conditions": [
+          "after the excessive deficit has been corrected"
+        ],
+        "temporal": [
+          "after the excessive deficit has been corrected"
+        ],
+        "conflict_label": "granularity",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_cyclically_adjusted_defi_063__fell_markedly_to__ent_3_of_gdp_108",
+        "source": "ent_cyclically_adjusted_defi_063",
+        "target": "ent_3_of_gdp_108",
+        "label": "fell markedly to",
+        "annotators": [
+          "nemotron-3-nano:4b"
+        ],
+        "fact_ids": [
+          "1400aaa8e91f5c29"
+        ],
+        "group_ids": [
+          "29ea40950a77f779"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "qualifiers": [],
+        "conditional": true,
+        "conditions": [
+          "In 2004"
+        ],
+        "temporal": [
+          "In 2004"
+        ],
+        "conflict_label": "redundancy",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_cyclically_adjusted_defi_063__compared_with__ent_3_of_gdp_108",
+        "source": "ent_cyclically_adjusted_defi_063",
+        "target": "ent_3_of_gdp_108",
+        "label": "compared with",
+        "annotators": [
+          "nemotron-3-nano:4b"
+        ],
+        "fact_ids": [
+          "ebee5a888371fcee"
+        ],
+        "group_ids": [
+          "29ea40950a77f779"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "qualifiers": [],
+        "conditional": true,
+        "conditions": [
+          "in 2003"
+        ],
+        "temporal": [
+          "in 2003"
+        ],
+        "conflict_label": "redundancy",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_cyclically_adjusted_defi_063__further_decrease_to__ent_3_of_gdp_108",
+        "source": "ent_cyclically_adjusted_defi_063",
+        "target": "ent_3_of_gdp_108",
+        "label": "further decrease to",
+        "annotators": [
+          "nemotron-3-nano:4b"
+        ],
+        "fact_ids": [
+          "3aaa9eb5f03b445e"
+        ],
+        "group_ids": [
+          "ca233cc9782bd6e7"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "qualifiers": [],
+        "conditional": true,
+        "conditions": [
+          "in 2005"
+        ],
+        "temporal": [
+          "in 2005"
+        ],
+        "conflict_label": "contradiction",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_cyclically_adjusted_defi_063__close_to__ent_balance_067",
+        "source": "ent_cyclically_adjusted_defi_063",
+        "target": "ent_balance_067",
+        "label": "close to",
+        "annotators": [
+          "nemotron-3-nano:4b"
+        ],
+        "fact_ids": [
+          "9ea27f234b049440"
+        ],
+        "group_ids": [
+          "ca233cc9782bd6e7"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "qualifiers": [],
+        "conditional": true,
+        "conditions": [
+          "in 2005"
+        ],
+        "temporal": [
+          "in 2005"
+        ],
+        "conflict_label": "contradiction",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_cyclically_adjusted_defi_063__fall_to__ent_3_of_gdp_108",
+        "source": "ent_cyclically_adjusted_defi_063",
+        "target": "ent_3_of_gdp_108",
+        "label": "fall to",
+        "annotators": [
+          "nemotron-3-nano:4b"
+        ],
+        "fact_ids": [
+          "38f369e6b63c06aa"
+        ],
+        "group_ids": [
+          "ca233cc9782bd6e7"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "qualifiers": [],
+        "conditional": true,
+        "conditions": [
+          "in 2006"
+        ],
+        "temporal": [
+          "in 2006"
+        ],
+        "conflict_label": "contradiction",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_government_debt_ratio_069__kept_below__ent_3_of_gdp_108",
+        "source": "ent_government_debt_ratio_069",
+        "target": "ent_3_of_gdp_108",
+        "label": "kept below",
+        "annotators": [
+          "nemotron-3-nano:4b",
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "0b12e22357698fd0",
+          "42a7ba64f4b6d89a"
+        ],
+        "group_ids": [
+          "175d733d8db44422",
+          "543c3e3a29494544"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "qualifiers": [
+          "in 2004"
+        ],
+        "conditional": true,
+        "conditions": [
+          "in 2004"
+        ],
+        "temporal": [
+          "in 2004"
+        ],
+        "conflict_label": "contradiction",
+        "n_annotators": 2
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_government_debt_ratio_069__reference_value__ent_3_of_gdp_108",
+        "source": "ent_government_debt_ratio_069",
+        "target": "ent_3_of_gdp_108",
+        "label": "reference value",
+        "annotators": [
+          "nemotron-3-nano:4b"
+        ],
+        "fact_ids": [
+          "bd7d23bb6fddc15b",
+          "f8bca2dd77084638"
+        ],
+        "group_ids": [
+          "175d733d8db44422",
+          "d5bc2e4c9040242b"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "qualifiers": [],
+        "conditional": true,
+        "conditions": [
+          "March 2005 excessive deficit procedure notification"
+        ],
+        "temporal": [
+          "March 2005 excessive deficit procedure notification"
+        ],
+        "conflict_label": "unlabeled",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_government_debt_ratio_069__remains_below__ent_3_of_gdp_108",
+        "source": "ent_government_debt_ratio_069",
+        "target": "ent_3_of_gdp_108",
+        "label": "remains below",
+        "annotators": [
+          "nemotron-3-nano:4b"
+        ],
+        "fact_ids": [
+          "66cc53527f7f8ea9"
+        ],
+        "group_ids": [
+          "d5bc2e4c9040242b"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "qualifiers": [],
+        "conditional": true,
+        "conditions": [
+          "in 2005 and 2006"
+        ],
+        "temporal": [
+          "in 2005 and 2006"
+        ],
+        "conflict_label": "granularity",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_decision_2005_136_ec_018__abrogated__ent_yes_071",
+        "source": "ent_decision_2005_136_ec_018",
+        "target": "ent_yes_071",
+        "label": "abrogated",
+        "annotators": [
+          "nemotron-3-nano:4b"
+        ],
+        "fact_ids": [
+          "66f5fad295145722",
+          "f7ac6c846b630b71"
+        ],
+        "group_ids": [
+          "234ea9603d22c958",
+          "e28c9848ce071d42"
+        ],
+        "section_paths": [
+          "enacting.article_2",
+          "preamble.recitals[5]"
+        ],
+        "qualifiers": [],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
+        "conflict_label": "granularity",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_deficit_102__completed__ent_2004_073",
+        "source": "ent_deficit_102",
+        "target": "ent_2004_073",
+        "label": "completed",
+        "annotators": [
+          "nemotron-3-nano:4b",
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "2cb3f48f6ebb7ddc",
+          "6e7985bb357c5da6"
+        ],
+        "group_ids": [
+          "60a5410c2a50229d",
+          "79abb89d527333dc"
+        ],
+        "section_paths": [
+          "enacting.article_1"
+        ],
+        "qualifiers": [
+          "in the Netherlands"
+        ],
+        "conditional": true,
+        "conditions": [
+          "under the terms of the recommendation addressed to the Netherlands on 2 June 200"
+        ],
+        "temporal": [
+          "in 2004"
+        ],
+        "conflict_label": "granularity",
+        "n_annotators": 2
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_recommendation_addressed_114__addressed__ent_the_netherlands_004",
+        "source": "ent_recommendation_addressed_114",
+        "target": "ent_the_netherlands_004",
+        "label": "addressed",
+        "annotators": [
+          "nemotron-3-nano:4b"
+        ],
+        "fact_ids": [
+          "e2c514781e8026c7"
+        ],
+        "group_ids": [
+          "60a5410c2a50229d"
+        ],
+        "section_paths": [
+          "enacting.article_1"
+        ],
+        "qualifiers": [],
+        "conditional": true,
+        "conditions": [
+          "under the terms of the recommendation addressed to the Netherlands on 2 June 200"
+        ],
+        "temporal": [
+          "on 2 June 2004"
+        ],
+        "conflict_label": "unlabeled",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_recommendation_addressed_114__addressed__ent_2_june_2004_075",
+        "source": "ent_recommendation_addressed_114",
+        "target": "ent_2_june_2004_075",
+        "label": "addressed",
+        "annotators": [
+          "nemotron-3-nano:4b"
+        ],
+        "fact_ids": [
+          "5baa7a72690620c7"
+        ],
+        "group_ids": [
+          "60a5410c2a50229d"
+        ],
+        "section_paths": [
+          "enacting.article_1"
+        ],
+        "qualifiers": [],
+        "conditional": true,
+        "conditions": [
+          "under the terms of the recommendation addressed to the Netherlands on 2 June 200"
+        ],
+        "temporal": [
+          "on 2 June 2004"
+        ],
+        "conflict_label": "granularity",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_recommendation_addressed_114__addressed__ent_a_recommendation_076",
+        "source": "ent_recommendation_addressed_114",
+        "target": "ent_a_recommendation_076",
+        "label": "addressed",
+        "annotators": [
+          "nemotron-3-nano:4b"
+        ],
+        "fact_ids": [
+          "0b9ef806a3d38b09"
+        ],
+        "group_ids": [
+          "60a5410c2a50229d"
+        ],
+        "section_paths": [
+          "enacting.article_1"
+        ],
+        "qualifiers": [],
+        "conditional": true,
+        "conditions": [
+          "under the terms of the recommendation addressed to the Netherlands on 2 June 200"
+        ],
+        "temporal": [
+          "on 2 June 2004"
+        ],
+        "conflict_label": "unlabeled",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_commission_086__addressed_to__ent_kingdom_of_the_netherlan_077",
+        "source": "ent_commission_086",
+        "target": "ent_kingdom_of_the_netherlan_077",
+        "label": "addressed to",
+        "annotators": [
+          "nemotron-3-nano:4b"
+        ],
+        "fact_ids": [
+          "4f11be9c1d30fe57"
+        ],
+        "group_ids": [
+          "784228a365eca2f2"
+        ],
+        "section_paths": [
+          "enacting.article_3"
+        ],
+        "qualifiers": [],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
+        "conflict_label": "unlabeled",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_a_recommendation_076__made__ent_2_june_2004_075",
+        "source": "ent_a_recommendation_076",
+        "target": "ent_2_june_2004_075",
+        "label": "made",
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "00897fc0e37e0480"
+        ],
+        "group_ids": [
+          "b0265d28f4a19843"
+        ],
+        "section_paths": [
+          "preamble.recitals[1]"
+        ],
+        "qualifiers": [
+          "on 2 June 2004"
+        ],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
+        "conflict_label": "granularity",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_a_recommendation_076__made_with_a_view_to__ent_deficit_102",
+        "source": "ent_a_recommendation_076",
+        "target": "ent_deficit_102",
+        "label": "made with a view to",
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "19694ae33106c5a4"
+        ],
+        "group_ids": [
+          "b0265d28f4a19843"
+        ],
+        "section_paths": [
+          "preamble.recitals[1]"
+        ],
+        "qualifiers": [
+          "to an end"
+        ],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
+        "conflict_label": "unlabeled",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_a_recommendation_076__established__ent_a_deadline_078",
+        "source": "ent_a_recommendation_076",
+        "target": "ent_a_deadline_078",
+        "label": "established",
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "ca4c3c675fdc3d40"
+        ],
+        "group_ids": [
+          "d698e750a7654108"
+        ],
+        "section_paths": [
+          "preamble.recitals[1]"
+        ],
+        "qualifiers": [],
+        "conditional": true,
+        "conditions": [
+          "in conjunction with Article 3(4) of Council Regulation (EC) No 1467/97 of 7 July"
+        ],
+        "temporal": [
+          "at the latest"
+        ],
+        "conflict_label": "granularity",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_a_deadline_078__set__ent_for_2005_079",
+        "source": "ent_a_deadline_078",
+        "target": "ent_for_2005_079",
+        "label": "set",
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "c72f40e9d191771c"
+        ],
+        "group_ids": [
+          "d698e750a7654108"
+        ],
+        "section_paths": [
+          "preamble.recitals[1]"
+        ],
+        "qualifiers": [],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [
+          "at the latest"
+        ],
+        "conflict_label": "granularity",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_a_deadline_078__set_for__ent_deficit_102",
+        "source": "ent_a_deadline_078",
+        "target": "ent_deficit_102",
+        "label": "set for",
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "38720c469f83c1ea"
+        ],
+        "group_ids": [
+          "d698e750a7654108"
+        ],
+        "section_paths": [
+          "preamble.recitals[1]"
+        ],
+        "qualifiers": [],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
+        "conflict_label": "granularity",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_the_definitions_of_gover_082__laid_down__ent_deficit_102",
+        "source": "ent_the_definitions_of_gover_082",
+        "target": "ent_deficit_102",
+        "label": "laid down",
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "5270dc15733ca3a3"
+        ],
+        "group_ids": [
+          "3e863c708c6f70ea"
+        ],
+        "section_paths": [
+          "preamble.recitals[3]"
+        ],
+        "qualifiers": [],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
+        "conflict_label": "granularity",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_deficit_102__laid_down_by_reference_t__ent_european_system_of_integ_084",
+        "source": "ent_deficit_102",
+        "target": "ent_european_system_of_integ_084",
+        "label": "laid down by reference to",
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "37350469b729d888"
+        ],
+        "group_ids": [
+          "3e863c708c6f70ea"
+        ],
+        "section_paths": [
+          "preamble.recitals[3]"
+        ],
+        "qualifiers": [
+          "of Integrated Economic Accounts, second edition"
+        ],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
+        "conflict_label": "granularity",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_deficit_102__provided_by__ent_commission_086",
+        "source": "ent_deficit_102",
+        "target": "ent_commission_086",
+        "label": "provided by",
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "764e68559532a0a6"
+        ],
+        "group_ids": [
+          "5d4156d58a4e0299"
+        ],
+        "section_paths": [
+          "preamble.recitals[3]"
+        ],
+        "qualifiers": [],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
+        "conflict_label": "granularity",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_excessive_deficit_in_the_087__estimated_at__ent_3_of_gdp_108",
+        "source": "ent_excessive_deficit_in_the_087",
+        "target": "ent_3_of_gdp_108",
+        "label": "estimated at",
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "f59d9fde3c354ce8"
+        ],
+        "group_ids": [
+          "517031e9544f2457"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "qualifiers": [
+          "in 2004"
+        ],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
+        "conflict_label": "contradiction",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_excessive_deficit_in_the_087__in_2003__ent_3_of_gdp_108",
+        "source": "ent_excessive_deficit_in_the_087",
+        "target": "ent_3_of_gdp_108",
+        "label": "in 2003",
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "65a41ae66095a141"
+        ],
+        "group_ids": [
+          "517031e9544f2457"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "qualifiers": [],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
+        "conflict_label": "contradiction",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_deficit_102__reduced_below__ent_reference_value_of_3_of_090",
+        "source": "ent_deficit_102",
+        "target": "ent_reference_value_of_3_of_090",
+        "label": "reduced below",
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "dfd93201fab8784a"
+        ],
+        "group_ids": [
+          "f106916132996632"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "qualifiers": [
+          "of 3 % of GDP by 2005 at the latest"
+        ],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
+        "conflict_label": "granularity",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_fiscal_adjustment_039__pursued_in_2004__ent_in_the_form_of_substanti_091",
+        "source": "ent_fiscal_adjustment_039",
+        "target": "ent_in_the_form_of_substanti_091",
+        "label": "pursued in 2004",
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "e34c8cddcb0e6783"
+        ],
+        "group_ids": [
+          "c5ef242e75cd5c28"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "qualifiers": [
+          "of substantial savings measures"
+        ],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
+        "conflict_label": "granularity",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_savings_measures_097__partly_contained_in__ent_the_2004_budget_041",
+        "source": "ent_savings_measures_097",
+        "target": "ent_the_2004_budget_041",
+        "label": "partly contained in",
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "addb575c12bd34ec"
+        ],
+        "group_ids": [
+          "c5ef242e75cd5c28"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "qualifiers": [],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
+        "conflict_label": "redundancy",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_savings_measures_097__partly_decided_in__ent_the_additional_consolida_092",
+        "source": "ent_savings_measures_097",
+        "target": "ent_the_additional_consolida_092",
+        "label": "partly decided in",
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "22a8439f1582c47c"
+        ],
+        "group_ids": [
+          "c5ef242e75cd5c28"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "qualifiers": [
+          "on 14 April 2004"
+        ],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
+        "conflict_label": "redundancy",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_budgetary_measures_093__geared_towards_securing__ent_a_lasting_improvement_in_094",
+        "source": "ent_budgetary_measures_093",
+        "target": "ent_a_lasting_improvement_in_094",
+        "label": "geared towards securing",
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "311a832e8a6e223b"
+        ],
+        "group_ids": [
+          "22f1b19feeed1a05"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "qualifiers": [
+          "in the general government balance"
+        ],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
+        "conflict_label": "granularity",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_deficit_102__projected_to_decline_to__ent_3_of_gdp_108",
+        "source": "ent_deficit_102",
+        "target": "ent_3_of_gdp_108",
+        "label": "projected to decline to",
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "9e0036793f577866"
+        ],
+        "group_ids": [
+          "018e9d07447da4fc"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "qualifiers": [
+          "in 2005"
+        ],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
+        "conflict_label": "redundancy",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_deficit_102__largely_in_response_to__ent_savings_measures_097",
+        "source": "ent_deficit_102",
+        "target": "ent_savings_measures_097",
+        "label": "largely in response to",
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "cccc0b2876c7cc35"
+        ],
+        "group_ids": [
+          "018e9d07447da4fc"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "qualifiers": [
+          "of a structural nature, adding up to 0,5 % of GDP"
+        ],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
+        "conflict_label": "contradiction",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_forecast_for_2005_098__in_line_with__ent_official_target_099",
+        "source": "ent_forecast_for_2005_098",
+        "target": "ent_official_target_099",
+        "label": "in line with",
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "90b2f6ab804be318"
+        ],
+        "group_ids": [
+          "4998e7418d865c98"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "qualifiers": [
+          "of a deficit of 2,1 % of GDP"
+        ],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
+        "conflict_label": "contradiction",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_deficit_102__projected_to_fall_to__ent_3_of_gdp_108",
+        "source": "ent_deficit_102",
+        "target": "ent_3_of_gdp_108",
+        "label": "projected to fall to",
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "05a44cc8e5b79b16"
+        ],
+        "group_ids": [
+          "9829120cf2a2b0c1"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "qualifiers": [
+          "in 2006"
+        ],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
+        "conflict_label": "contradiction",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_deficit_102__points_to__ent_deficit_102",
+        "source": "ent_deficit_102",
+        "target": "ent_deficit_102",
+        "label": "points to",
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "ae07ceb00a4ea854"
+        ],
+        "group_ids": [
+          "9829120cf2a2b0c1"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "qualifiers": [],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
+        "conflict_label": "contradiction",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_cyclically_adjusted_defi_063__expected_to_reach_close___ent_deficit_102",
+        "source": "ent_cyclically_adjusted_defi_063",
+        "target": "ent_deficit_102",
+        "label": "expected to reach close to balance",
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "64a6126008b08cb6"
+        ],
+        "group_ids": [
+          "af736a0ee2f1ccdc"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "qualifiers": [],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
+        "conflict_label": "granularity",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_cyclically_adjusted_defi_063__fell_to__ent_3_of_gdp_108",
+        "source": "ent_cyclically_adjusted_defi_063",
+        "target": "ent_3_of_gdp_108",
+        "label": "fell to",
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "883c8da06c20f7e8"
+        ],
+        "group_ids": [
+          "c5bba48ba6749081"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "qualifiers": [
+          "in 2004"
+        ],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
+        "conflict_label": "redundancy",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_cyclically_adjusted_defi_063__in_2003__ent_3_of_gdp_108",
+        "source": "ent_cyclically_adjusted_defi_063",
+        "target": "ent_3_of_gdp_108",
+        "label": "in 2003",
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "6b60bcbc2c6cf4eb"
+        ],
+        "group_ids": [
+          "c5bba48ba6749081"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "qualifiers": [],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
+        "conflict_label": "redundancy",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_cyclically_adjusted_defi_063__projected_to_decrease_in__ent_3_of_gdp_108",
+        "source": "ent_cyclically_adjusted_defi_063",
+        "target": "ent_3_of_gdp_108",
+        "label": "projected to decrease in 2005 by",
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "7c9f266a34d7971e"
+        ],
+        "group_ids": [
+          "da8f73a7177ea44c"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "qualifiers": [],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
+        "conflict_label": "contradiction",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_cyclically_adjusted_defi_063__projected_to_reach__ent_3_of_gdp_108",
+        "source": "ent_cyclically_adjusted_defi_063",
+        "target": "ent_3_of_gdp_108",
+        "label": "projected to reach",
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "6fa5324eb277707d"
+        ],
+        "group_ids": [
+          "da8f73a7177ea44c"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "qualifiers": [
+          "in 2005"
+        ],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
+        "conflict_label": "contradiction",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_3_of_gdp_108__close_to__ent_balance_067",
+        "source": "ent_3_of_gdp_108",
+        "target": "ent_balance_067",
+        "label": "close to",
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "4a9d15d13765be3e"
+        ],
+        "group_ids": [
+          "da8f73a7177ea44c"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "qualifiers": [],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
+        "conflict_label": "contradiction",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_cyclically_adjusted_defi_063__projected_to_fall_to__ent_3_of_gdp_108",
+        "source": "ent_cyclically_adjusted_defi_063",
+        "target": "ent_3_of_gdp_108",
+        "label": "projected to fall to",
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "2eb8e495f413a13c"
+        ],
+        "group_ids": [
+          "01e4bfc67d5576e1"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "qualifiers": [
+          "in 2006"
+        ],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
+        "conflict_label": "contradiction",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_government_debt_ratio_069__projected_to_remain_belo__ent_this_threshold_in_2005_a_109",
+        "source": "ent_government_debt_ratio_069",
+        "target": "ent_this_threshold_in_2005_a_109",
+        "label": "projected to remain below",
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "957379900fdb4a6a"
+        ],
+        "group_ids": [
+          "054d93b9125eeb52"
+        ],
+        "section_paths": [
+          "preamble.recitals[4]"
+        ],
+        "qualifiers": [
+          "in 2005"
+        ],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
+        "conflict_label": "granularity",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_decision_2005_136_ec_018__be__ent_abrogated_110",
+        "source": "ent_decision_2005_136_ec_018",
+        "target": "ent_abrogated_110",
+        "label": "be",
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "ffd2938b55fd2f87"
+        ],
+        "group_ids": [
+          "4a65958dfbabb8b9"
+        ],
+        "section_paths": [
+          "preamble.recitals[5]"
+        ],
+        "qualifiers": [],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
+        "conflict_label": "granularity",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_the_completion_of_the_co_112__followed__ent_the_terms_of_the_recomme_113",
+        "source": "ent_the_completion_of_the_co_112",
+        "target": "ent_the_terms_of_the_recomme_113",
+        "label": "followed",
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "4ee37b672774fa74"
+        ],
+        "group_ids": [
+          "dbf637a843b89861"
+        ],
+        "section_paths": [
+          "enacting.article_1"
+        ],
+        "qualifiers": [
+          "on 2 June 2004",
+          "to the Netherlands"
+        ],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
+        "conflict_label": "unlabeled",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_recommendation_addressed_114__issued__ent_in_accordance_with_artic_115",
+        "source": "ent_recommendation_addressed_114",
+        "target": "ent_in_accordance_with_artic_115",
+        "label": "issued",
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "cdc8f8c7ec01cbdd"
+        ],
+        "group_ids": [
+          "e5303ea215e5ea09"
+        ],
+        "section_paths": [
+          "enacting.article_1"
+        ],
+        "qualifiers": [
+          "with Article 104(7) of the Treaty"
+        ],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
+        "conflict_label": "unlabeled",
+        "n_annotators": 1
+      }
+    },
+    {
+      "data": {
+        "id": "e_ent_decision_2005_136_ec_018__abrogated_by__ent_this_decision_116",
+        "source": "ent_decision_2005_136_ec_018",
+        "target": "ent_this_decision_116",
+        "label": "abrogated by",
+        "annotators": [
+          "qwen3.5:4b"
+        ],
+        "fact_ids": [
+          "e6ba8db1d3dc45ac"
+        ],
+        "group_ids": [
+          "c72b37e6134ba19a"
+        ],
+        "section_paths": [
+          "enacting.article_2"
+        ],
+        "qualifiers": [],
+        "conditional": false,
+        "conditions": [],
+        "temporal": [],
+        "conflict_label": "granularity",
         "n_annotators": 1
       }
     }
   ],
   "summary": {
-    "n_nodes": 42,
-    "n_edges": 57,
+    "n_nodes": 53,
+    "n_edges": 90,
     "edge_label_counts": {
-      "redundancy": 20,
-      "granularity": 31,
-      "contradiction": 1,
-      "unlabeled": 5
+      "redundancy": 16,
+      "granularity": 44,
+      "contradiction": 21,
+      "unlabeled": 9
     }
   }
 }

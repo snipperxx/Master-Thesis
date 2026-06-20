@@ -536,6 +536,24 @@ def parse_plain_text(text: str, doc_id: str) -> ParsedDocument:
             )
         )
 
+    # 4b) Fallback for pre-1999 acts whose recitals are unnumbered run-on
+    #     "Whereas ...; whereas ..." prose (no "(N)" markers). Without this the
+    #     entire preamble stays an un-extracted blob (observed on train-000014,
+    #     CELEX 31996R1629: 0 recitals, ~40% of the doc never sent to the LLM).
+    #     Split on line-initial "Whereas" so enumerate_sections yields one
+    #     section per recital. Offsets are into preamble_text, same convention
+    #     as the numbered path above.
+    if not recitals:
+        wmarks = [w.start() for w in re.finditer(r"(?m)^\s*Whereas\b", preamble_text)]
+        for wi, cs in enumerate(wmarks):
+            ce = wmarks[wi + 1] if wi + 1 < len(wmarks) else len(preamble_text)
+            rtext = _norm(preamble_text[cs:ce])
+            if rtext:
+                recitals.append(
+                    Recital(number=f"({wi + 1})", text=rtext,
+                            char_start=cs, char_end=ce)
+                )
+
     # 5) Articles — slice enacting_text between consecutive "Article N" headings.
     article_headings = list(_ARTICLE_LINE_RE.finditer(enacting_text))
     articles: List[Article] = []

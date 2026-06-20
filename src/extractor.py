@@ -79,6 +79,11 @@ UNLOAD_KEEP_ALIVE = 0  # sentinel: unload immediately
 DEFAULT_TIMEOUT_S = 600  # legal recitals are slow on a 4B Q4_K_M
 OFFSET_MIN_SCORE = 70.0  # below this we drop the fact rather than mis-locate it
 
+# Group-level fields (one atomic annotation = one human-readable statement + span).
+GROUP_REQUIRED_FIELDS = ("natural_language", "source_quote")
+# Triple-level fields (each SPO inside a group / each legacy element).
+TRIPLE_REQUIRED_FIELDS = ("subject", "predicate", "object")
+# Back-compat alias (kept for any external import).
 REQUIRED_FIELDS = ("subject", "predicate", "object", "natural_language", "source_quote")
 
 
@@ -134,12 +139,29 @@ def enumerate_sections(doc: ParsedDocument) -> Iterator[Section]:
 
 
 def load_prompt_template(guideline_version: str = "v1",
-                         prompt_path: Path | None = None) -> str:
-    """Read the markdown prompt template from disk.
+                         prompt_path: Path | None = None,
+                         schema_version: str = "v1") -> str:
+    """Assemble the extraction prompt from a SCHEMA frame + a GUIDELINE body.
 
-    The template uses sentinel strings (not str.format placeholders) so that
-    legal section text containing literal `{` `}` characters does not break
-    substitution.
+    Separation of concerns (2026-06-19): the prompt is split across two files so
+    the output contract and the annotation policy vary independently.
+
+      * prompts/schema_<schema_version>.md    - the I/O CONTRACT: output JSON
+        shape, field requirements, and the input template (the <<DOC_TITLE>> /
+        <<SECTION_PATH>> / <<SECTION_TEXT>> sentinels). Carries one
+        `<<GUIDELINE>>` slot into which the annotation policy is injected.
+      * prompts/extract_<guideline_version>.md - PURE GUIDELINE: the annotation
+        policy only (coverage mandate + <guideline> rules + examples); no output
+        schema and no sentinels.
+
+    The schema is selectable independently of the guideline, so one guideline
+    can run against different output schemas (and vice-versa). Sentinels use
+    plain string replacement (not str.format) so legal text with literal
+    `{ }` does not break substitution.
+
+    Back-compat: a legacy SELF-CONTAINED guideline file (one that still carries
+    the <<SECTION_TEXT>> sentinel, i.e. pre-split) is returned verbatim with no
+    schema frame applied.
     """
     if prompt_path is None:
         prompt_path = _PROJECT_ROOT / "prompts" / f"extract_{guideline_version}.md"
@@ -148,7 +170,24 @@ def load_prompt_template(guideline_version: str = "v1",
             f"Prompt template not found: {prompt_path}. "
             f"Did you write prompts/extract_{guideline_version}.md ?"
         )
-    return prompt_path.read_text(encoding="utf-8")
+    guideline = prompt_path.read_text(encoding="utf-8")
+
+    # Legacy self-contained prompt (pre-split): use verbatim.
+    if "<<SECTION_TEXT>>" in guideline:
+        return guideline
+
+    schema_path = _PROJECT_ROOT / "prompts" / f"schema_{schema_version}.md"
+    if not schema_path.exists():
+        raise FileNotFoundError(
+            f"Schema frame not found: {schema_path}. "
+            f"Did you write prompts/schema_{schema_version}.md ?"
+        )
+    schema = schema_path.read_text(encoding="utf-8")
+    if "<<GUIDELINE>>" not in schema:
+        raise ValueError(
+            f"Schema frame {schema_path} is missing the <<GUIDELINE>> slot."
+        )
+    return schema.replace("<<GUIDELINE>>", guideline)
 
 
 def render_prompt(template: str, *, doc_title: str, section: Section,
@@ -158,7 +197,7 @@ def render_prompt(template: str, *, doc_title: str, section: Section,
     `suppress_thinking` appends `/no_think` — the Qwen3 inline switch that
     forces non-reasoning mode. This is a dispatcher-level adapter, kept
     OUT of the markdown template so the guideline stays model-agnostic
-    (Gemma3 / Phi4-mini ignore the token harmlessly).
+    (Gemma3 / Nemotron-3-nano ignore the token harmlessly).
     """
     out = template
     out = out.replace("<<DOC_TITLE>>", doc_title)
@@ -291,15 +330,21 @@ class ExtractionError(Exception):
 
 
 def _parse_facts_response(raw: str) -> list[dict]:
-    """Parse the model's raw response into a list of fact dicts.
+    """Parse the model's raw response into a list of atomic-fact GROUPS.
 
-    Enforces:
-      * Top-level is a JSON object with key "facts".
-      * "facts" is a list (possibly empty).
-      * Each element has all REQUIRED_FIELDS as non-empty strings.
+    Each group is ONE annotation (a single natural_language + source_quote span)
+    carrying one or more SPO triples. Two accepted element shapes:
 
-    On any violation, raises ExtractionError with a message suitable for
-    feeding back to the model as a corrective hint.
+      * multi-SPO:  {"natural_language", "source_quote",
+                     "triples": [{"subject","predicate","object",
+                                  "condition?","temporal_context?"}, ...]}
+      * legacy:     {"subject","predicate","object","natural_language",
+                     "source_quote","condition?","temporal_context?"}
+                    (treated as a 1-triple group)
+
+    Returns: list of {"natural_language", "source_quote",
+    "triples": [{subject,predicate,object,condition,temporal_context}, ...]}.
+    On any violation raises ExtractionError with a corrective message.
     """
     try:
         obj = json.loads(raw)
@@ -314,23 +359,50 @@ def _parse_facts_response(raw: str) -> list[dict]:
     if not isinstance(facts, list):
         raise ExtractionError('"facts" must be a JSON array.')
 
-    cleaned: list[dict] = []
+    def _req_str(d, field, where):
+        if field not in d:
+            raise ExtractionError(f'{where} is missing required field "{field}".')
+        if not isinstance(d[field], str) or not d[field].strip():
+            raise ExtractionError(f'{where}."{field}" must be a non-empty string.')
+        return d[field].strip()
+
+    def _opt_str(d, field, fallback=""):
+        val = d.get(field, fallback)
+        return val.strip() if isinstance(val, str) else fallback
+
+    groups: list[dict] = []
     for i, f in enumerate(facts):
         if not isinstance(f, dict):
             raise ExtractionError(f"facts[{i}] is not a JSON object.")
-        for field in REQUIRED_FIELDS:
-            if field not in f:
-                raise ExtractionError(f'facts[{i}] is missing required field "{field}".')
-            if not isinstance(f[field], str) or not f[field].strip():
-                raise ExtractionError(
-                    f'facts[{i}]."{field}" must be a non-empty string.'
-                )
-        row = {k: f[k].strip() for k in REQUIRED_FIELDS}
-        for opt in ("condition", "temporal_context"):
-            val = f.get(opt, "")
-            row[opt] = val.strip() if isinstance(val, str) else ""
-        cleaned.append(row)
-    return cleaned
+        nl = _req_str(f, "natural_language", f"facts[{i}]")
+        sq = _req_str(f, "source_quote", f"facts[{i}]")
+        # group-level condition/temporal are inherited by triples that omit them
+        g_cond = _opt_str(f, "condition")
+        g_temp = _opt_str(f, "temporal_context")
+        g_logic_group = _opt_str(f, "logic_group")
+        g_logic_op = _opt_str(f, "logic_op").upper()
+        if g_logic_op not in ("", "AND", "OR", "XOR"):
+            g_logic_op = ""
+
+        raw_triples = f.get("triples")
+        if isinstance(raw_triples, list) and raw_triples:
+            triple_dicts, legacy = raw_triples, False
+        else:
+            triple_dicts, legacy = [f], True   # legacy: element itself is the triple
+
+        triples: list[dict] = []
+        for j, t in enumerate(triple_dicts):
+            if not isinstance(t, dict):
+                raise ExtractionError(f"facts[{i}].triples[{j}] is not a JSON object.")
+            where = f"facts[{i}]" if legacy else f"facts[{i}].triples[{j}]"
+            triple = {fld: _req_str(t, fld, where) for fld in TRIPLE_REQUIRED_FIELDS}
+            triple["condition"] = _opt_str(t, "condition", g_cond)
+            triple["temporal_context"] = _opt_str(t, "temporal_context", g_temp)
+            triples.append(triple)
+
+        groups.append({"natural_language": nl, "source_quote": sq, "triples": triples,
+                       "logic_group": g_logic_group, "logic_op": g_logic_op})
+    return groups
 
 
 def _recover_offsets(quote: str, section: Section) -> tuple[int, int, float, str]:
@@ -362,50 +434,59 @@ def _recover_offsets(quote: str, section: Section) -> tuple[int, int, float, str
     return cs, ce, score, matched
 
 
-def _fact_id(model: str, doc_id: str, section_path: str, index: int) -> str:
+def _group_id(model: str, doc_id: str, section_path: str, group_index: int) -> str:
     h = hashlib.sha1()
-    h.update(f"{model}|{doc_id}|{section_path}|{index}".encode("utf-8"))
+    h.update(f"grp|{model}|{doc_id}|{section_path}|{group_index}".encode("utf-8"))
     return h.hexdigest()[:16]
 
 
-def _build_atomic_fact(raw: dict,
+def _fact_id(model: str, doc_id: str, section_path: str,
+             group_index: int, triple_index: int = 0) -> str:
+    h = hashlib.sha1()
+    h.update(f"{model}|{doc_id}|{section_path}|{group_index}|{triple_index}".encode("utf-8"))
+    return h.hexdigest()[:16]
+
+
+def _build_atomic_fact(triple: dict,
                        *,
                        model_name: str,
                        doc: ParsedDocument,
                        guideline_version: str,
                        section: Section,
-                       index: int) -> AtomicFact | None:
-    """Convert a validated raw dict into an AtomicFact, or return None if the
-    quote could not be anchored (which means we cannot trust the provenance)."""
-    cs, ce, score, matched = _recover_offsets(raw["source_quote"], section)
-    if cs < 0:
-        logger.warning(
-            "Dropped fact (quote not located in %s, fuzzy score=%.1f): %r",
-            section.section_path, score, raw["source_quote"][:80],
-        )
-        return None
+                       locator: ProseLocator,
+                       natural_language: str,
+                       source_quote: str,
+                       anchor_score: float,
+                       group_id: str,
+                       group_index: int,
+                       triple_index: int,
+                       logic_group: str = "",
+                       logic_op: str = "") -> AtomicFact:
+    """Build one AtomicFact for a single SPO triple of an atomic-annotation group.
 
-    locator = ProseLocator(
-        section_path=section.section_path,
-        char_start=cs,
-        char_end=ce,
-        quote=matched,
-    )
+    The group's source_quote was already anchored to `locator` by the caller, so
+    every triple in the group shares the same provenance + group_id.
+    """
     return AtomicFact(
-        fact_id=_fact_id(model_name, doc.celex, section.section_path, index),
+        fact_id=_fact_id(model_name, doc.celex, section.section_path,
+                         group_index, triple_index),
         doc_id=doc.celex,
         annotator=model_name,
         guideline_version=guideline_version,
-        subject=raw["subject"],
-        predicate=raw["predicate"],
-        object=raw["object"],
-        natural_language=raw["natural_language"],
-        condition=raw.get("condition", ""),
-        temporal_context=raw.get("temporal_context", ""),
+        subject=triple["subject"],
+        predicate=triple["predicate"],
+        object=triple["object"],
+        natural_language=natural_language,
+        condition=triple.get("condition", ""),
+        temporal_context=triple.get("temporal_context", ""),
         source_locator=locator,
+        group_id=group_id,
+        logic_group=logic_group,
+        logic_op=logic_op,
         extra={
-            "anchor_score": score,
-            "model_quote": raw["source_quote"],
+            "anchor_score": anchor_score,
+            "model_quote": source_quote,
+            "triple_index": triple_index,
         },
     )
 
@@ -451,29 +532,42 @@ def _extract_one_section(model_name: str,
                 f"Ollama request failed on section {section.section_path}: {exc}"
             ) from exc
 
-        # Success path — build AtomicFact objects.
+        # Success path — anchor each GROUP's quote once, then build one
+        # AtomicFact per SPO triple in the group (shared locator + group_id).
         facts: list[AtomicFact] = []
-        for i, raw_fact in enumerate(cleaned):
-            try:
-                f = _build_atomic_fact(
-                    raw_fact,
-                    model_name=model_name,
-                    doc=doc,
-                    guideline_version=guideline_version,
-                    section=section,
-                    index=i,
-                )
-            except ValidationError as exc:
+        for gi, group in enumerate(cleaned):
+            cs, ce, score, matched = _recover_offsets(group["source_quote"], section)
+            if cs < 0:
                 logger.warning(
-                    "Skipping fact %d in %s: %s",
-                    i, section.section_path, exc,
+                    "Dropped group (quote not located in %s, fuzzy score=%.1f): %r",
+                    section.section_path, score, group["source_quote"][:80],
                 )
                 continue
-            if f is not None:
+            locator = ProseLocator(
+                section_path=section.section_path,
+                char_start=cs, char_end=ce, quote=matched,
+            )
+            gid = _group_id(model_name, doc.celex, section.section_path, gi)
+            for ti, triple in enumerate(group["triples"]):
+                try:
+                    f = _build_atomic_fact(
+                        triple,
+                        model_name=model_name, doc=doc,
+                        guideline_version=guideline_version, section=section,
+                        locator=locator, natural_language=group["natural_language"],
+                        source_quote=group["source_quote"], anchor_score=score,
+                        group_id=gid, group_index=gi, triple_index=ti,
+                        logic_group=group.get("logic_group", ""),
+                        logic_op=group.get("logic_op", ""),
+                    )
+                except ValidationError as exc:
+                    logger.warning("Skipping triple %d.%d in %s: %s",
+                                   gi, ti, section.section_path, exc)
+                    continue
                 facts.append(f)
         logger.info(
-            "[%s] %s — %d facts extracted (attempt %d).",
-            model_name, section.section_path, len(facts), attempt + 1,
+            "[%s] %s — %d facts from %d group(s) (attempt %d).",
+            model_name, section.section_path, len(facts), len(cleaned), attempt + 1,
         )
         return facts
 
@@ -489,7 +583,8 @@ def extract(model_name: str,
             *,
             guideline_version: str = "v1",
             base_url: str = DEFAULT_BASE_URL,
-            retries: int = 2,
+            retries: int = 1,  # fail-fast: a section that can't yield valid JSON
+                               # should not loop (v4 + dense sections on 6GB GPU).
             ensure_solo: bool = True,
             unload_after: bool = False,
             prompt_path: Path | None = None,

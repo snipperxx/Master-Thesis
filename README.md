@@ -55,7 +55,7 @@ Then download the models:
 ```bash
 ollama pull qwen3.5:4b
 ollama pull gemma3:4b
-ollama pull phi4-mini
+ollama pull nemotron-3-nano:4b
 ```
 
 Now you can start extraction from the web UI — open the **Background runs** tab at the bottom of the page. (On a 6 GB GPU the models can't all run at once, so each document takes a few minutes.) The command-line steps are in [`doc/docker.md`](doc/docker.md).

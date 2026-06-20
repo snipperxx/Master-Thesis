@@ -51,6 +51,11 @@ class Layer1Config:
 
 _NUMBER_RE = re.compile(r"\d+[,.]?\d*")
 _WORD_RE = re.compile(r"[A-Za-z]+")
+# Legal-citation "No" — "Regulation (EEC) No 584/75", "No. 1418/76" — must NOT
+# be read as the negation "no". Without this scrub, every fact that cites a
+# regulation number trips the polarity-asymmetry escalation (observed on
+# train-000014: gemma "security is ECU 20" vs phi4 "... No 584/75 shall be ...").
+_CITATION_NO_RE = re.compile(r"\bno\.?\s*\d", re.IGNORECASE)
 
 
 def _char_trigram_jaccard(a: str, b: str) -> float:
@@ -75,7 +80,8 @@ def _numbers(s: str) -> list[str]:
 
 
 def _polarity_tokens(s: str, markers: tuple[str, ...]) -> set[str]:
-    return {w.lower() for w in _WORD_RE.findall(s or "") if w.lower() in markers}
+    s = _CITATION_NO_RE.sub(" ", s or "")
+    return {w.lower() for w in _WORD_RE.findall(s) if w.lower() in markers}
 
 
 def _so_text(fact: dict) -> str:

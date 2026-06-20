@@ -324,6 +324,53 @@ not crashes, so verify by reading.
 
 ---
 
+### Session 2026-06-15 — Reified statement-node KG + in-UI Neo4j conflict detection
+
+Added a **reified** rendering of the live KG that mirrors the Neo4j `:Fact`
+model, plus an interface to run custom conflict-detection rules against Neo4j
+from the UI. (User chose: do the reification first, full statement-node
+reconstruction.) Details also in memory `reference_reified_kg.md`.
+
+- `src/kg_build.build_reified_graph()` — new SIBLING of the (unchanged) flat
+  `build_graph`, which still backs the Multiples tab + `tests/test_kg_build.py`.
+  Emits `type:"entity"` and `type:"statement"` nodes; a statement is keyed on
+  **(subject, predicate, object, condition, temporal)** so same-S-P-O facts with
+  different conditions stay SEPARATE nodes (`scope_variant`) instead of
+  collapsing into one edge. Edge `role`s: subject / object / condition (dashed)
+  / temporal (dotted); a condition-or-temporal-only entity is promoted into the
+  graph (`ref_only`). Conflict label lives on the statement node.
+- `GET /api/graph/<doc>?reify=1` → reified graph; cached separately as
+  `data/graphs/<doc>[__v]__reified.json` (never clobbers the flat cache the
+  Multiples tab uses). Front-end (`ui/static/app.js`, `app.css`, `index.html`):
+  `#cy-reify` toggle in graph-settings (default ON); statement nodes = indigo
+  round-rectangles; `selectFact` / tap / hover / island-filter branch on
+  `state.graph.reified`. Click-a-fact lights its statement node + subject(blue)
+  / object(red) + source spans.
+- **Neo4j custom conflict detection** (proposal's "interactive graph
+  constraints / patching"): `src/neo4j_constraints.py` — `BUILTIN_CONSTRAINTS`
+  (conditional_scope, cardinality, predicate_mismatch, materialize variant,
+  custom) + `validate_cypher` gatekeeper (DELETE/DETACH/REMOVE/DROP/`CALL db.*`
+  always blocked; MERGE/SET only when `mode=materialize`). Endpoints
+  `/api/neo4j/{status,constraints,export/<doc>,constraint}`. UI: append-only
+  IIFE `ui/static/neo4j.js` → "Neo4j" drawer tab. Plus
+  `cypher/30_custom_constraint.cypher` and `tests/test_neo4j_constraints.py`.
+- **Side fix:** facts panel no longer shows a false "No facts on disk" banner
+  over rendered conflict-doc facts (`updateEmptyCTA` now also checks
+  `#facts-table .fact-item`).
+- **Verified live 2026-06-15** (Chrome + user's Neo4j @ `bolt://neo4j:7687`,
+  docker-compose): reified graph renders & interacts; export pushed 89 :Fact /
+  42 :Entity / 89 subject+object edges / 72 ALIGNED_WITH; `predicate_mismatch`
+  returned **53 real inter-annotator conflicts**. Tests: 47 pass (incl. 9 new);
+  1 pre-existing unrelated failure (`test_review_store` guideline-wording drift).
+- **Caveat:** condition/temporal *edges* only appear on data that populates the
+  `condition`/`temporal_context` fields (real v2 extractions); synthetic
+  `train-000000` has none, so only statement nodes + subject/object edges show.
+- **Tooling lesson (recorded in memory):** the `Edit`/`Write` tools silently
+  truncate large files on this Windows mount — `ui/app.py` lost its tail and was
+  restored via bash; ALL big-file edits (`app.py`, `app.js`, `app.css`,
+  `index.html`) now go through `bash python3 ... write_text`, verified with
+  `node --check` / `ast.parse(..., encoding="utf-8")`.
+
 ## 5. Roadmap by Phase
 
 ### Phase 1 — Data Pipeline & Extraction (1 Jun – 15 Jul)
@@ -662,6 +709,10 @@ sanity-check counts against the live document on `eur-lex.europa.eu`.
 ## 9. Handoff Pointer — for the next conversation window
 
 If you're a new conversation (or a different AI) reading this:
+
+> **⚡ LATEST (2026-06-16):** **v4 guideline rewrite lifted extraction coverage.** Rewrote `prompts/extract_v4.md` from the old "conservative, drop-if-unsure" stance to a **Coverage mandate** (process clause-by-clause; every clause = at least one fact; completeness over brevity) plus rule 12 (disjunction "either A or B" -> one fact per branch) and rule 13 (qualifier/exception/cross-ref clause -> its own fact). Schema unchanged, so no code change for the prompt. On **doc14 / gemma3:4b**: char coverage **35.6% -> 82.4%**, facts **14 -> 49**, Article-7 either/or now SPLITS into branch facts ("the Commission may fix -> a maximum export refund" / "may not take any action -> on the tenders") instead of one giant node (issue-3 win at the prompt level), and anchoring stays perfect (0 offset errors, min score 100). **IMPORTANT decomposition (for the thesis narrative):** the guideline only fixed *within-section recall* (enacting text 59% -> 92%). The bigger ~40% gap was the **entire preamble never being extracted** — a PARSER bug (this 1996 act has unnumbered "Whereas..." recitals, so 0 recitals were parsed and `enumerate_sections` never sent the preamble). That was fixed separately: `src/eurlex_parse.py` Whereas-fallback + a `data/parsed/train-000014.json` recital patch (preamble 0% -> 67%). So: do NOT attribute all coverage loss to the guideline — structural gaps live in parsing. Also note the last full Phase-2 ran with **layer2=STUB** (granularity labels meaningless; re-run with `skip_layer2=false` for real qwen). Env gotchas this session: docker `--debug` reloader restarts the app (and KILLS running jobs) on any `.py` save; the Edit/Write tools TRUNCATE files on the mount (corrupted eurlex_parse.py once) -> use bash for code edits. Full detail in memory `project_v4_coverage_work_2026_06_16.md`. **Next:** finish phi4/qwen v4 run + visual coverage check on site; real-qwen Phase-2; KG predicate-normalization (Zilong to decide merge aggressiveness); schema logic layer (deeper issue-3).
+>
+> **⚡ PREVIOUS (2026-06-15):** Reified statement-node KG + in-UI Neo4j custom conflict detection are built and verified live (see the dated §4 subsection; memory `reference_reified_kg.md`). `/api/graph?reify=1`, `#cy-reify` toggle, `src/neo4j_constraints.py` + "Neo4j" drawer tab. Verified on the user's live Neo4j (export 89 :Fact; predicate_mismatch=53). **Next concrete action:** the TEXT-VIEW coverage bug — facts whose `source_quote` offsets are null or whose `section_path` doesn't match a rendered container get NO highlight in the document pane (`renderText` skips them). The 2026-05-24 handoff below is older history.
 
 1. **Read these three files first**, in order:
    - `PROJECT_STATE.md` (this file) — full context

@@ -48,15 +48,28 @@ _SEVERITY = {
 # ---------------------------------------------------------------------------
 
 
-def _norm_predicate(pred: str) -> str:
-    """Cheap predicate normalisation — strip determiners, lowercase.
+# Leading function words stripped before edge-keying so surface/modal variants
+# of the SAME relation collapse to one edge instead of N parallel edges
+# ("may fix"/"fix"/"shall fix", "shall be determined"/"is determined"). Only
+# LEADING words are removed — trailing prepositions carry meaning, so
+# "are held by" vs "are held" stay distinct. Tunable: edit this set.
+_PRED_STOP_LEAD = {
+    "shall", "must", "may", "should", "will", "would", "can", "could",
+    "is", "are", "be", "been", "being", "was", "were", "am",
+    "has", "have", "had", "does", "do", "did",
+    "hereby", "to", "the", "a", "an",
+}
 
-    Phase-3 entity resolution does the heavy lifting on nodes; here we
-    just want "issued" and "issued" not "issued" vs "Issued ". A more
-    aggressive predicate merge (e.g. lemmatisation) belongs in a later
-    iteration with proper evaluation.
-    """
-    return " ".join((pred or "").lower().split())
+
+def _norm_predicate(pred: str) -> str:
+    """Normalise a predicate for edge-keying. Lowercases, collapses whitespace,
+    and strips LEADING modals/auxiliaries/determiners so "may fix" and "fix"
+    key to the same edge. Keeps >=1 token. Conservative on purpose — a fuller
+    lemmatiser belongs in a later iteration with proper evaluation."""
+    toks = (pred or "").lower().split()
+    while len(toks) > 1 and toks[0] in _PRED_STOP_LEAD:
+        toks.pop(0)
+    return " ".join(toks)
 
 
 _COND_RE = re.compile(
@@ -71,6 +84,15 @@ def _strongest_label(labels: Iterable[str]) -> str:
         if sev > best_sev:
             best, best_sev = lbl, sev
     return best
+
+
+def _disp_label(s: str, n: int = 34) -> str:
+    """Truncate a node's display label so a whole-clause surface form (the
+    common small-model failure: a relative/scope clause dumped into the object)
+    doesn't render as a giant unreadable node. Full text stays in
+    data.full_label / data.surface_forms for the tooltip."""
+    s = (s or "").strip()
+    return s if len(s) <= n else s[: n - 1].rstrip() + "\u2026"
 
 
 # ---------------------------------------------------------------------------
@@ -134,10 +156,14 @@ def build_graph(conflicts_doc: dict) -> dict:
                     "conflict_labels": set(),
                     "section_paths": set(),
                     "qualifiers": set(),
+                    "group_ids": set(),
                 },
             )
             slot["fact_ids"].add(f["fact_id"])
             slot["annotators"].add(annotator)
+            _gid = (f.get("group_id") or "").strip()
+            if _gid:
+                slot["group_ids"].add(_gid)
             # Wikidata-style: modifiers stripped from S/O (dates, clause tails)
             # belong to the STATEMENT, i.e. this edge — not to the entity node.
             from src.entity_norm import split_entity
@@ -188,7 +214,8 @@ def build_graph(conflicts_doc: dict) -> dict:
             {
                 "data": {
                     "id": cid,
-                    "label": min(info["surface_forms"], key=lambda s: (len(s), s)),
+                    "label": _disp_label(min(info["surface_forms"], key=lambda s: (len(s), s))),
+                    "full_label": min(info["surface_forms"], key=lambda s: (len(s), s)),
                     "surface_forms": sorted(info["surface_forms"]),
                     "annotators": sorted(info["annotators"]),
                     "n_surface": len(info["surface_forms"]),
@@ -210,6 +237,7 @@ def build_graph(conflicts_doc: dict) -> dict:
                     "label": pred,
                     "annotators": sorted(info["annotators"]),
                     "fact_ids": sorted(info["fact_ids"]),
+                    "group_ids": sorted(info.get("group_ids", set()))[:8],
                     "section_paths": sorted(info["section_paths"]),
                     "qualifiers": sorted(info.get("qualifiers", set()))[:6],
                     "conditional": bool(info.get("conditional", False)),
@@ -360,6 +388,7 @@ def build_reified_graph(conflicts_doc: dict) -> dict:
     stmts: dict = {}
     stmt_of_fact: dict = {}
     spo_variants: dict = {}
+    logic_groups: dict = {}   # (annotator, logic_group) -> {stmts:set, ops:{}, annot}
 
     for annot, facts in facts_per_ann.items():
         for f in facts:
@@ -385,7 +414,7 @@ def build_reified_graph(conflicts_doc: dict) -> dict:
                 st = stmts[key] = {
                     "id": key, "s_c": s_c, "o_c": o_c,
                     "predicate": pred, "predicate_norm": pred_norm,
-                    "fact_ids": set(), "annotators": set(),
+                    "fact_ids": set(), "annotators": set(), "group_ids": set(),
                     "conditions": set(), "temporal": set(),
                     "conflict_labels": set(), "section_paths": set(),
                     "natural_language": f.get("natural_language") or "",
@@ -395,6 +424,16 @@ def build_reified_graph(conflicts_doc: dict) -> dict:
                 }
             st["fact_ids"].add(fid)
             st["annotators"].add(annot)
+            _lg = (f.get("logic_group") or "").strip()
+            _lop = (f.get("logic_op") or "").strip().upper()
+            if _lg and _lop in ("AND", "OR", "XOR"):
+                lgslot = logic_groups.setdefault((annot, _lg),
+                                                 {"stmts": set(), "ops": {}, "annot": annot})
+                lgslot["stmts"].add(key)
+                lgslot["ops"][_lop] = lgslot["ops"].get(_lop, 0) + 1
+            _gid = (f.get("group_id") or "").strip()
+            if _gid:
+                st["group_ids"].add(_gid)
             if not st["predicate"] and pred:
                 st["predicate"], st["predicate_norm"] = pred, pred_norm
             if not st["natural_language"]:
@@ -448,6 +487,8 @@ def build_reified_graph(conflicts_doc: dict) -> dict:
             "fact_ids": sorted(st["fact_ids"]),
             "annotators": sorted(st["annotators"]),
             "n_annotators": len(st["annotators"]),
+            "group_ids": sorted(st["group_ids"]),
+            "n_groups": len(st["group_ids"]),
             "conditions": sorted(st["conditions"])[:4],
             "temporal": sorted(st["temporal"])[:4],
             "conditional": bool(st["conditional"]) or bool(st["conditions"]),
@@ -512,7 +553,8 @@ def build_reified_graph(conflicts_doc: dict) -> dict:
         annots = sorted(info["annotators"]) if info else []
         entity_nodes.append({"data": {
             "id": cid, "type": "entity",
-            "label": min(sforms, key=lambda s: (len(s), s)),
+            "label": _disp_label(min(sforms, key=lambda s: (len(s), s))),
+            "full_label": min(sforms, key=lambda s: (len(s), s)),
             "surface_forms": sorted(sforms),
             "annotators": annots,
             "n_surface": len(sforms),
@@ -521,7 +563,34 @@ def build_reified_graph(conflicts_doc: dict) -> dict:
             "conflict_label": node_label_sev.get(cid, "unlabeled"),
         }})
 
-    nodes = entity_nodes + stmt_nodes
+    # ----- logical-operator nodes (AND/OR/XOR among branch statements) -----
+    # Facts the annotator marked as branches of one construction ("either A or
+    # B") share a (annotator, logic_group); render a small operator node joining
+    # their statements so the KG SHOWS the disjunction instead of burying
+    # "A or B" inside one object (the v1-v4 failure).
+    logic_nodes = []
+    for (annot, lg), slot in logic_groups.items():
+        member_keys = {k for k in slot["stmts"] if k in stmts}
+        if len(member_keys) < 2:
+            continue
+        op = max(slot["ops"].items(), key=lambda kv: kv[1])[0] if slot["ops"] else "OR"
+        lid = "lo_" + hashlib.sha1(f"{annot}|{lg}".encode("utf-8")).hexdigest()[:12]
+        mlabels = set()
+        for k in member_keys:
+            mlabels |= stmts[k]["conflict_labels"]
+        logic_nodes.append({"data": {
+            "id": lid, "type": "logic", "op": op, "label": op,
+            "annotators": [annot], "n_branches": len(member_keys),
+            "conflict_label": _strongest_label(mlabels) if mlabels else "unlabeled",
+        }})
+        for k in member_keys:
+            edges.append({"data": {
+                "id": f"loe_{lid}_{k}", "source": lid, "target": k,
+                "role": "branch", "label": "", "op": op,
+                "annotators": [annot], "conflict_label": "unlabeled",
+            }})
+
+    nodes = entity_nodes + stmt_nodes + logic_nodes
     return {
         "doc_id": conflicts_doc["doc_id"],
         "params": conflicts_doc.get("params", {}),
@@ -532,6 +601,7 @@ def build_reified_graph(conflicts_doc: dict) -> dict:
             "n_nodes": len(nodes),
             "n_entities": len(entity_nodes),
             "n_statements": len(stmt_nodes),
+            "n_logic": len(logic_nodes),
             "n_edges": len(edges),
             "edge_label_counts": _count_by_label(stmt_nodes),
         },

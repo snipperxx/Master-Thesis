@@ -69,7 +69,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(me
 DEFAULT_DOC_LIST = ROOT / "data" / "doc_lists" / "phase1_short.json"
 DEFAULT_MANIFEST = ROOT / "data" / "facts" / "manifest.json"
 DEFAULT_FACTS_ROOT = ROOT / "data" / "facts"
-DEFAULT_MODELS = ("qwen3.5:4b", "gemma3:4b", "phi4-mini")
+DEFAULT_MODELS = ("qwen3.5:4b", "gemma3:4b", "nemotron-3-nano:4b")
 
 # ---------------------------------------------------------------------------
 # Manifest helpers

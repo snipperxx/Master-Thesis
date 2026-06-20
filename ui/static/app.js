@@ -216,7 +216,7 @@ async function boot() {
   $("#modal-overlay").addEventListener("click", (e) => { if (e.target.id === "modal-overlay") closeAllModals(); });
   $("#compare-overlay").addEventListener("click", (e) => { if (e.target.id === "compare-overlay") closeAllModals(); });
 
-  $("#guideline-save").addEventListener("click", saveGuideline);
+  $("#guideline-save")?.addEventListener("click", saveGuideline);
   $("#export-json").addEventListener("click", () => exportFacts("json"));
   $("#export-csv").addEventListener("click", () => exportFacts("csv"));
 
@@ -399,49 +399,100 @@ function visibleFacts() {
   return out;
 }
 
+function _makeFactItem(f) {
+  const conflict = f._edge_conflict_label || "unlabeled";
+  const item = document.createElement("div");
+  item.className = `fact-item conf-${conflict}`;
+  item.dataset.factId = f.fact_id;
+  const vstat = f._verification?.status || "";
+  const vmark = vstat === "verified" ? "✓" : vstat === "rejected" ? "✗" : "?";
+  const cond = f.condition ? `<span class="f-cond" title="condition">if ${escapeHtml(f.condition)}</span>` : "";
+  const temp = f.temporal_context ? `<span class="f-temp" title="temporal order">⏱ ${escapeHtml(f.temporal_context)}</span>` : "";
+  const sec = (f.source_locator || {}).section_path || "";
+  item.innerHTML = `
+    <button class="verify-btn ${vstat}" data-fact-id="${f.fact_id}">${vmark}</button>
+    <div class="fact-body">
+      <div class="fact-nl">${escapeHtml(f.natural_language || `${f.subject || ""} ${f.predicate || ""} ${f.object || ""}`)}${cond}${temp}</div>
+      <div class="fact-spo"><span class="f-subj">${escapeHtml(f.subject || "")}</span> <span class="f-pred">${escapeHtml(f.predicate || "")}</span> <span class="f-obj">${escapeHtml(f.object || "")}</span><span class="f-sec">${escapeHtml(sec)}</span></div>
+    </div>`;
+  item.addEventListener("click", (e) => {
+    if (e.target.classList.contains("verify-btn")) return;
+    selectFact(f.fact_id);
+  });
+  return item;
+}
+
+function _sectionLabel(path) {
+  if (!path || path === "(no section)") return path;
+  const m1 = path.match(/^preamble\.recitals\[(\d+)\]$/);
+  if (m1) return "Recital " + (+m1[1] + 1);
+  const m2 = path.match(/^enacting\.article_(.+)$/);
+  if (m2) return "Article " + m2[1];
+  return path;
+}
+
 function renderFacts() {
   const container = $("#facts-table");
   container.innerHTML = "";
   const visible = visibleFacts();
   $("#facts-count").textContent = `${visible.length} visible / ${state.factsById.size} total`;
 
-  // Poster layout: one readable block per annotator (model).
-  const groups = new Map();
-  for (const f of visible) {
-    if (!groups.has(f._annotator)) groups.set(f._annotator, []);
-    groups.get(f._annotator).push(f);
-  }
-  for (const [annot, facts] of groups) {
-    const grp = document.createElement("div");
-    grp.className = "fact-group";
-    grp.dataset.annotator = annot;
-    const head = document.createElement("div");
-    head.className = "fact-group-head";
-    head.textContent = `${annot} — ${facts.length} facts`;
-    grp.appendChild(head);
-    for (const f of facts) {
-      const conflict = f._edge_conflict_label || "unlabeled";
-      const item = document.createElement("div");
-      item.className = `fact-item conf-${conflict}`;
-      item.dataset.factId = f.fact_id;
-      const vstat = f._verification?.status || "";
-      const vmark = vstat === "verified" ? "✓" : vstat === "rejected" ? "✗" : "?";
-      const cond = f.condition ? `<span class="f-cond" title="condition">if ${escapeHtml(f.condition)}</span>` : "";
-      const temp = f.temporal_context ? `<span class="f-temp" title="temporal order">⏱ ${escapeHtml(f.temporal_context)}</span>` : "";
-      const sec = (f.source_locator || {}).section_path || "";
-      item.innerHTML = `
-        <button class="verify-btn ${vstat}" data-fact-id="${f.fact_id}">${vmark}</button>
-        <div class="fact-body">
-          <div class="fact-nl">${escapeHtml(f.natural_language || `${f.subject || ""} ${f.predicate || ""} ${f.object || ""}`)}${cond}${temp}</div>
-          <div class="fact-spo"><span class="f-subj">${escapeHtml(f.subject || "")}</span> <span class="f-pred">${escapeHtml(f.predicate || "")}</span> <span class="f-obj">${escapeHtml(f.object || "")}</span><span class="f-sec">${escapeHtml(sec)}</span></div>
-        </div>`;
-      item.addEventListener("click", (e) => {
-        if (e.target.classList.contains("verify-btn")) return;
-        selectFact(f.fact_id);
-      });
-      grp.appendChild(item);
+  const sortMode = document.getElementById("facts-sort")?.value || "model";
+
+  if (sortMode === "paragraph") {
+    // Group by section_path in document order
+    const sectionOrder = [];
+    const sectionFacts = new Map(); // section_path → Map<annotator → fact[]>
+    for (const f of visible) {
+      const sec = (f.source_locator || {}).section_path || "(no section)";
+      if (!sectionFacts.has(sec)) { sectionFacts.set(sec, new Map()); sectionOrder.push(sec); }
+      const byAnnot = sectionFacts.get(sec);
+      if (!byAnnot.has(f._annotator)) byAnnot.set(f._annotator, []);
+      byAnnot.get(f._annotator).push(f);
     }
-    container.appendChild(grp);
+    // Sort in document order: preamble before enacting, then numerically
+    sectionOrder.sort((a, b) => {
+      const aPre = a.startsWith("preamble"), bPre = b.startsWith("preamble");
+      if (aPre !== bPre) return aPre ? -1 : 1;
+      const na = parseInt(a.match(/\d+/)?.[0] ?? "0");
+      const nb = parseInt(b.match(/\d+/)?.[0] ?? "0");
+      return na - nb;
+    });
+    for (const sec of sectionOrder) {
+      const secDiv = document.createElement("div");
+      secDiv.className = "fact-group fact-group-section";
+      const secHead = document.createElement("div");
+      secHead.className = "fact-section-head";
+      secHead.textContent = _sectionLabel(sec);
+      secDiv.appendChild(secHead);
+      const byAnnot = sectionFacts.get(sec);
+      for (const [annot, facts] of byAnnot) {
+        const annotHead = document.createElement("div");
+        annotHead.className = "fact-annotator-head";
+        annotHead.textContent = `${annot} (${facts.length})`;
+        secDiv.appendChild(annotHead);
+        for (const f of facts) secDiv.appendChild(_makeFactItem(f));
+      }
+      container.appendChild(secDiv);
+    }
+  } else {
+    // Original by-model layout
+    const groups = new Map();
+    for (const f of visible) {
+      if (!groups.has(f._annotator)) groups.set(f._annotator, []);
+      groups.get(f._annotator).push(f);
+    }
+    for (const [annot, facts] of groups) {
+      const grp = document.createElement("div");
+      grp.className = "fact-group";
+      grp.dataset.annotator = annot;
+      const head = document.createElement("div");
+      head.className = "fact-group-head";
+      head.textContent = `${annot} — ${facts.length} facts`;
+      grp.appendChild(head);
+      for (const f of facts) grp.appendChild(_makeFactItem(f));
+      container.appendChild(grp);
+    }
   }
   for (const btn of container.querySelectorAll(".verify-btn")) {
     btn.addEventListener("click", (e) => cycleVerify(e.target));
@@ -1185,6 +1236,9 @@ function escapeHtml(s) {
     .replaceAll('"', "&quot;").replaceAll("'", "&#39;");
 }
 
+// Expose for cross-IIFE access (initPhase5 needs to trigger re-render)
+window._refreshFacts = () => refreshFacts();
+
 boot();
 })();
 
@@ -1226,8 +1280,9 @@ function initPhase5() {
       const key = tab.dataset.tab;
       $$("#drawer-tabs .tab").forEach(t => t.classList.toggle("active", t === tab));
       $$(".tab-pane").forEach(p => p.classList.toggle("active", p.dataset.tab === key));
-      if (key === "guideline-manager") loadGuidelinesList();
       if (key === "run-matrix") renderRunMatrix();
+      if (key === "annotation") { window._svLoad?.(); loadGuidelinesList(); }
+      if (key === "arbitrate-manager") window._amLoad?.();
     });
   }
 
@@ -1244,9 +1299,13 @@ function initPhase5() {
   $("#span-cancel")?.addEventListener("click", hideSpanMenu);
   $("#span-reextract")?.addEventListener("click", submitSpanReextract);
 
-  // Guideline manager
+  // Facts sort dropdown
+  document.getElementById("facts-sort")?.addEventListener("change", () => window._refreshFacts?.());
+
+  // Guideline manager (Annotation tab — right panel)
   $("#gm-load")?.addEventListener("click", gmLoad);
   $("#gm-save")?.addEventListener("click", gmSave);
+  $("#gm-delete")?.addEventListener("click", gmDelete);
 
   // Run matrix
   $("#rm-add-combo")?.addEventListener("click", addMatrixCombo);
@@ -1451,9 +1510,27 @@ async function gmSave() {
   }
 }
 
+async function gmDelete() {
+  const version = $("#gm-select")?.value || "";
+  if (!version || version === "v1") { alert("v1 is the baseline guideline and cannot be deleted."); return; }
+  if (!confirm(`Delete extract_${version}.md? This cannot be undone.`)) return;
+  try {
+    const r = await fetch(`/api/guidelines/${encodeURIComponent(version)}`,
+      { method: "DELETE" });
+    if (!r.ok) { _setInlineStatus("#gm-status", "delete failed: " + r.status, "err"); return; }
+    await loadGuidelinesList();
+    const ta = $("#gm-text"); if (ta) ta.value = "";
+    _setInlineStatus("#gm-status", `deleted extract_${version}.md`, "ok");
+  } catch(e) { _setInlineStatus("#gm-status", "error: " + e.message, "err"); }
+}
+
 // ----------------------------------------------------------
 // Run matrix
 // ----------------------------------------------------------
+function _rmSelectedModels() {
+  return [...$$('.rm-model-checks input[type="checkbox"]:checked')].map(el => el.value);
+}
+
 async function renderRunMatrix() {
   // Fetch docs, guidelines, matrix status
   const [docs, gl, status] = await Promise.all([
@@ -1465,8 +1542,8 @@ async function renderRunMatrix() {
   ext.guidelines = gl.guidelines || [];
   ext.matrixStatus = status || {};
   if (!ext.matrixCols.length) {
-    // Default columns: every model × every guideline. The user can prune.
-    const models = ($("#rm-models").value || "").split(",").map(s => s.trim()).filter(Boolean);
+    // Default columns: every checked model × every guideline.
+    const models = _rmSelectedModels();
     ext.matrixCols = [];
     for (const m of models) for (const g of ext.guidelines) {
       ext.matrixCols.push({ model: m, guideline: g.version });
@@ -1510,7 +1587,7 @@ function drawMatrix() {
 }
 
 function addMatrixCombo() {
-  const models = ($("#rm-models").value || "").split(",").map(s => s.trim()).filter(Boolean);
+  const models = _rmSelectedModels();
   ext.matrixCols = [];
   for (const m of models) for (const g of ext.guidelines) {
     ext.matrixCols.push({ model: m, guideline: g.version });
@@ -1519,6 +1596,7 @@ function addMatrixCombo() {
 }
 
 async function submitMatrix() {
+  const phase = (document.querySelector('input[name="rm-phase"]:checked')?.value) || "phase1";
   const checks = $$('#rm-matrix-wrap input[type="checkbox"]:checked');
   const cells = [...checks].map(el => ({
     doc_id: el.dataset.doc,
@@ -1527,18 +1605,33 @@ async function submitMatrix() {
   }));
   const status = $("#rm-status");
   if (!cells.length) { status.textContent = "select at least one cell"; status.className = "err"; return; }
-  status.textContent = `queueing ${cells.length} cells…`; status.className = "";
+  status.textContent = `queueing ${cells.length} cells (${phase})…`; status.className = "";
   try {
-    const r = await fetch("/api/run_matrix", {
-      method: "POST", headers: {"Content-Type":"application/json"},
-      body: JSON.stringify({ cells }),
-    });
-    if (!r.ok) { status.textContent = `failed: HTTP ${r.status}`; status.className = "err"; return; }
-    const data = await r.json();
-    const ok = data.jobs.filter(j => j.job_id).length;
-    const err = data.jobs.length - ok;
-    status.textContent = `queued ${ok} jobs (${err} skipped/errored)`;
-    status.className = ok ? "ok" : "err";
+    if (phase === "phase2") {
+      // Phase-2: group by (doc_id × guideline_version), one job per unique pair
+      const pairs = [...new Map(cells.map(c => [`${c.doc_id}|${c.guideline_version}`, c])).values()];
+      let ok = 0, err = 0;
+      for (const c of pairs) {
+        const r = await fetch("/api/run_phase2", {
+          method: "POST", headers: {"Content-Type":"application/json"},
+          body: JSON.stringify({ version: c.guideline_version, doc_ids: [c.doc_id], skip_layer2: true }),
+        });
+        if (r.ok) ok++; else err++;
+      }
+      status.textContent = `queued ${ok} Phase-2 jobs (${err} errored)`;
+      status.className = ok ? "ok" : "err";
+    } else {
+      const r = await fetch("/api/run_matrix", {
+        method: "POST", headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({ cells }),
+      });
+      if (!r.ok) { status.textContent = `failed: HTTP ${r.status}`; status.className = "err"; return; }
+      const data = await r.json();
+      const ok = data.jobs.filter(j => j.job_id).length;
+      const err = data.jobs.length - ok;
+      status.textContent = `queued ${ok} Phase-1 jobs (${err} skipped/errored)`;
+      status.className = ok ? "ok" : "err";
+    }
   } catch (e) {
     status.textContent = `failed: ${e.message}`; status.className = "err";
   }
@@ -1619,16 +1712,143 @@ function initLiveJobs() {
   // Start polling on a 2-second cadence regardless of panel visibility
   // (so a new job auto-opens the panel). Stop only when no in-flight jobs.
   startPolling();
+
+  // Schema viewer (Annotation tab — left panel) + Arbitrate manager tab listeners
+  $("#sv-load")?.addEventListener("click", svLoad);
+  $("#sv-save")?.addEventListener("click", svSave);
+  $("#sv-delete")?.addEventListener("click", svDelete);
+  $("#am-load")?.addEventListener("click", amLoad);
+  $("#am-save")?.addEventListener("click", amSave);
+  $("#am-delete")?.addEventListener("click", amDelete);
+  // Expose for cross-IIFE tab-switch auto-load
+  window._svLoad = svLoad;
+  window._amLoad = amLoad;
+}
+
+// ---------------------------------------------------------------------------
+// Schema viewer tab
+// ---------------------------------------------------------------------------
+
+async function svLoad() {
+  const version = $("#sv-select")?.value || "v1";
+  try {
+    const r = await fetch(`/api/schema_prompt?version=${encodeURIComponent(version)}`);
+    if (!r.ok) { _setInlineStatus("#sv-status", "load failed: " + r.status, "err"); return; }
+    const d = await r.json();
+    const ta = $("#sv-text"); if (ta) ta.value = d.text || "";
+    _setInlineStatus("#sv-status", `loaded ${d.filename}`, "ok");
+  } catch(e) { _setInlineStatus("#sv-status", "error: " + e.message, "err"); }
+}
+
+async function svSave() {
+  const version = ($("#sv-new-version")?.value || "").trim() || $("#sv-select")?.value || "v1";
+  const text = $("#sv-text")?.value || "";
+  try {
+    const r = await fetch(`/api/schema_prompt?version=${encodeURIComponent(version)}`,
+      { method: "PUT", headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({text}) });
+    if (!r.ok) { _setInlineStatus("#sv-status", "save failed: " + r.status, "err"); return; }
+    await populateP1Guidelines();
+    const sel = $("#sv-select"); if (sel) sel.value = version;
+    _setInlineStatus("#sv-status", `saved schema_${version}.md`, "ok");
+  } catch(e) { _setInlineStatus("#sv-status", "error: " + e.message, "err"); }
+}
+
+async function svDelete() {
+  const version = $("#sv-select")?.value || "";
+  if (!version || version === "v1") { alert("v1 is protected and cannot be deleted."); return; }
+  if (!confirm(`Delete schema_${version}.md? This cannot be undone.`)) return;
+  try {
+    const r = await fetch(`/api/schema_prompt?version=${encodeURIComponent(version)}`,
+      { method: "DELETE" });
+    if (!r.ok) { _setInlineStatus("#sv-status", "delete failed: " + r.status, "err"); return; }
+    await populateP1Guidelines();
+    const ta = $("#sv-text"); if (ta) ta.value = "";
+    _setInlineStatus("#sv-status", `deleted schema_${version}.md`, "ok");
+  } catch(e) { _setInlineStatus("#sv-status", "error: " + e.message, "err"); }
+}
+
+// ---------------------------------------------------------------------------
+// Arbitrate manager tab
+// ---------------------------------------------------------------------------
+
+async function amLoad() {
+  const version = $("#am-select")?.value || "v1";
+  try {
+    const r = await fetch(`/api/arbitrate_prompt?version=${encodeURIComponent(version)}`);
+    if (!r.ok) { _setInlineStatus("#am-status", "load failed: " + r.status, "err"); return; }
+    const d = await r.json();
+    const ta = $("#am-text"); if (ta) ta.value = d.text || "";
+    _setInlineStatus("#am-status", `loaded ${d.filename}`, "ok");
+  } catch(e) { _setInlineStatus("#am-status", "error: " + e.message, "err"); }
+}
+
+async function amSave() {
+  const newVer = ($("#am-new-version")?.value || "").trim();
+  const version = newVer || $("#am-select")?.value || "v1";
+  const text = $("#am-text")?.value || "";
+  try {
+    const r = await fetch(`/api/arbitrate_prompt?version=${encodeURIComponent(version)}`,
+      { method: "PUT", headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({text}) });
+    if (!r.ok) { _setInlineStatus("#am-status", "save failed: " + r.status, "err"); return; }
+    await populateP1Guidelines();
+    const sel = $("#am-select"); if (sel) sel.value = version;
+    _setInlineStatus("#am-status", `saved arbitrate_${version}.md`, "ok");
+  } catch(e) { _setInlineStatus("#am-status", "error: " + e.message, "err"); }
+}
+
+async function amDelete() {
+  const version = $("#am-select")?.value || "";
+  if (!version || version === "v1") { alert("v1 is protected and cannot be deleted."); return; }
+  if (!confirm(`Delete arbitrate_${version}.md? This cannot be undone.`)) return;
+  try {
+    const r = await fetch(`/api/arbitrate_prompt?version=${encodeURIComponent(version)}`,
+      { method: "DELETE" });
+    if (!r.ok) { _setInlineStatus("#am-status", "delete failed: " + r.status, "err"); return; }
+    await populateP1Guidelines();
+    _setInlineStatus("#am-status", `deleted arbitrate_${version}.md`, "ok");
+    const ta = $("#am-text"); if (ta) ta.value = "";
+  } catch(e) { _setInlineStatus("#am-status", "error: " + e.message, "err"); }
 }
 
 async function populateP1Guidelines() {
   try {
     const data = await fetch("/api/guidelines").then(r => r.json());
-    for (const id of ["#p1-guideline", "#p2-guideline"]) {
+    for (const id of ["#p1-guideline", "#p2-guideline", "#gm-select"]) {
       const sel = $(id);
       if (!sel) continue;
       sel.innerHTML = "";
       for (const g of data.guidelines || []) {
+        const opt = document.createElement("option");
+        opt.value = g.version; opt.textContent = g.version;
+        sel.appendChild(opt);
+      }
+      sel.value = "v1";
+    }
+  } catch {}
+  // Populate arbitrate version selects
+  try {
+    const data = await fetch("/api/arbitrate_prompts").then(r => r.json());
+    for (const id of ["#p2-arbitrate-version", "#am-select"]) {
+      const sel = $(id);
+      if (!sel) continue;
+      sel.innerHTML = "";
+      for (const g of data.arbitrate_prompts || []) {
+        const opt = document.createElement("option");
+        opt.value = g.version; opt.textContent = g.version;
+        sel.appendChild(opt);
+      }
+      sel.value = "v1";
+    }
+  } catch {}
+  // Populate schema version select
+  try {
+    const data = await fetch("/api/schema_prompts").then(r => r.json());
+    const sel = $("#sv-select");
+    if (sel) {
+      sel.innerHTML = "";
+      for (const g of data.schema_prompts || []) {
         const opt = document.createElement("option");
         opt.value = g.version; opt.textContent = g.version;
         sel.appendChild(opt);
@@ -1819,12 +2039,14 @@ async function runPhase2() {
   const layer2_model = $("#p2-layer2-model").value || "qwen3.5:4b";
   const align_threshold = parseFloat($("#p2-align-threshold").value) || 0.78;
   const version = $("#p2-guideline")?.value || "v1";
-  const body = { skip_layer2, layer2_model, align_threshold, version };
+  const arbitrate_version = $("#p2-arbitrate-version")?.value || "v1";
+  const body = { skip_layer2, layer2_model, align_threshold, version, arbitrate_version };
   const ok = confirm("Phase-2 batch:\n" +
                      "  skip_layer2:     " + skip_layer2 + "\n" +
                      "  layer2_model:    " + layer2_model + "\n" +
                      "  align_threshold: " + align_threshold + "\n" +
-                     "  guideline:       " + version + "\n\n" +
+                     "  guideline:       " + version + "\n" +
+                     "  conflict detect: " + arbitrate_version + "\n\n" +
                      (skip_layer2 ? "Uses the deterministic stub — no LLM needed.\n\n" : "") +
                      "Proceed?");
   if (!ok) return;
@@ -2372,7 +2594,8 @@ async function runPhase2() {
   // ---------- Sort the facts tbody --------------------------------
   function sortTbody() {
     const container = document.querySelector("#facts-table");
-    if (!container || cache.sort === "default") return;
+    // Only handle Phase-5e sort modes; "paragraph" and "default" are left to renderFacts.
+    if (!container || !["alignment", "model", "section"].includes(cache.sort)) return;
     const keyOf = (item) => {
       const f = cache.factById.get(item.dataset.factId);
       if (!f) return "";
@@ -2389,8 +2612,11 @@ async function runPhase2() {
     };
     for (const grp of container.querySelectorAll(".fact-group")) {
       const items = [...grp.querySelectorAll(".fact-item[data-fact-id]")];
-      items.sort((a, b) => keyOf(a).localeCompare(keyOf(b)));
-      items.forEach(it => grp.appendChild(it));
+      const sorted = items.slice().sort((a, b) => keyOf(a).localeCompare(keyOf(b)));
+      // Only touch the DOM if the order actually changed (prevents observer loop).
+      if (sorted.some((el, i) => el !== items[i])) {
+        sorted.forEach(it => grp.appendChild(it));
+      }
     }
   }
 

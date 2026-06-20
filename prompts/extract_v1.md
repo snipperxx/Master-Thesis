@@ -1,110 +1,103 @@
-# Atomic Fact Extraction — Prompt v1
+## Coverage mandate (the primary objective)
 
-You are an expert legal-text annotator. You will receive ONE section of a EUR-Lex
-regulatory document and you will output a single JSON object listing the
-**atomic facts** that section contains.
+Work through the section **clause by clause, left to right**. EVERY clause —
+main, subordinate, relative, conditional, and each branch of a coordination —
+must be represented by at least one fact. Before finishing, re-read the section
+and confirm no clause is left uncovered.
 
-Output STRICT JSON ONLY. No prose, no Markdown, no commentary, no trailing text.
-If the section contains no extractable facts (boilerplate citations, signatures,
-purely procedural closing formulas), return `{"facts": []}`.
+- **One fact per distinct clause or relation.** A compound sentence becomes
+  several facts (one per clause), not one. Aim for complete coverage, not the
+  smallest set. Mild overlap between neighbouring facts is acceptable; do not pad
+  with verbatim duplicates of the same triple.
+- **Cover qualifiers** — geographic scope, exceptions, cross-references, amounts,
+  deadlines, addressees — as their own fact when they carry distinct content.
+- **Skip only:** "Having regard to …" citations, closing formulas
+  ("Done at …", "For the Commission …"), and bare headers ("Article 5"). A
+  "Whereas …" recital is NOT formulaic — cover it.
+- **Hard guards:** `source_quote` stays verbatim; never invent content the text
+  does not state. Coverage = capture everything STATED, never fabricate.
 
-## Output schema
-
-```
-{
-  "facts": [
-    {
-      "subject":          "string — the entity the fact is about",
-      "predicate":        "string — the relation or property",
-      "object":           "string — the value, target, or counterparty",
-      "condition":        "string — logical precondition (if/when/under clause), or empty string if unconditional",
-      "temporal_context": "string — ordering/deadline (after/before/within N days, subsequently), or empty string if none",
-      "natural_language": "string — single sentence restating the fact, self-contained",
-      "source_quote":     "string — verbatim contiguous substring of the section text"
-    }
-  ]
-}
-```
-
-subject, predicate, object, natural_language and source_quote are REQUIRED (non-empty). `condition` and `temporal_context` are optional — use an empty string when not applicable.
-
-## Guideline (v1)
-
-> This block is the editable rule set. Phase-4 will revise it to `v2`; do not
-> change wording here without bumping `guideline_version` in the dispatcher.
+## Guideline (v5)
 
 <guideline>
 
-### 1. Atomicity — one claim per fact
-Split conjunctions ("X **and** Y", "X **as well as** Y") into separate facts.
-Split appositives ("X, which Y") into separate facts. A fact that contains
-the word "and" between two distinct claims is **not** atomic.
+### 1. Atomicity — one claim per TRIPLE, every relation captured
+Split "X and Y" and appositives into separate triples. When one statement
+asserts several relations about the same subject (a date AND a place; a value AND
+a unit AND a year), capture it ONCE in `natural_language`/`source_quote` and emit
+ONE triple per relation. Never drop the relations that do not fit the first
+triple. Triples from genuinely different statements go in DIFFERENT `facts`.
+Example: "Einstein was born on 14 March 1879 in Ulm" → one fact, two triples
+(`born on`→`14 March 1879`, `born in`→`Ulm`).
 
-### 2. Decontextualization — no unresolved references
-Replace every pronoun and demonstrative ("it", "they", "this Decision",
-"the Recommendation", "the Member State concerned") with the named referent
-recoverable from earlier in the section or from the section path. A reader
-who sees only the fact (without the source text) must still understand who or
-what is being talked about.
+### 2. Decontextualization — resolve references
+Replace pronouns/demonstratives ("it", "this Regulation", "the threshold", "the
+deficit") with the named referent from the section, title, or section path. If a
+reference truly cannot be resolved, still emit the fact (coverage) but keep the
+surface form.
 
-### 3. Minimum-sufficient modifiers
-The subject and object must be uniquely identifiable. Attach the smallest
-set of modifiers that disambiguates them: dates ("of 7 June 2005"),
-nationality ("the Netherlands"), legal instrument identifier
-("Article 104(7) of the Treaty"), reporting year ("in 2004"). Do not
-attach modifiers that are not required for disambiguation.
+### 3. Imperative articles specify both ends
+"X is hereby abrogated / shall enter into force / is addressed to Y": the acting
+instrument (this Regulation, the Commission) is the SUBJECT; the affected
+instrument/addressee is the OBJECT. Resolve the implicit subject from the title.
 
-### 4. Verbatim source_quote
-`source_quote` MUST be a contiguous substring of the section text, copied
-exactly as written — preserve casing, punctuation, hyphens, em-dashes,
-non-ASCII characters (`‘ ’ — %`). Pick the **shortest** contiguous span
-that supports the fact. Do not paraphrase the quote; if a verbatim span
-cannot be produced, drop the fact.
+### 4. Conditions/ordering go in their fields — and the branch is still covered
+"if X then Y", "in accordance with X, Y": consequent Y in the triple, precondition
+X in `condition`. "after/before/within N days/prior to X": that phrase in
+`temporal_context`. Keep the whole sentence in `source_quote`. Still emit the
+consequent; if X itself states a checkable state, you may ALSO emit a fact for X.
 
-### 5. Skip purely formulaic text
-Do NOT extract from "Having regard to …" citation paragraphs unless they
-carry a distinct fact (e.g. they assert the year or title of a cited
-instrument). Do NOT extract from closing formulas ("Done at Brussels, …",
-"For the Council, …", "This Decision is addressed to …" when it merely
-restates the addressee already named in the title).
+### 5. Canonical entity surface forms
+Use one surface form per real-world entity throughout the section ("the
+Commission", not also "Commission services"). When two appear, pick the longer/
+more-qualified one. Consistent forms let the KG merge co-referent nodes.
 
-### 6. Conditions and ordering go in their own fields
-If a fact holds only under a precondition ("**if** X", "**when** X", "**provided
-that** X", "**under** X", "**in accordance with** X"): emit **one** fact whose
-subject/predicate/object describe the consequent Y, and put the precondition
-text X in the `condition` field. If the fact carries an order or deadline
-("**after** X", "**before** X", "**within** 30 days", "**subsequently**"): put
-that phrase in the `temporal_context` field. Keep the whole sentence in
-`source_quote` for audit, and do NOT split the antecedent or ordering into a
-separate fact. Leave a field as "" when it does not apply.
+### 6. Minimum-sufficient modifiers on entities
+Subject/object must be uniquely identifiable; attach the smallest disambiguating
+modifier set. Do NOT bury a whole subordinate clause inside one object string —
+push it into its own triple/fact (rule 13).
 
-### 7. Numeric facts always carry unit and temporal reference
-Include the unit and the year/period in the subject or object.
-- Good: subject = `"general government deficit of the Netherlands in 2004"`,
-        predicate = `"is estimated at"`,
-        object = `"2,3 % of GDP"`.
-- Bad: subject = `"deficit"`, object = `"2,3 %"`.
+### 7. Verbatim source_quote
+`source_quote` is a contiguous substring copied exactly (casing, punctuation,
+hyphens, non-ASCII). Pick the shortest span supporting all the fact's triples
+(antecedent clauses extend it). Do not paraphrase.
 
-### 8. References to other legal acts use the canonical short form
-Use the form that appears in EUR-Lex citations:
-`"Council Regulation (EC) No 1467/97 of 7 July 1997"`, not "the Regulation"
-or "Reg. 1467/97". If the section text uses an abbreviated form, expand it
-using context from the section path.
+### 8. Skip ONLY formulaic text
+No facts from "Having regard to …" citations (unless one asserts a distinct fact),
+closing formulas, or bare headers. Everything else — every "Whereas …" recital and
+every operative clause — is covered.
 
-### 9. No hallucination
-If the section text does not support a fact, do not emit it. It is acceptable
-to return `{"facts": []}`. Do not invent dates, percentages, or actors.
+### 9. Numeric facts carry unit and temporal reference
+Put the unit and the year/period in the subject or object. Good: subject
+"general government deficit of the Netherlands in 2004", object "2,3 % of GDP".
+
+### 10. Cite other acts in canonical short form
+"Council Regulation (EEC) No 1418/76 of 21 June 1976", not "the Regulation".
+Expand abbreviated forms from the section path or title.
+
+### 11. No hallucination
+If the text does not support a fact, do not emit it. Coverage means capture every
+relation/clause the text DOES state — not licence to add unstated content.
+
+### 12. Disjunctions & conjunctions — one fact per branch, marked with a logic group
+"either A or B" / "A or B" / "whether to A or to B" / "A and B (both apply)": emit a
+SEPARATE fact for EACH branch. Do NOT pack "A or B" into one object. Give every
+branch fact of the SAME construction the SAME `logic_group` id (a short tag, e.g.
+"g1", unique within this section) and set `logic_op`:
+- `XOR` for exclusive "either A or B" (exactly one),
+- `OR`  for inclusive "A or B" (one or more),
+- `AND` for "A and B" obligations you split but that all hold.
+Example: "the Commission shall decide either to fix a maximum export refund or not
+to take any action" → two facts, BOTH `"logic_group":"g1","logic_op":"XOR"`:
+fact A (`the Commission` `may fix` `a maximum export refund`) and fact B
+(`the Commission` `may take` `no action on the tenders`). Standalone facts leave
+`logic_group` and `logic_op` empty.
+
+### 13. Qualifier clauses become their own facts
+A relative/scope/exception/cross-reference clause gets its OWN fact in addition to
+the main-clause fact — never folded into one giant object. "… opened for the
+refund on rice, for Zones I to VI excluding Guyana, as specified in the Annex to
+Regulation (EEC) No 2145/92" → a fact for the opening, a fact for the zone scope,
+a fact for the exclusion, a fact for the cross-reference.
 
 </guideline>
-
-## Input
-
-Document title: <<DOC_TITLE>>
-Section path: <<SECTION_PATH>>
-
-Section text:
-"""
-<<SECTION_TEXT>>
-"""
-
-Now produce the JSON object. Output JSON only.
