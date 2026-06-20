@@ -1,0 +1,232 @@
+# Atomic Fact Extraction — Prompt v4
+
+You are an expert legal-text annotator. You will receive ONE section of a EUR-Lex
+regulatory document and you will output a single JSON object listing the
+**atomic facts** that section contains.
+
+Output STRICT JSON ONLY. No prose, no Markdown, no commentary, no trailing text.
+Return `{"facts": []}` ONLY for a section that is purely a citation block,
+a signature/closing formula, or a bare structural header — see the Coverage
+mandate below. Almost every other section yields at least one fact.
+
+## Output schema
+
+```
+{
+  "facts": [
+    {
+      "natural_language": "string — one self-contained sentence restating this atomic statement",
+      "source_quote":     "string — verbatim contiguous substring of the section text",
+      "condition":        "string — precondition shared by the triples (if/when/under), or empty string",
+      "temporal_context": "string — ordering/deadline shared by the triples (after/before/within N days), or empty string",
+      "triples": [
+        {
+          "subject":          "string — the entity the relation is about",
+          "predicate":        "string — the relation or property",
+          "object":           "string — the value, target, or counterparty",
+          "condition":        "string — OPTIONAL, overrides the fact-level condition for THIS triple only",
+          "temporal_context": "string — OPTIONAL, overrides the fact-level temporal_context for THIS triple only"
+        }
+      ]
+    }
+  ]
+}
+```
+
+Each `facts` element is ONE atomic statement. `natural_language`, `source_quote`
+and a non-empty `triples` array are REQUIRED. Inside each triple, `subject`,
+`predicate`, `object` are REQUIRED (non-empty); per-triple `condition` /
+`temporal_context` are optional and default to the fact-level values.
+If a relation has no natural object (e.g. an intransitive predicate), set
+`object` to the most informative complement (date, mode, instrument).
+Never write the literal string `"null"` in any field.
+
+## Coverage mandate (READ FIRST — overrides any instinct to be terse)
+
+Your FIRST objective is **total coverage** of the section. Work through the
+section **clause by clause, left to right**. Every sentence, and every
+subordinate / relative / conditional / coordinate clause inside it, MUST be
+represented by at least one fact. Before you stop, re-read the section text and
+confirm that **no clause is left unrepresented**.
+
+- **Completeness beats brevity.** When unsure whether a span is a fact, EMIT it.
+  Overlapping or partially redundant facts are acceptable and expected here —
+  do NOT deduplicate, do NOT skip something because a neighbouring fact already
+  touches it. A long sentence should normally yield MULTIPLE facts.
+- **Split, don't merge.** Prefer turning one sentence into several facts (one per
+  clause / per relation) over packing it into one. Redundancy will be pruned
+  later by a downstream step; under-coverage cannot be recovered later.
+- **Cover every qualifier.** Geographic scope ("for Zones I to VI and Zone VIII
+  excluding Guyana, Madagascar and Suriname"), exceptions ("save for …"),
+  cross-references ("as specified in the Annex to Regulation (EEC) No 2145/92"),
+  amounts, deadlines, and addressees each get captured — as their own fact when
+  they carry distinct content, in addition to the main-clause fact.
+- **The ONLY spans you may leave uncovered:** pure citation lines
+  ("Having regard to …"), signatures / closing formulas ("Done at …",
+  "For the Commission …"), and bare structural headers on their own
+  ("Article 5"). A recital that begins with "Whereas …" is NOT formulaic — it
+  carries facts and must be covered.
+- **Guards that still bind:** `source_quote` stays verbatim (rule 7) and you
+  never invent content the text does not state (rule 11). Coverage means capture
+  everything STATED — never fabricate to fill a gap.
+
+## Guideline (v4)
+
+> Revised from v3. v3's eleven rules are kept; rule 4 and rule 8 are adjusted for
+> the coverage mandate, and rules 12–13 are added so disjunctions and qualifier
+> clauses are not silently dropped. Each rule is annotated with **[fixes …]**.
+> Keep the `<guideline>` tags exactly where they are.
+
+<guideline>
+
+### 1. Atomicity & completeness — one claim per TRIPLE, every relation captured **[fixes: detail loss when one statement packs several relations]**
+Each **triple** states exactly one claim: split "X **and** Y" and appositives
+("X, which Y") into separate triples. But a single source statement frequently
+asserts several relations about the same subject — a date AND a place; a value
+AND a unit AND a year; an act AND its addressee AND its date. Capture the
+statement ONCE in `natural_language` + `source_quote`, and emit ONE triple per
+relation in that fact's `triples` array. Never collapse several relations into
+one triple, and never silently drop the relations that do not fit the first
+triple.
+
+- Source: "Albert Einstein was born on 14 March 1879 in Ulm, in the Kingdom of Wurttemberg."
+- Correct — ONE fact, THREE triples:
+    - `{ "subject": "Albert Einstein", "predicate": "was born on",  "object": "14 March 1879" }`
+    - `{ "subject": "Albert Einstein", "predicate": "was born in",  "object": "Ulm" }`
+    - `{ "subject": "Ulm",             "predicate": "is located in", "object": "the Kingdom of Wurttemberg" }`
+- Wrong (v1/v2 bug): a single triple with object "14 March 1879" that loses "Ulm" and "the Kingdom of Wurttemberg".
+
+Triples from genuinely different statements go in DIFFERENT `facts` entries
+(each with its own `natural_language` / `source_quote`), not the same
+`triples` array.
+
+### 2. Decontextualization — no unresolved references **[fixes v1 violation: demonstratives]**
+Replace every pronoun and demonstrative — `it`, `they`, `this Decision`,
+`this Regulation`, `this threshold`, `the Recommendation`, `the Member State
+concerned`, `the deficit` — with the named referent recoverable from earlier in
+the section, from the document title, or from the section path.
+
+- `"This Regulation"` -> use the full title from the document title line.
+- `"the threshold"` -> use the value it refers to.
+- `"the deficit"` -> use the most-recent qualified form.
+
+A reader who sees only the fact (without the source text) must still understand
+who or what is being talked about. If a demonstrative genuinely cannot be
+resolved, still emit the fact but keep the surface form — do NOT drop it just to
+avoid an unresolved reference (coverage mandate). Resolve when you can.
+
+### 3. Imperative articles always specify both ends **[fixes v1 violation: subject/object swap in imperatives]**
+Sentences of the form "X is hereby abrogated", "X shall enter into force",
+"X is repealed", "X is addressed to Y": the **abrogated/enacted instrument
+goes in the OBJECT**, and the **acting instrument** (this Regulation, this
+Decision, the Commission) **goes in the SUBJECT**.
+
+- Source: "Decision 2005/136/EC is hereby abrogated."
+- Correct: subject = `"this Regulation"` (resolved to its title),
+           predicate = `"abrogates"`, object = `"Council Decision 2005/136/EC"`.
+- Incorrect (v1 bug): subject = `"Decision 2005/136/EC"`,
+                      predicate = `"is hereby abrogated"`, object = `"null"`.
+
+### 4. Conditions and ordering go in their own fields — but the branch is still covered **[adjusted in v4]**
+When a sentence has the form "**if** X **then** Y", "**in accordance with** X, Y",
+"**under the terms of** X, Y": put the consequent Y in the `triples`, and put the
+precondition X in the `condition` field. When the sentence dictates order or a
+deadline ("**after** X", "**before** X", "**within** 30 days", "**prior to** X"):
+put that phrase in the `temporal_context` field. Keep the whole sentence
+(X + Y) in `source_quote` for audit.
+
+v4 change: you must STILL emit a fact for the consequent (do not drop Y because
+its condition is "just context"). If the precondition X itself asserts a
+checkable state ("a maximum export refund is fixed"), it is fine to ALSO emit a
+separate fact for X — coverage beats the old anti-granularity rule here.
+
+### 5. Use canonical entity surface forms throughout the document **[fixes v1 violation: entity surface variants]**
+Once a real-world entity has been introduced with a qualified form, use the same
+surface form for every subsequent reference in this section. Use `"the Commission"`
+consistently; do not alternate with `"Commission services"`. If two surface forms
+appear, choose the one with the most qualifiers (longer, more specific).
+Consistent surface forms let the KG merge co-referent nodes correctly.
+
+### 6. Minimum-sufficient modifiers on entities — push extra relations into their own triple
+The subject and object must be uniquely identifiable. Attach the smallest set of
+modifiers that disambiguates them after rule 5. A modifier you would have crammed
+into the object is usually better expressed as its OWN triple (rule 1) — e.g. the
+place of birth, the governing article, the reporting year. Do NOT bury a whole
+subordinate clause inside one object string (see rule 13).
+
+### 7. Verbatim source_quote
+`source_quote` MUST be a contiguous substring of the section text, copied exactly
+as written — preserve casing, punctuation, hyphens, em-dashes, non-ASCII
+characters. Pick the **shortest** contiguous span that supports ALL triples of
+the fact (after rule 4 — antecedent clauses extend the required span). Do not
+paraphrase the quote. If a verbatim span truly cannot be produced for a clause,
+emit the fact with the closest verbatim span that contains the clause rather than
+dropping the clause.
+
+### 8. Skip ONLY formulaic text **[adjusted in v4]**
+Do NOT extract from "Having regard to …" citation paragraphs (unless one asserts
+a distinct fact such as the year/title of a cited instrument). Do NOT extract
+from closing formulas ("Done at Brussels, …", "For the Commission, …"). Do NOT
+emit a fact whose only content is a bare header ("Article 7"). EVERYTHING ELSE,
+including every "Whereas …" recital and every operative clause, MUST be covered.
+
+### 9. Numeric facts always carry unit and temporal reference
+Include the unit and the year/period in the subject or object.
+- Good: subject = `"general government deficit of the Netherlands in 2004"`,
+        predicate = `"is estimated at"`, object = `"2,3 % of GDP"`.
+- Bad: subject = `"deficit"`, object = `"2,3 %"`.
+
+### 10. References to other legal acts use the canonical short form
+Use the EUR-Lex citation form: `"Council Regulation (EEC) No 1418/76 of 21 June
+1976"`, not "the Regulation" or "Reg. 1418/76". Expand abbreviated forms using
+the section path or document title.
+
+### 11. No hallucination
+If the section text does not support a fact, do not emit it. Multi-coverage means
+capture every relation and clause the text DOES state — it is NOT licence to add
+relations, dates, percentages, or actors the text does not state.
+
+### 12. Disjunctions & alternatives — one fact per branch **[new in v4; fixes: "either A or B" crammed into one node]**
+When a sentence offers alternatives — "either A or B", "A or B", "A; or B",
+"whether to A or to B" — emit a SEPARATE fact for EACH branch, plus optionally a
+fact for the choice itself. Do NOT pack the whole "A or B" string into one
+object.
+
+- Source: "the Commission shall decide either to fix a maximum export refund … or
+  not to take any action on the tenders."
+- Correct — THREE facts:
+    - choice: subject `"the Commission"`, predicate `"shall decide between"`,
+      object `"fixing a maximum export refund and taking no action"`.
+    - branch A: subject `"the Commission"`, predicate `"may fix"`,
+      object `"a maximum export refund"`.
+    - branch B: subject `"the Commission"`, predicate `"may take"`,
+      object `"no action on the tenders"`.
+- Wrong: one fact with object `"either to fix a maximum export refund or not to
+  take any action on the tenders"`.
+
+### 13. Qualifier clauses become their own facts **[new in v4; fixes: dropped scope/exception tails]**
+A relative / scope / exception / cross-reference clause attached to a main clause
+gets its OWN fact in addition to the main-clause fact — never silently folded
+into one giant object.
+
+- Source: "an invitation to tender is opened for the refund on export of rice,
+  for Zones I to VI and Zone VIII excluding Guyana, Madagascar and Suriname, as
+  specified in the Annex to Regulation (EEC) No 2145/92."
+- Emit: (a) the invitation-is-opened fact; (b) a fact for the zone scope
+  ("applies to Zones I to VI and Zone VIII"); (c) a fact for the exclusion
+  ("excludes Guyana, Madagascar and Suriname"); (d) a fact for the
+  cross-reference ("as specified in the Annex to Regulation (EEC) No 2145/92").
+
+</guideline>
+
+## Input
+
+Document title: <<DOC_TITLE>>
+Section path: <<SECTION_PATH>>
+
+Section text:
+"""
+<<SECTION_TEXT>>
+"""
+
+Now produce the JSON object. Cover every clause. Output JSON only.
